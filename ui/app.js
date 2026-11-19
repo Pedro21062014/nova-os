@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.1.3';
+const VERSION = '1.1.4';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -33,10 +33,11 @@ function sampleGlass(){
   glassFrame=0;
   if(!pref.glass||!pref.wall||idleMode)return;
   const frame=$('tv-screen').getBoundingClientRect(), scale=frame.width/1600;if(!scale)return;
-  each.call(document.querySelectorAll('#top .nav,#top .round,#main .pill.ghost,#main .ambient-card'),el=>{
+  const positions=Array.from(document.querySelectorAll('#top .nav,#top .round,#main .pill.ghost,#main .ambient-card')).map(el=>{
    const r=el.getBoundingClientRect();
-   el.style.setProperty('--legacy-sample-position',((frame.left-r.left)/scale)+'px '+((frame.top-r.top)/scale)+'px');
+   return [el,((frame.left-r.left)/scale)+'px '+((frame.top-r.top)/scale)+'px'];
   });
+  positions.forEach(([el,position])=>{if(el.style.getPropertyValue('--legacy-sample-position')!==position)el.style.setProperty('--legacy-sample-position',position);});
  });
 }
 function glassWallpaper(id){if(legacyGlass)$('tv-screen').style.setProperty('--legacy-wall',`url("${location.origin}/wallpapers/glass-${id||'dolomitas'}.webp")`);}
@@ -58,7 +59,7 @@ const curated = [
  {id:'nova:duna',title:'Duna: Parte Dois',meta:'2024 · Ficção científica · 2h46',tag:'FILME',art:'img/media/dune.webp',poster:'img/media/dune-poster.webp',url:'https://tv.apple.com/br/movie/duna-parte-dois/umc.cmc.363aycnv6vy9qgekvew6fveb9',source:'Apple TV',summary:'Paul Atreides se une a Chani e aos Fremen enquanto procura vingar a destruição da sua família.'},
  {id:'nova:jogos',title:'Jogos Vorazes',fullTitle:'Jogos Vorazes: A Cantiga dos Pássaros e das Serpentes',meta:'2023 · Ação e aventura · 2h37',tag:'FILME',art:'img/media/hunger.webp',poster:'img/media/hunger-poster.webp',url:'https://tv.apple.com/br/movie/jogos-vorazes-a-cantiga-dos-passaros-e-das-serpentes/umc.cmc.4vck516h5k6fsg7r7srnfyp4w',source:'Apple TV',summary:'A cantiga dos pássaros e das serpentes volta ao início da história de Coriolanus Snow e dos Jogos Vorazes.'}];
 const catalogs = {movies:{items:[],state:'idle'},series:{items:[],state:'idle'}};
-let apps = native ? [] : demoApps.slice(), page='home', dialog=null, previousFocus='', useDpad=!!native, toastTimer, searchValue='', organizeFrom='home', paintedHeader=false;
+let apps = native ? [] : demoApps.slice(), page='home', dialog=null, previousFocus='', useDpad=!!native, toastTimer, searchValue='', organizeFrom='home', paintedHeader=false, headerPage='', clockMinute=-1, onlineState=null;
 const escape = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const attr=escape;
 const slug=s=>{const text=String(s||'');return (text.normalize?text.normalize('NFD'):text).replace(/[\u0300-\u036f]/g,'').toLowerCase();};
@@ -69,12 +70,17 @@ const rnd=(name,action,icon=action)=>`<button type="button" class="round glass" 
 const tabs=[['home','Início','home'],['movies','Filmes','film'],['series','Séries','tv'],['live','Ao vivo','live']];
 const syncHeader=()=>{
  if(!paintedHeader){$('top').innerHTML=`<button class="brand" aria-label="Nova OS, início" data-do="page" data-arg="home"><img class="nova-wordmark" src="img/brand/nova-os-header.webp" alt="" width="174" height="54" decoding="async"></button><nav class="nav glass" aria-label="Navegação principal"><span class="nav-indicator" aria-hidden="true"></span>${tabs.map(([id,name,i])=>`<button data-do="page" data-arg="${id}" aria-label="${name}">${ico(i,18)}<span class="nav-label" aria-hidden="true">${name}</span></button>`).join('')}</nav><div class="header-right">${rnd('Buscar','search')}<span class="net" id="net" title="Conexão">${ico('wifi',21)}</span><div class="time"><b id="clock"></b><span id="date"></span></div>${rnd('Configurações','settings')}</div>`;paintedHeader=true;}
+ if(headerPage===page)return;headerPage=page;
  const nav=$('top').querySelector('.nav');const index=tabs.findIndex(t=>t[0]===page);nav.classList.toggle('has-current',index>=0);if(index>=0){nav.style.setProperty('--nav-index',index);if(legacyLayout)nav.querySelector('.nav-indicator').style.transform='translateX('+(index*44)+'px)';}
  nav.querySelectorAll('button').forEach(el=>{const active=el.dataset.arg===page;el.classList.toggle('active',active);if(active)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
- $('top').querySelectorAll('.header-right [data-do]').forEach(el=>{if(el.dataset.do===page)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});clock(); net();
+ $('top').querySelectorAll('.header-right [data-do]').forEach(el=>{if(el.dataset.do===page)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
 };
-function clock(){const d=new Date();$('clock').textContent=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',hour12:false});$('date').textContent=d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'}).replace(/\./g,'').replace(/ de /g,' ');if($('ambient-clock'))$('ambient-clock').textContent=$('clock').textContent;}
-function net(){if(!$('net'))return;const online=native?connection():navigator.onLine;$('net').classList.toggle('off',!online);$('net').title=online?'Conectado':'Sem conexão';}
+function clock(){
+ const d=new Date(), minute=Math.floor(d.getTime()/60000);
+ if(minute!==clockMinute){clockMinute=minute;$('clock').textContent=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',hour12:false});$('date').textContent=d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'}).replace(/\./g,'').replace(/ de /g,' ');}
+ const ambientClock=$('ambient-clock');if(ambientClock&&ambientClock.textContent!==$('clock').textContent)ambientClock.textContent=$('clock').textContent;
+}
+function net(){const el=$('net');if(!el)return;const online=native?connection():navigator.onLine;if(online===onlineState)return;onlineState=online;el.classList.toggle('off',!online);el.title=online?'Conectado':'Sem conexão';}
 function connection(){try{return native.isOnline();}catch(_){return false;}}
 const section=(title,sub,action,text,icon='arrow',arg='')=>`<div class="section-head"><h2>${title}</h2>${sub?`<p>${sub}</p>`:''}${action?`<button class="small" data-do="${action}" data-arg="${arg}">${text}${ico(icon,16)}</button>`:''}</div>`;
 function appTile(a){const more=a.id==='__more';const mark=more?ico('grid',33):logos.includes(a.brand)?`<img alt="" class="app-logo logo-${a.brand}" src="img/brand/${a.brand}.webp">`:a.icon&&native?`<img alt="" loading="lazy" src="${attr(a.icon)}">`:`<span class="generic">${escape(a.label.charAt(0).toUpperCase())}</span>`;return `<button class="tile" data-do="${more?'page':'app'}" data-arg="${more?'apps':attr(a.id)}" aria-label="${attr(a.label)}"><span class="app-mark glass${more?' more':''}">${mark}</span><span class="app-label">${escape(a.label)}</span></button>`;}
@@ -187,7 +193,7 @@ function render(reset=false,refocus=true){
  main.scrollTop=reset?0:y;
  if(page==='updates'){const input=$('release-repo');if(input)input.addEventListener('input',()=>{repoDraft=input.value;});}
  if(page==='search'){const q=$('query');q.addEventListener('input',()=>{searchValue=q.value;searchResults();});searchResults();}
- $('footer').innerHTML=`<span><kbd>OK</kbd> Selecionar</span><span><kbd>← ↑ ↓ →</kbd> Navegar</span><span><kbd>↩</kbd> Voltar</span><span class="signature"><i></i> Nova OS · 16:9</span>`;clock();
+ clock();
  if(refocus&&wasMain&&!dialog&&document.activeElement===document.body) focusMatching(main,anchor);
  if(page==='home'&&!useDpad&&!document.querySelector('.preset-focus')){const first=main.querySelector('.tile');if(first)first.classList.add('preset-focus');}
 }
@@ -202,8 +208,9 @@ function go(to,keepNavFocus=false){
  if(dialog)closeDialog(false);
  if(to!==page&&to!=='search')searchValue='';
  if(to==='search'&&page!=='search')searchValue='';
- page=to;render(true,false);if(!keepNavFocus)focusPage();
- if(to==='movies'||to==='series')load(to);
+ page=to;const request=(to==='movies'||to==='series')?prepareCatalog(to,false):null;
+ render(true,false);if(!keepNavFocus)focusPage();
+ if(request)request();
  if(to==='search'){load('movies');load('series');}
  if(to==='updates'&&native)native.updaterState();
  if(to==='home'&&bool('trending'))load('movies');
@@ -224,11 +231,20 @@ function normalize(which,raw){
  if(!Array.isArray(raw))return [];
  return raw.slice(0,12).filter(e=>e&&e.name&&urlOk(e.url)).map(e=>({id:`maze:${e.id}`,title:compact(e.name),tag:'SÉRIE',meta:[year(e.premiered),e.genres&&e.genres[0]].filter(Boolean).join(' · '),image:artOk(e.image&&e.image.medium),url:urlOk(e.url),source:'TVmaze',summary:compact(e.summary).slice(0,740)}));
 }
-function load(which,force=false){
- const s=catalogs[which];if(!s||s.state==='loading'||(!force&&s.ts&&Date.now()-s.ts<ttl))return;
- s.state='loading';if(page===which)render();
- if(native){try{native.catalog(which);}catch(_){catalogReply(which,false,'');}}
- else getText(`catalog/${which}.json`).then(s=>catalogReply(which,true,s)).catch(()=>catalogReply(which,false,''));
+function prepareCatalog(which,force){
+ const s=catalogs[which];if(!s||s.state==='loading'||(!force&&s.ts&&Date.now()-s.ts<ttl))return null;
+ s.state='loading';
+ return ()=>{
+  if(native){try{native.catalog(which);}catch(_){catalogReply(which,false,'');}}
+  else getText(`catalog/${which}.json`).then(s=>catalogReply(which,true,s)).catch(()=>catalogReply(which,false,''));
+ };
+}
+function load(which,force=false){const request=prepareCatalog(which,force);if(request){if(page===which)render();request();}}
+function artReady(url,revision){
+ const source='art?url='+encodeURIComponent(url);
+ each.call(document.querySelectorAll('img.art[src],img.detail-art[src]'),el=>{
+  if(el.getAttribute('src').split('&rev=')[0]===source)el.setAttribute('src',source+'&rev='+revision);
+ });
 }
 function catalogReply(which,good,body){
  const s=catalogs[which];if(!s)return;
@@ -274,15 +290,15 @@ function doAction(action,arg){switch(action){
  case 'about':openDialog('Sobre o Nova OS',`<p>Versão ${VERSION} · Launcher para Android TV e TV boxes.</p><p>Os favoritos e os ajustes são gravados neste aparelho. O catálogo consulta a iTunes Store (filmes) e o TVmaze (séries) e armazena a última seleção localmente. O Nova OS não acessa o seu histórico de reprodução nem faz login em serviços de streaming.</p><p class="credit">Dados de séries: TVmaze (CC BY-SA). Fonte Manrope (SIL OFL). Banners dos títulos: catálogo Apple TV.</p><div class="actions">${btn('Fechar','close','check','primary')}</div>`);break;
  case 'system': if(native)native.openSystem(arg);else toast('Esta opção fica disponível no aparelho Android.');break;
  }}
-let held=null, suppressClick=false;
+let held=null, suppressClick=false, suppressedArrow='';
 function back(){if(idleMode){wakeIdle();return true;}if(page==='updates'){go('settings');return true;}if(dialog){closeDialog();return true;}if(page==='home')return false;if(page==='organize')go(organizeFrom);else go('home');return true;}
-function setDpad(){useDpad=true;document.body.classList.add('dpad');const f=document.querySelector('.preset-focus');if(f)f.classList.remove('preset-focus');}
+function setDpad(){if(useDpad)return;useDpad=true;document.body.classList.add('dpad');const f=document.querySelector('.preset-focus');if(f)f.classList.remove('preset-focus');}
 function spatial(k){
  const isOverlay=!!dialog;
- const root=isOverlay?$('dialog'):$('stage');const active=document.activeElement;const elements=Array.from(root.querySelectorAll('button:not([disabled]),input:not([disabled])')).filter(el=>el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden');
+ const root=isOverlay?$('dialog'):page==='ambient'?$('main'):$('stage');const active=document.activeElement;const elements=Array.from(root.querySelectorAll('button:not([disabled]):not([hidden]),input:not([disabled]):not([hidden])'));
  if(!elements.includes(active)){const first=page==='home'&&!isOverlay?elements.find(e=>e.classList.contains('tile')):null;const target=first||elements[0];if(target)target.focus();return;}
  const r=active.getBoundingClientRect(), x=(r.left+r.right)/2,y=(r.top+r.bottom)/2;let best=null, score=Infinity;
- for(const el of elements){if(el===active)continue;const t=el.getBoundingClientRect(), tx=(t.left+t.right)/2,ty=(t.top+t.bottom)/2, h=k==='ArrowLeft'||k==='ArrowRight';const major=h?(k==='ArrowLeft'?x-tx:tx-x):(k==='ArrowUp'?y-ty:ty-y);if(major<3)continue;const overlap=h?Math.min(t.bottom,r.bottom)-Math.max(t.top,r.top):Math.min(t.right,r.right)-Math.max(t.left,r.left);const off=h?Math.abs(ty-y):Math.abs(tx-x);const point=major+off*(overlap>1?.26:3)+(overlap>1?0:34);if(point<score){score=point;best=el;}}
+ for(const el of elements){if(el===active)continue;const t=el.getBoundingClientRect();if(!t.width&&!t.height)continue;const tx=(t.left+t.right)/2,ty=(t.top+t.bottom)/2, h=k==='ArrowLeft'||k==='ArrowRight';const major=h?(k==='ArrowLeft'?x-tx:tx-x):(k==='ArrowUp'?y-ty:ty-y);if(major<3)continue;const overlap=h?Math.min(t.bottom,r.bottom)-Math.max(t.top,r.top):Math.min(t.right,r.right)-Math.max(t.left,r.left);const off=h?Math.abs(ty-y):Math.abs(tx-x);const point=major+off*(overlap>1?.26:3)+(overlap>1?0:34);if(point<score){score=point;best=el;}}
  if(best)best.focus();
 }
 function key(k,down,repeat=false,fromRemote=false){
@@ -293,6 +309,12 @@ function key(k,down,repeat=false,fromRemote=false){
  if(k!=='Enter'||!el||el.tagName!=='BUTTON')return false;
  if(down){setDpad();if(!held&&!repeat){held={el,long:false,timer:0};if(el.dataset.do==='app'&&page==='home')held.timer=setTimeout(()=>{if(!held||held.el!==el)return;held.long=true;organizeFrom='home';go('organize');render();manage(el.dataset.arg);},570);}}
  else if(held){const work=held;clearTimeout(work.timer);held=null;if(!work.long&&document.activeElement===work.el)work.el.click();}return true;
+}
+function remoteArrow(k,repeat){
+ if(idleMode){suppressedArrow=k;wakeIdle();return true;}
+ if(repeat&&suppressedArrow===k)return true;
+ if(!repeat)suppressedArrow='';
+ return key(k,true,repeat,true);
 }
 // A TV remote changes the top-level section on focus, without stealing focus from the tab.
 document.addEventListener('focusin',e=>{
@@ -309,14 +331,16 @@ let pointerTimer;document.addEventListener('pointerdown',e=>{if(e.pointerType===
 // Only fetch one photo at a time; leave the current or bundled photo on-screen if loading fails.
 const WALL_INTERVAL=15*60*1000;
 const DEFAULT_WALL={id:'',title:'Dolomitas, Itália',author:'',page:''};
-let wallNow=DEFAULT_WALL, wallActive=false, wallLoading=false, wallTimer, wallList=null, wallSlot=-1, nativePaused=false,lastWallChange=0;
+let wallNow=DEFAULT_WALL, wallActive=false, wallLoading=false, wallTimer, wallList=null, wallSlot=-1, wallSettleTimer=0, nativePaused=false,lastWallChange=0;
 const suspended=()=>native?nativePaused:document.hidden;
 const wallLayers=Array.from(document.querySelectorAll('.wall-photo'));
 const storedWall=()=>{try{return localStorage.getItem('nova.wallpaper.last')||'';}catch(_){return '';}};
 function displayWall(next){
  wallSlot=(wallSlot+1)%wallLayers.length;
+ const scene=document.querySelector('.scenery');clearTimeout(wallSettleTimer);scene.classList.remove('wall-settled');
  const layer=wallLayers[wallSlot];layer.style.backgroundImage=`url("wallpapers/${next.id}.webp?v=2")`;
  layer.classList.add('visible');wallLayers.forEach((other,i)=>{if(i!==wallSlot)other.classList.remove('visible');});
+ wallSettleTimer=setTimeout(()=>{scene.classList.add('wall-settled');wallLayers.forEach((other,i)=>{if(i!==wallSlot)other.style.backgroundImage='';});},700);
  glassWallpaper(next.id);
  wallNow=next;wallActive=true;lastWallChange=Date.now();document.querySelector('.scenery').dataset.wallpaper=next.id;
  document.querySelectorAll('[data-wall-title]').forEach(el=>{el.textContent=next.title;});
@@ -383,7 +407,7 @@ function wakeIdle(){
  if(idleFocus&&document.documentElement.contains(idleFocus)&&idleFocus!==document.body){
   try{idleFocus.focus({preventScroll:true});}catch(_){idleFocus.focus();}
  }
- idleFocus=null;queueIdle();
+ idleFocus=null;clock();net();queueIdle();
 }
 function idleKey(k,down){
  if(wakeKey&&wakeKey===k){if(!down)wakeKey='';return true;}
@@ -416,13 +440,13 @@ function resize(){
 }
 window.NovaUi={
  updateApps(raw){try{const rows=JSON.parse(raw);if(!Array.isArray(rows))return;apps=rows.filter(a=>a&&a.id&&a.label).map(a=>{const entry=services.find(x=>x[3].includes(a.pkg));return {...a,brand:entry&&entry[0]};});apps.sort((a,b)=>{const rank=x=>x.brand?services.findIndex(s=>s[0]===x.brand):999;return rank(a)-rank(b)||a.label.localeCompare(b.label,'pt-BR');});if(['home','apps','organize','live'].includes(page)){render(false,!dialog);if(document.activeElement===document.body&&useDpad&&!dialog)focusPage();}if(page==='search')searchResults();}catch(_){}},
- catalogReply, updateState, toast, back, key, net,
+ catalogReply, artReady, updateState, toast, back, key, remoteArrow, net,
  suspend(){nativePaused=true;clearTimeout(wallTimer);clearTimeout(idleTimer);idleTimer=0;},
- reopen(){nativePaused=false;net();queueIdle();if((bool('rotate')||!wallActive)&&Date.now()-lastWallChange>1000)rotateWallpaper(bool('rotate'));else scheduleWallpaper();},
+ reopen(){nativePaused=false;clock();net();queueIdle();if((bool('rotate')||!wallActive)&&Date.now()-lastWallChange>1000)rotateWallpaper(bool('rotate'));else scheduleWallpaper();},
  home(){if(idleMode){wakeIdle();return;}go('home');}
 };
 window.addEventListener('resize',resize);window.addEventListener('online',net);window.addEventListener('offline',net);window.addEventListener('blur',()=>{if(held){clearTimeout(held.timer);held=null;}});
 glassWallpaper('');if(legacyGlass){$('main').addEventListener('scroll',sampleGlass);$('top').addEventListener('transitionend',sampleGlass);}
-resize();render(true,false);focusPage();queueIdle();rotateWallpaper(bool('rotate'));setInterval(()=>{clock();net();},30000);
+resize();render(true,false);net();focusPage();queueIdle();rotateWallpaper(bool('rotate'));setInterval(()=>{if(!suspended()&&!idleMode){clock();net();}},30000);
 if(native){native.ready();setInterval(()=>{if(!nativePaused)native.updaterCheck(false);},12*60*60*1000);}if(pref.auto||pref.trending) setTimeout(()=>load('movies'),550);
 })();

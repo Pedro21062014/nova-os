@@ -178,3 +178,6 @@ body.legacy-glass.ambient .top .nav,body.legacy-glass.ambient .top .round,body.l
 body.software-rendering .top .nav,body.software-rendering .top .round,body.software-rendering .pill.ghost,body.software-rendering .ambient-card{
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
+
+/* Skip painting the base photo when the opaque current photo fully covers it. */
+body:not(.no-wall) #tv-screen .scenery.wall-settled,body.ambient #tv-screen .scenery.wall-settled,body.idle-ambient #tv-screen .scenery.wall-settled{background-image:none}

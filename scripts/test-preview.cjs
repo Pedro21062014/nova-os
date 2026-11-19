@@ -51,7 +51,7 @@ async function run() {
       delete NodeList.prototype.forEach;
       delete Element.prototype.closest;
       delete window.fetch;
-      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.1.3',available:'',progress:0};
+      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.1.4',available:'',progress:0};
       const post=(patch={})=>window.NovaUi.updateState(JSON.stringify(Object.assign(state,patch)));
       window.installerCalled=false;
       window.NovaNative={
@@ -98,6 +98,32 @@ async function run() {
     assert.equal(await sw.locator('.legacy-layout').count(),0);
     assert.equal(await sw.locator('.nav').evaluate(e=>getComputedStyle(e).backdropFilter),'none');
     assert.match(await sw.locator('.nav').evaluate(e=>getComputedStyle(e).backgroundImage),/glass-braies\.webp/);
+    await sw.waitForFunction(()=>document.querySelector('.scenery').classList.contains('wall-settled'));
+    assert.equal(await sw.locator('.scenery').evaluate(e=>getComputedStyle(e).backgroundImage),'none');
+    await sw.evaluate(()=>{
+      window.originalFooter=document.querySelector('#footer span');
+      window.originalDate=Date.now;Date.now=()=>originalDate()+241000;
+      document.dispatchEvent(new Event('visibilitychange'));Date.now=originalDate;
+    });
+    assert.equal(await sw.locator('.idle-ambient').count(),1);
+    await sw.evaluate(()=>{
+      document.querySelector('.nav [data-arg="home"]').focus();
+      NovaUi.remoteArrow('ArrowRight',false);NovaUi.remoteArrow('ArrowRight',true);
+    });
+    assert.equal(await sw.locator('.idle-ambient').count(),0);
+    assert.equal(await sw.locator('.nav [aria-current="page"]').getAttribute('data-arg'),'home');
+    await sw.locator('.nav [data-arg="home"]').focus();
+    await sw.evaluate(()=>NovaUi.remoteArrow('ArrowRight',false));
+    assert.equal(await sw.locator('.nav [aria-current="page"]').getAttribute('data-arg'),'movies');
+    assert(await sw.evaluate(()=>originalFooter===document.querySelector('#footer span')));
+    await sw.route('**/art?*',r=>r.fulfill({status:200,contentType:'image/webp',body:require('node:fs').readFileSync('app/src/main/assets/img/media/dune-poster.webp')}));
+    await sw.evaluate(()=>{
+      const image='https://is1-ssl.mzstatic.com/image/100x100bb.jpg';
+      NovaUi.catalogReply('movies',true,JSON.stringify({feed:{entry:[{'im:name':{label:'Filme de teste'},'im:image':[{label:image}],id:{label:'https://itunes.apple.com/us/movie/example'}}]}}));
+      NovaUi.artReady(image.replace('100x100bb','300x450bb'),123);
+    });
+    assert.match(await sw.locator('.poster-frame img,.portrait-frame img').first().getAttribute('src'),/&rev=123$/);
+
     console.log('Validados: software Android simulado, modo legado simulado, layouts, setas, filme/série, fundo, descanso, preferências e interface do atualizador com ponte Android simulada.');
   } finally {await browser.close();}
 }

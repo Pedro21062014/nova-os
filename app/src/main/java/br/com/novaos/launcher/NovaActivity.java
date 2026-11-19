@@ -55,6 +55,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -65,11 +72,16 @@ public final class NovaActivity extends Activity {
     private static final String SERIES = "https://api.tvmaze.com/shows?page=0";
     private static final long ART_TTL = 7L * 24 * 60 * 60 * 1000;
     private static final long ART_LIMIT = 6L * 1024 * 1024;
+    private static final Pattern ASSET_PATH = Pattern.compile("/(index\\.html|app\\.js|style\\.css|manrope\\.woff2|fonts/manrope-(400|600|650|700|750|800)\\.woff2|wallpapers/(list\\.json|glass-(dolomitas|braies|moraine|reine|aoraki)\\.webp|(braies|moraine|reine|aoraki)\\.webp)|img/(dolomitas|brand/(apple|hbo|netflix|nova-os-header|plex|prime|spotify|youtube)|media/(dune|hunger|interstellar|severance)(-poster)?)\\.webp)");
     private final ExecutorService requests = Executors.newFixedThreadPool(3);
     private final LruCache<String, byte[]> icons = new LruCache<String, byte[]>(1024 * 1024) {
         @Override protected int sizeOf(String key, byte[] data) {return data.length;}
     };
+    private static final byte[] EMPTY_ART = android.util.Base64.decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNgYGBgAAAABQABeqhXUAAAAABJRU5ErkJggg==",android.util.Base64.DEFAULT);
     private final Object artLock = new Object();
+    private final Set<String> pendingArtwork = new HashSet<>();
+    private final LruCache<String,Long> artworkBackoff = new LruCache<>(96);
+    private final ThreadPoolExecutor artwork = new ThreadPoolExecutor(2,2,30,TimeUnit.SECONDS,new ArrayBlockingQueue<>(32));
     private volatile Map<String, ComponentName> installed = new HashMap<>();
     private String lastApps = "";
     private long lastAppQuery = 0;
@@ -114,8 +126,8 @@ public final class NovaActivity extends Activity {
             showStartupRecovery();return;
         }
         getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        // Match the software window in the manifest; do not paint the WebView through EGL.
-        web.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+        // The manifest already supplies a software window. LAYER_TYPE_SOFTWARE would
+        // add a second, viewport-sized bitmap before drawing to that software canvas.
         web.setBackgroundColor(0xff080d15);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
         WebSettings cfg = web.getSettings();
@@ -127,7 +139,7 @@ public final class NovaActivity extends Activity {
         cfg.setSupportMultipleWindows(false);
         cfg.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         cfg.setMediaPlaybackRequiresUserGesture(true);
-        cfg.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        cfg.setCacheMode(WebSettings.LOAD_DEFAULT);
         WebView.setWebContentsDebuggingEnabled(false);
         web.setWebViewClient(new LocalClient());
         web.addJavascriptInterface(new Bridge(web), "NovaNative");
@@ -151,7 +163,7 @@ public final class NovaActivity extends Activity {
         if(web!=null){web.onResume();if(ready){refreshApps(false);js("reopen()");if(updater!=null)updater.onResume();}}
     }
     @Override protected void onPause(){super.onPause();if(web!=null){js("suspend()");web.onPause();}}
-    @Override protected void onDestroy(){if(updater!=null)updater.close();requests.shutdownNow();releaseWeb();super.onDestroy();}
+    @Override protected void onDestroy(){if(updater!=null)updater.close();requests.shutdownNow();artwork.shutdownNow();releaseWeb();super.onDestroy();}
     @Override protected void onNewIntent(Intent intent) {super.onNewIntent(intent);if (intent.hasCategory(Intent.CATEGORY_HOME)) js("home()");}
     @Override public void onBackPressed() {
         if (web == null || !ready) {if(!isDeviceHome())super.onBackPressed();return;}
@@ -179,9 +191,12 @@ public final class NovaActivity extends Activity {
             default:return super.dispatchKeyEvent(e);
         }
         final boolean center="Enter".equals(key);
+        if(!center){
+            if(down)web.evaluateJavascript("window.NovaUi&&NovaUi.remoteArrow("+JSONObject.quote(key)+","+(e.getRepeatCount()>0)+")",null);
+            return true;
+        }
         final String call="window.NovaUi&&NovaUi.key("+JSONObject.quote(key)+","+down+","+(e.getRepeatCount()>0)+",true)";
-        if(!center)web.evaluateJavascript(call,null);
-        else web.evaluateJavascript(call, handled->{
+        web.evaluateJavascript(call, handled->{
             if(!"true".equals(handled)&&!down&&web!=null){
                 web.evaluateJavascript("document.activeElement&&document.activeElement.tagName==='INPUT'", input->{
                     if("true".equals(input)&&web!=null){
@@ -216,7 +231,8 @@ public final class NovaActivity extends Activity {
                 }catch(Exception ignored){}
             }
             installed=ids;
-            runOnUiThread(()->{String result=data.toString();if(!lastApps.equals(result)){lastApps=result;js("updateApps("+JSONObject.quote(result)+")");}});
+            String result=data.toString();
+            runOnUiThread(()->{if(!lastApps.equals(result)){lastApps=result;js("updateApps("+JSONObject.quote(result)+")");}});
         });
     }
     public final class Bridge {
@@ -299,19 +315,53 @@ public final class NovaActivity extends Activity {
             byte[] data=out.toByteArray();icons.put(id,data);return data;
         }catch(PackageManager.NameNotFoundException e){throw new IOException(e);}
     }
-    private static String hash(String s) throws Exception{byte[] d=MessageDigest.getInstance("SHA-256").digest(s.getBytes(StandardCharsets.UTF_8));StringBuilder b=new StringBuilder();for(byte n:d)b.append(String.format(Locale.ROOT,"%02x",n&255));return b.toString();}
-    private byte[] art(String url) throws Exception{
-        File base=new File(getCacheDir(),"covers"); if(!base.isDirectory())base.mkdirs();
-        File file=new File(base,hash(url));
-        if(file.isFile()&&System.currentTimeMillis()-file.lastModified()<ART_TTL)return read(new FileInputStream(file),340*1024);
-        byte[] data;
-        try{data=download(url,340*1024,true);}catch(IOException e){if(file.isFile())return read(new FileInputStream(file),340*1024);throw e;}
-        synchronized(artLock){
-            File tmp=File.createTempFile("cover-",".tmp",base);
-            try{try(FileOutputStream out=new FileOutputStream(tmp)){out.write(data);}tmp.renameTo(file);}finally{if(tmp.exists())tmp.delete();}
-            File[] files=base.listFiles();if(files!=null){Arrays.sort(files,(a,b)->Long.compare(a.lastModified(),b.lastModified()));long size=0;for(File f:files)size+=f.length();for(File f:files){if(size<=ART_LIMIT)break;long len=f.length();if(f.delete())size-=len;}}
+    private static String hash(String s) throws Exception{
+        byte[] digest=MessageDigest.getInstance("SHA-256").digest(s.getBytes(StandardCharsets.UTF_8));
+        final String alphabet="0123456789abcdef";char[] output=new char[digest.length*2];
+        for(int i=0;i<digest.length;i++){output[i*2]=alphabet.charAt((digest[i]&255)>>>4);output[i*2+1]=alphabet.charAt(digest[i]&15);}
+        return new String(output);
+    }
+    private WebResourceResponse art(String url) throws Exception{
+        File base=new File(getCacheDir(),"covers"), file=new File(base,hash(url));
+        if(file.isFile()){
+            try{
+                byte[] data=read(new FileInputStream(file),340*1024);
+                if(System.currentTimeMillis()-file.lastModified()>=ART_TTL)queueArtwork(url,base,file);
+                return bytes(bitmapType(data),data);
+            }catch(IOException ignored){}
         }
-        return data;
+        queueArtwork(url,base,file);
+        WebResourceResponse response=bytes("image/png",EMPTY_ART);
+        response.setResponseHeaders(Collections.singletonMap("Cache-Control","no-store"));
+        return response;
+    }
+    private void queueArtwork(String url,File base,File file){
+        synchronized(artLock){
+            Long until=artworkBackoff.get(url);
+            if((until!=null&&until>android.os.SystemClock.elapsedRealtime())||!pendingArtwork.add(url))return;
+        }
+        try{artwork.execute(()->{
+            boolean ok=false;
+            try{
+                byte[] data=download(url,340*1024,true);
+                synchronized(artLock){
+                    if(!base.isDirectory())base.mkdirs();
+                    File tmp=File.createTempFile("cover-",".tmp",base);
+                    try{try(FileOutputStream out=new FileOutputStream(tmp)){out.write(data);}ok=tmp.renameTo(file);}
+                    finally{if(tmp.exists())tmp.delete();}
+                    File[] files=base.listFiles();
+                    if(files!=null){
+                        Arrays.sort(files,(a,b)->Long.compare(a.lastModified(),b.lastModified()));
+                        long size=0;for(File f:files)size+=f.length();
+                        for(File f:files){if(size<=ART_LIMIT)break;long len=f.length();if(f.delete())size-=len;}
+                    }
+                }
+            }catch(IOException ignored){}
+            finally{
+                synchronized(artLock){pendingArtwork.remove(url);if(!ok)artworkBackoff.put(url,android.os.SystemClock.elapsedRealtime()+30000);}
+            }
+            if(ok)js("artReady("+JSONObject.quote(url)+","+android.os.SystemClock.elapsedRealtime()+")");
+        });}catch(RejectedExecutionException ignored){synchronized(artLock){pendingArtwork.remove(url);}}
     }
     private static String type(String p){
         if(p.endsWith(".json"))return "application/json";if(p.endsWith(".html"))return "text/html";if(p.endsWith(".css"))return "text/css";if(p.endsWith(".js"))return "application/javascript";if(p.endsWith(".woff2"))return "font/woff2";if(p.endsWith(".webp"))return "image/webp";return "application/octet-stream";
@@ -331,10 +381,14 @@ public final class NovaActivity extends Activity {
             String path=u.getPath();if(path==null)return notFound();
             try{
                 if(path.equals("/icon"))return bytes("image/png",icon(u.getQueryParameter("id")));
-                if(path.equals("/art")){String url=u.getQueryParameter("url");if(!allowedArt(url))return notFound();byte[] d=art(url);return bytes(bitmapType(d),d);}
+                if(path.equals("/art")){String url=u.getQueryParameter("url");if(!allowedArt(url))return notFound();return art(url);}
                 if(path.equals("/"))path="/index.html";
-                if(!path.matches("/(index\\.html|app\\.js|style\\.css|manrope\\.woff2|fonts/manrope-(400|600|650|700|750|800)\\.woff2|wallpapers/(list\\.json|glass-(dolomitas|braies|moraine|reine|aoraki)\\.webp|(braies|moraine|reine|aoraki)\\.webp)|img/(dolomitas|brand/(apple|hbo|netflix|nova-os-header|plex|prime|spotify|youtube)|media/(dune|hunger|interstellar|severance)(-poster)?)\\.webp)"))return notFound();
-                String mime=type(path);return new WebResourceResponse(mime,mime.startsWith("text/")||(mime.equals("application/javascript")||mime.equals("application/json"))?"UTF-8":null,getAssets().open(path.substring(1)));
+                if(!ASSET_PATH.matcher(path).matches())return notFound();
+                String mime=type(path);
+                WebResourceResponse response=new WebResourceResponse(mime,mime.startsWith("text/")||(mime.equals("application/javascript")||mime.equals("application/json"))?"UTF-8":null,getAssets().open(path.substring(1)));
+                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"114".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
+                response.setResponseHeaders(Collections.singletonMap("Cache-Control",cache));
+                return response;
             }catch(Exception ignored){return notFound();}
         }
     }
