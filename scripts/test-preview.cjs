@@ -35,8 +35,23 @@ async function run() {
 
     // Drive the updater's WebView interface with a deterministic fake Android bridge.
     const n=await browser.newPage({viewport:{width:1600,height:900}});n.setDefaultTimeout(9000);
+    const legacyErrors=[];
+    n.on('pageerror',e=>legacyErrors.push(e.message));
+    await n.clock.install();
     await n.addInitScript(()=>{
-      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.1.0',available:'',progress:0};
+      const supports=CSS.supports.bind(CSS);
+      CSS.supports=(name,value)=>name==='display'&&value==='grid'?false:supports(name,value);
+      // Remove features that are absent on early WebViews, before loading Nova OS.
+      delete Object.entries;
+      delete Object.assign;
+      delete Array.from;
+      delete Array.prototype.find;
+      delete Array.prototype.findIndex;
+      delete Array.prototype.includes;
+      delete NodeList.prototype.forEach;
+      delete Element.prototype.closest;
+      delete window.fetch;
+      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.1.1',available:'',progress:0};
       const post=(patch={})=>window.NovaUi.updateState(JSON.stringify(Object.assign(state,patch)));
       window.installerCalled=false;
       window.NovaNative={
@@ -51,6 +66,18 @@ async function run() {
       };
     });
     await n.goto(base);
+    await n.waitForFunction(()=>!!window.NovaUi&&document.body.classList.contains('legacy-layout')&&document.querySelector('.scenery').dataset.wallpaper==='braies');
+    assert.equal(await n.locator('.tile').count(),2);
+    assert.equal(await n.locator('.app-grid').first().evaluate(e=>getComputedStyle(e).display),'flex');
+    const b=await n.locator('.banner').first().boundingBox();assert(Math.abs(b.width/b.height-16/9)<0.02);
+    await n.getByRole('button',{name:'Início',exact:true}).focus();
+    await n.evaluate(()=>NovaUi.key('ArrowRight',true,false,true));
+    assert.equal(await n.getByRole('button',{name:'Filmes',exact:true}).getAttribute('aria-current'),'page');
+    await n.clock.fastForward(240010);
+    assert.equal(await n.locator('.idle-ambient').count(),1);
+    await n.evaluate(()=>{NovaUi.key('Enter',true,false,true);NovaUi.key('Enter',false,false,true);});
+    assert.equal(await n.locator('.idle-ambient').count(),0);
+    assert.equal(await n.locator('#overlay').evaluate(e=>e.hidden),true);
     await n.getByRole('button',{name:'Configurações',exact:true}).click();
     await n.getByRole('button',{name:/Sistema/}).click();
     await n.getByRole('button',{name:/Atualizações/}).click();
@@ -62,7 +89,8 @@ async function run() {
     await n.getByRole('button',{name:'Instalar atualização',exact:true}).click();
     assert(await n.evaluate(()=>window.installerCalled));
     assert.match(await n.locator('#update-message').textContent(),/instalador do Android/);
-    console.log('Validados: layouts, setas, filme/série, fundo, descanso, preferências e interface do atualizador com ponte Android simulada.');
+    assert.deepEqual(legacyErrors,[]);
+    console.log('Validados: modo legado simulado, layouts, setas, filme/série, fundo, descanso, preferências e interface do atualizador com ponte Android simulada.');
   } finally {await browser.close();}
 }
 run().catch(e=>{console.error(e);process.exit(1);});

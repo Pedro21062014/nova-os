@@ -15,10 +15,14 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.LruCache;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Gravity;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -26,6 +30,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Button;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,16 +76,43 @@ public final class NovaActivity extends Activity {
     private WebView web;
     private UpdateManager updater;
     private boolean ready;
+    private final Handler startup = new Handler(Looper.getMainLooper());
+    private Runnable bootDeadline;
+    private void cancelBootDeadline(){if(bootDeadline!=null){startup.removeCallbacks(bootDeadline);bootDeadline=null;}}
+    private void releaseWeb(){
+        WebView old=web;web=null;ready=false;cancelBootDeadline();
+        if(old==null)return;
+        old.removeJavascriptInterface("NovaNative");
+        if(old.getParent() instanceof ViewGroup)((ViewGroup)old.getParent()).removeView(old);
+        old.stopLoading();old.destroy();
+    }
+    private void showStartupRecovery(){
+        releaseWeb();
+        LinearLayout panel=new LinearLayout(this);panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setGravity(Gravity.CENTER);panel.setPadding(32,24,32,24);panel.setBackgroundColor(0xff080d15);
+        TextView title=new TextView(this);title.setText("Nova OS não conseguiu iniciar");title.setTextSize(24);title.setTextColor(0xfff6f7f9);title.setGravity(Gravity.CENTER);panel.addView(title);
+        TextView detail=new TextView(this);detail.setText("Se o problema continuar, atualize o Android System WebView ou volte ao launcher anterior.");detail.setTextColor(0xffd4def0);detail.setGravity(Gravity.CENTER);detail.setPadding(0,12,0,16);panel.addView(detail);
+        Button retry=new Button(this);retry.setText("Tentar novamente");retry.setOnClickListener(v->createWeb());panel.addView(retry);
+        Button home=new Button(this);home.setText("Alterar launcher padrão");home.setOnClickListener(v->openRecoverySettings(Settings.ACTION_HOME_SETTINGS));panel.addView(home);
+        Button settings=new Button(this);settings.setText("Abrir configurações do Android");settings.setOnClickListener(v->openRecoverySettings(Settings.ACTION_SETTINGS));panel.addView(settings);
+        setContentView(panel);retry.requestFocus();
+    }
+    private void openRecoverySettings(String action){
+        try{startActivity(new Intent(action));}
+        catch(RuntimeException e){if(!Settings.ACTION_SETTINGS.equals(action))openRecoverySettings(Settings.ACTION_SETTINGS);else error("Os ajustes não estão disponíveis neste aparelho.");}
+    }
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        updater=new UpdateManager(this,stateJson->js("updateState("+JSONObject.quote(stateJson.toString())+")"));
+        createWeb();
+    }
+    private void createWeb(){
         try {
             web = new WebView(this);
         } catch (RuntimeException unavailable) {
-            Toast.makeText(this, "Instale ou atualize o Android System WebView para abrir o Nova OS.", Toast.LENGTH_LONG).show();
-            finish(); return;
+            showStartupRecovery();return;
         }
-        updater=new UpdateManager(this,stateJson->js("updateState("+JSONObject.quote(stateJson.toString())+")"));
         getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         web.setBackgroundColor(0xff080d15);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -94,12 +128,15 @@ public final class NovaActivity extends Activity {
         cfg.setCacheMode(WebSettings.LOAD_NO_CACHE);
         WebView.setWebContentsDebuggingEnabled(false);
         web.setWebViewClient(new LocalClient());
-        web.addJavascriptInterface(new Bridge(), "NovaNative");
+        web.addJavascriptInterface(new Bridge(web), "NovaNative");
         setContentView(web);
         web.setFocusableInTouchMode(true);
         web.requestFocus();
         immersive();
         web.loadUrl(BASE + "/index.html");
+        final WebView starting=web;
+        bootDeadline=()->{if(web==starting&&!ready&&!isFinishing())showStartupRecovery();};
+        startup.postDelayed(bootDeadline,8000);
     }
     @Override public void onWindowFocusChanged(boolean focus) { super.onWindowFocusChanged(focus); if(focus)immersive(); }
     private void immersive() {
@@ -112,10 +149,10 @@ public final class NovaActivity extends Activity {
         if(web!=null){web.onResume();if(ready){refreshApps(false);js("reopen()");if(updater!=null)updater.onResume();}}
     }
     @Override protected void onPause(){super.onPause();if(web!=null){js("suspend()");web.onPause();}}
-    @Override protected void onDestroy(){ready=false;if(updater!=null)updater.close();requests.shutdownNow();if(web!=null){web.removeJavascriptInterface("NovaNative");web.destroy();web=null;}super.onDestroy();}
+    @Override protected void onDestroy(){if(updater!=null)updater.close();requests.shutdownNow();releaseWeb();super.onDestroy();}
     @Override protected void onNewIntent(Intent intent) {super.onNewIntent(intent);if (intent.hasCategory(Intent.CATEGORY_HOME)) js("home()");}
     @Override public void onBackPressed() {
-        if (web == null || !ready) {super.onBackPressed(); return;}
+        if (web == null || !ready) {if(!isDeviceHome())super.onBackPressed();return;}
         // Stay on Home when selected as the device launcher; Back unwinds internal screens first.
         web.evaluateJavascript("window.NovaUi&&NovaUi.back()", handled -> {
             if (!"true".equals(handled) && !isDeviceHome()) NovaActivity.super.onBackPressed();
@@ -181,7 +218,9 @@ public final class NovaActivity extends Activity {
         });
     }
     public final class Bridge {
-        @JavascriptInterface public void ready(){runOnUiThread(()->{if(web==null)return;ready=true;lastApps="";refreshApps(true);if(updater!=null){updater.send();updater.onResume();}});}
+        private final WebView owner;
+        Bridge(WebView owner){this.owner=owner;}
+        @JavascriptInterface public void ready(){runOnUiThread(()->{if(web!=owner||ready)return;cancelBootDeadline();ready=true;lastApps="";refreshApps(true);if(updater!=null){updater.send();updater.onResume();}});}
         @JavascriptInterface public void updaterState(){if(updater!=null)updater.send();}
         @JavascriptInterface public void updaterConfigure(String repo,boolean automatic){if(updater!=null)updater.configure(repo,automatic);}
         @JavascriptInterface public void updaterCheck(boolean force){if(updater!=null)updater.check(force);}
@@ -281,7 +320,11 @@ public final class NovaActivity extends Activity {
         @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest r){return true;}
         @Override public boolean shouldOverrideUrlLoading(WebView view,String url){return true;}
         @Override public WebResourceResponse shouldInterceptRequest(WebView view,WebResourceRequest r){
-            Uri u=r.getUrl();if(!"https".equals(u.getScheme())||!HOST.equals(u.getHost())||u.getPort()!=-1||!"GET".equals(r.getMethod()))return notFound();
+            return "GET".equals(r.getMethod())?intercept(r.getUrl()):notFound();
+        }
+        @Override public WebResourceResponse shouldInterceptRequest(WebView view,String url){return intercept(Uri.parse(url));}
+        private WebResourceResponse intercept(Uri u){
+            if(!"https".equals(u.getScheme())||!HOST.equals(u.getHost())||u.getPort()!=-1)return notFound();
             String path=u.getPath();if(path==null)return notFound();
             try{
                 if(path.equals("/icon"))return bytes("image/png",icon(u.getQueryParameter("id")));

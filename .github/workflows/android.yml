@@ -14,6 +14,15 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - name: Check legacy WebView assets
+        run: |
+          npm ci
+          npm run build:ui
+          git diff --exit-code -- app/src/main/assets/app.js app/src/main/assets/style.css
       - name: Install Android SDK components
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.1'
       - name: Build and verify APK

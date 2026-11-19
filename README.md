@@ -1,4 +1,4 @@
-# Nova OS 1.1.0
+# Nova OS 1.1.1
 
 Launcher em português para Android TV e TV boxes. É um aplicativo de tela inicial, não uma ROM. O pacote Android gerencia aplicativos instalados, controle remoto, rede e o atualizador; a interface é local, renderizada pelo Android System WebView.
 
@@ -8,7 +8,7 @@ Launcher em português para Android TV e TV boxes. É um aplicativo de tela inic
 2. Abra o **Nova OS**. Use as setas para navegar; na barra superior, o foco já ativa a aba. Segure **OK** em um app fixado para organizá-lo.
 3. Para escolher o Nova OS como tela inicial, vá em **Configurações → Sistema → Launcher padrão**. Alguns firmwares não permitem trocar o launcher; nesse caso, abra o Nova OS como app. Para desfazer a escolha, volte aos ajustes de tela inicial no Android.
 
-Requisitos: Android **6.0/API 23 ou superior** e Android System WebView atualizado. Para substituir uma instalação existente, os dois APKs precisam ter a mesma assinatura. A edição fornecida para teste usa a mesma chave de teste da edição 1.0.0. A chave privada dessa edição não acompanha o pacote nem o código-fonte. Para distribuir versões sob seu controle, comece com uma chave própria; mudar de chave a partir da edição de teste exige reinstalação.
+Requisitos: Android **6.0/API 23 ou superior** e Android System WebView. A edição 1.1.1 inclui JS compatível com sintaxe antiga, layout alternativo para WebViews antigos e tela de recuperação se a interface não iniciar. Atualize o WebView se o firmware permitir. Para substituir uma instalação existente, os dois APKs precisam ter a mesma assinatura. A edição fornecida para teste usa a mesma chave de teste da edição 1.0.0. A chave privada dessa edição não acompanha o pacote nem o código-fonte. Para distribuir versões sob seu controle, comece com uma chave própria; mudar de chave a partir da edição de teste exige reinstalação.
 
 ## Interface e conteúdo
 
@@ -33,14 +33,14 @@ Com JDK 11+ (o CI usa 17), Android SDK Platform 35, Build Tools 35.0.1 e `zip` d
 sdkmanager 'platforms;android-35' 'build-tools;35.0.1'
 export ANDROID_SDK_ROOT=/caminho/do/android-sdk
 ./scripts/build-apk.sh
-adb install -r artifacts/Nova-OS-1.1.0-debug.apk
+adb install -r artifacts/Nova-OS-1.1.1-debug.apk
 ```
 
-A chave de teste fica em `~/.android/debug.keystore` por padrão. Para compilar com uma chave própria, defina `NOVA_KEYSTORE`, `NOVA_KEY_ALIAS` e `NOVA_KEYSTORE_PASS`; se a senha da chave for diferente, defina `NOVA_KEY_PASS`. Mantenha esses valores fora do Git. O script alinha, assina e verifica a saída.
+A chave de teste fica em `~/.android/debug.keystore` por padrão. Para compilar com uma chave própria, defina `NOVA_KEYSTORE`, `NOVA_KEY_ALIAS` e `NOVA_KEYSTORE_PASS`; se a senha da chave for diferente, defina `NOVA_KEY_PASS`. Mantenha esses valores fora do Git. O script alinha, assina e verifica a saída. O APK utiliza os assets gerados já incluídos no repositório; após editar `ui/app.js` ou `ui/style.css`, regenere-os com `npm ci && npm run build:ui` (Node 20+).
 
 ### Publicação de releases
 
-Há um workflow de APK de teste e outro de publicação assinada. Para a publicação, configure no seu repositório os secrets `NOVA_KEYSTORE_B64`, `NOVA_KEY_ALIAS`, `NOVA_KEYSTORE_PASS` e, se necessário, `NOVA_KEY_PASS`. A cada release, incremente `versionCode` e `versionName` no manifesto e mantenha a constante `VERSION` em `app.js` em sincronia. Crie uma tag estável correspondente à versão, por exemplo `v1.2.0`.
+Há um workflow de APK de teste e outro de publicação assinada. Para a publicação, configure no seu repositório os secrets `NOVA_KEYSTORE_B64`, `NOVA_KEY_ALIAS`, `NOVA_KEYSTORE_PASS` e, se necessário, `NOVA_KEY_PASS`. A cada release, incremente `versionCode` e `versionName` no manifesto e mantenha a constante `VERSION` em `ui/app.js` em sincronia; execute `npm ci && npm run build:ui` e inclua os arquivos gerados no commit. Crie uma tag estável correspondente à versão, por exemplo `v1.2.0`.
 
 Para criar o repositório, autentique a CLI com `gh auth login`, inicialize o Git caso esteja usando o ZIP (sem histórico) e publique usando `gh repo create nova-os --public --source=. --remote=origin --push`. Um repositório público é necessário para o atualizador sem credenciais. Também é possível publicar manualmente o APK em uma release estável assinada com sua própria chave.
 

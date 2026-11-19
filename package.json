@@ -1,0 +1,13 @@
+{
+  "name": "nova-os-ui",
+  "private": true,
+  "scripts": {
+    "build:ui": "node scripts/build-ui.cjs"
+  },
+  "devDependencies": {
+    "@babel/core": "7.28.5",
+    "@babel/preset-env": "7.28.5",
+    "acorn": "8.15.0",
+    "esbuild": "0.25.12"
+  }
+}
