@@ -51,7 +51,7 @@ async function run() {
       delete NodeList.prototype.forEach;
       delete Element.prototype.closest;
       delete window.fetch;
-      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.1.2',available:'',progress:0};
+      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.1.3',available:'',progress:0};
       const post=(patch={})=>window.NovaUi.updateState(JSON.stringify(Object.assign(state,patch)));
       window.installerCalled=false;
       window.NovaNative={
@@ -90,7 +90,15 @@ async function run() {
     assert(await n.evaluate(()=>window.installerCalled));
     assert.match(await n.locator('#update-message').textContent(),/instalador do Android/);
     assert.deepEqual(legacyErrors,[]);
-    console.log('Validados: modo legado simulado, layouts, setas, filme/série, fundo, descanso, preferências e interface do atualizador com ponte Android simulada.');
+    // A modern WebView also gets the sampled glass when Android uses a software window.
+    const sw=await browser.newPage({viewport:{width:1600,height:900}});
+    await sw.addInitScript(()=>{window.NovaNative={softwareRendering:()=>true,ready(){},isOnline:()=>true,catalog(){}};});
+    await sw.goto(base);
+    await sw.waitForFunction(()=>document.body.classList.contains('software-rendering')&&document.querySelector('.scenery').dataset.wallpaper==='braies');
+    assert.equal(await sw.locator('.legacy-layout').count(),0);
+    assert.equal(await sw.locator('.nav').evaluate(e=>getComputedStyle(e).backdropFilter),'none');
+    assert.match(await sw.locator('.nav').evaluate(e=>getComputedStyle(e).backgroundImage),/glass-braies\.webp/);
+    console.log('Validados: software Android simulado, modo legado simulado, layouts, setas, filme/série, fundo, descanso, preferências e interface do atualizador com ponte Android simulada.');
   } finally {await browser.close();}
 }
 run().catch(e=>{console.error(e);process.exit(1);});

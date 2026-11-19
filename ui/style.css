@@ -173,3 +173,8 @@ body.legacy-glass:not(.solid):not(.no-wall) .ambient-card{
 body.legacy-glass .top .nav,body.legacy-glass .top .round,body.legacy-glass .pill.ghost,body.legacy-glass .ambient-card{--legacy-scene-tint:linear-gradient(#080d15c4,#080d15c4);--legacy-sample-position:0 0}
 body.legacy-glass.home .top .nav,body.legacy-glass.home .top .round,body.legacy-glass.home .pill.ghost,body.legacy-glass.home .ambient-card{--legacy-scene-tint:linear-gradient(#080d1508,#080d1508)}
 body.legacy-glass.ambient .top .nav,body.legacy-glass.ambient .top .round,body.legacy-glass.ambient .pill.ghost{--legacy-scene-tint:linear-gradient(transparent,transparent)}
+
+/* The Android launcher uses a software window to bypass incompatible EGL drivers. */
+body.software-rendering .top .nav,body.software-rendering .top .round,body.software-rendering .pill.ghost,body.software-rendering .ambient-card{
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}

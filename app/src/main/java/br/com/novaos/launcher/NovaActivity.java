@@ -114,6 +114,8 @@ public final class NovaActivity extends Activity {
             showStartupRecovery();return;
         }
         getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // Match the software window in the manifest; do not paint the WebView through EGL.
+        web.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
         web.setBackgroundColor(0xff080d15);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
         WebSettings cfg = web.getSettings();
@@ -227,6 +229,7 @@ public final class NovaActivity extends Activity {
         @JavascriptInterface public void updaterAutoDownload(boolean enabled){if(updater!=null)updater.autoDownload(enabled);}
         @JavascriptInterface public void updaterDownload(){if(updater!=null)updater.download();}
         @JavascriptInterface public void updaterInstall(){if(updater!=null)updater.install();}
+        @JavascriptInterface public boolean softwareRendering(){return true;}
         @JavascriptInterface public boolean isOnline(){
             ConnectivityManager cm=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);if(cm==null)return false;
             Network n=cm.getActiveNetwork();NetworkCapabilities cap=n==null?null:cm.getNetworkCapabilities(n);return cap!=null&&cap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);

@@ -20,10 +20,12 @@ function getText(path){return new Promise((resolve,reject)=>{
  req.onerror=req.ontimeout=()=>reject(Error('Arquivo indisponível'));req.send();
 });}
 const legacyLayout=!(window.CSS&&CSS.supports&&CSS.supports('display','grid')&&CSS.supports('aspect-ratio','16 / 9'));
-const legacyGlass=legacyLayout&&window.CSS&&CSS.supports&&CSS.supports('--x','0')&&!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)');
-const $ = id => document.getElementById(id);
 const native = window.NovaNative;
-const VERSION = '1.1.2';
+function softwareMode(){try{return !!(native&&native.softwareRendering&&native.softwareRendering());}catch(_){return false;}}
+const softwareRendering=softwareMode();
+const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
+const $ = id => document.getElementById(id);
+const VERSION = '1.1.3';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -172,7 +174,7 @@ const pages={home,movies:()=>catalog('movies'),series:()=>catalog('series'),live
 const describe=el=>el&&el.dataset&&el.dataset.do?`${el.dataset.do}\n${el.dataset.arg||''}`:'';
 function focusMatching(scope,signature){if(!signature)return false;const hit=Array.from(scope.querySelectorAll('button[data-do]')).find(el=>describe(el)===signature);if(hit){hit.focus();return true;}return false;}
 function applyAppearance(){
- document.body.className=`${page} ${legacyLayout?'legacy-layout':''} ${legacyGlass?'legacy-glass':''} ${prefsUpdate.status==='available'||prefsUpdate.status==='ready'?'has-update':''} ${pref.glass?'':'solid'} ${pref.wall?'':'no-wall'} ${useDpad?'dpad':''} ${pref.motion?'':'motion-off'} ${idleMode?'idle-ambient':''}`;sampleGlass();
+ document.body.className=`${page} ${legacyLayout?'legacy-layout':''} ${legacyGlass?'legacy-glass':''} ${softwareRendering?'software-rendering':''} ${prefsUpdate.status==='available'||prefsUpdate.status==='ready'?'has-update':''} ${pref.glass?'':'solid'} ${pref.wall?'':'no-wall'} ${useDpad?'dpad':''} ${pref.motion?'':'motion-off'} ${idleMode?'idle-ambient':''}`;sampleGlass();
 }
 function animateIn(el,distance=8){
  if(!el||!pref.motion||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))return;
