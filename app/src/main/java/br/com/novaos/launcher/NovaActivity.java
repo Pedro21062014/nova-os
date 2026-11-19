@@ -67,6 +67,7 @@ public final class NovaActivity extends Activity {
     private String lastApps = "";
     private long lastAppQuery = 0;
     private WebView web;
+    private UpdateManager updater;
     private boolean ready;
 
     @Override public void onCreate(Bundle state) {
@@ -77,6 +78,8 @@ public final class NovaActivity extends Activity {
             Toast.makeText(this, "Instale ou atualize o Android System WebView para abrir o Nova OS.", Toast.LENGTH_LONG).show();
             finish(); return;
         }
+        updater=new UpdateManager(this,stateJson->js("updateState("+JSONObject.quote(stateJson.toString())+")"));
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         web.setBackgroundColor(0xff080d15);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
         WebSettings cfg = web.getSettings();
@@ -106,10 +109,10 @@ public final class NovaActivity extends Activity {
     }
     @Override protected void onResume() {
         super.onResume();
-        if(web!=null){web.onResume();if(ready){refreshApps(false);js("net()");}}
+        if(web!=null){web.onResume();if(ready){refreshApps(false);js("reopen()");if(updater!=null)updater.onResume();}}
     }
-    @Override protected void onPause(){super.onPause();if(web!=null)web.onPause();}
-    @Override protected void onDestroy(){ready=false;requests.shutdownNow();if(web!=null){web.removeJavascriptInterface("NovaNative");web.destroy();web=null;}super.onDestroy();}
+    @Override protected void onPause(){super.onPause();if(web!=null){js("suspend()");web.onPause();}}
+    @Override protected void onDestroy(){ready=false;if(updater!=null)updater.close();requests.shutdownNow();if(web!=null){web.removeJavascriptInterface("NovaNative");web.destroy();web=null;}super.onDestroy();}
     @Override protected void onNewIntent(Intent intent) {super.onNewIntent(intent);if (intent.hasCategory(Intent.CATEGORY_HOME)) js("home()");}
     @Override public void onBackPressed() {
         if (web == null || !ready) {super.onBackPressed(); return;}
@@ -178,7 +181,13 @@ public final class NovaActivity extends Activity {
         });
     }
     public final class Bridge {
-        @JavascriptInterface public void ready(){runOnUiThread(()->{if(web==null)return;ready=true;lastApps="";refreshApps(true);});}
+        @JavascriptInterface public void ready(){runOnUiThread(()->{if(web==null)return;ready=true;lastApps="";refreshApps(true);if(updater!=null){updater.send();updater.onResume();}});}
+        @JavascriptInterface public void updaterState(){if(updater!=null)updater.send();}
+        @JavascriptInterface public void updaterConfigure(String repo,boolean automatic){if(updater!=null)updater.configure(repo,automatic);}
+        @JavascriptInterface public void updaterCheck(boolean force){if(updater!=null)updater.check(force);}
+        @JavascriptInterface public void updaterAutoDownload(boolean enabled){if(updater!=null)updater.autoDownload(enabled);}
+        @JavascriptInterface public void updaterDownload(){if(updater!=null)updater.download();}
+        @JavascriptInterface public void updaterInstall(){if(updater!=null)updater.install();}
         @JavascriptInterface public boolean isOnline(){
             ConnectivityManager cm=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);if(cm==null)return false;
             Network n=cm.getActiveNetwork();NetworkCapabilities cap=n==null?null:cm.getNetworkCapabilities(n);return cap!=null&&cap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
@@ -217,7 +226,7 @@ public final class NovaActivity extends Activity {
         });}
     }
     private static boolean allowedLink(String raw){
-        try{if(raw==null||raw.length()>1024)return false;URL u=new URL(raw);String h=u.getHost().toLowerCase(Locale.ROOT);return secure(u)&&(h.equals("itunes.apple.com")||h.equals("tv.apple.com")||h.equals("www.tvmaze.com")||h.equals("www.justwatch.com"));}catch(Exception e){return false;}
+        try{if(raw==null||raw.length()>1024)return false;URL u=new URL(raw);String h=u.getHost().toLowerCase(Locale.ROOT);return secure(u)&&(h.equals("itunes.apple.com")||h.equals("tv.apple.com")||h.equals("www.tvmaze.com")||h.equals("www.justwatch.com")||(h.equals("unsplash.com")&&u.getPath().startsWith("/photos/")));}catch(Exception e){return false;}
     }
     private static boolean secure(URL u){return "https".equalsIgnoreCase(u.getProtocol())&&(u.getPort()==-1||u.getPort()==443)&&u.getUserInfo()==null;}
     private static boolean allowedArt(String raw){
@@ -263,7 +272,7 @@ public final class NovaActivity extends Activity {
         return data;
     }
     private static String type(String p){
-        if(p.endsWith(".html"))return "text/html";if(p.endsWith(".css"))return "text/css";if(p.endsWith(".js"))return "application/javascript";if(p.endsWith(".woff2"))return "font/woff2";if(p.endsWith(".webp"))return "image/webp";return "application/octet-stream";
+        if(p.endsWith(".json"))return "application/json";if(p.endsWith(".html"))return "text/html";if(p.endsWith(".css"))return "text/css";if(p.endsWith(".js"))return "application/javascript";if(p.endsWith(".woff2"))return "font/woff2";if(p.endsWith(".webp"))return "image/webp";return "application/octet-stream";
     }
     private static String bitmapType(byte[] d){if(d.length>11&&d[0]=='R'&&d[8]=='W'&&d[9]=='E')return "image/webp";if(d.length>3&&(d[0]&255)==137&&d[1]=='P')return "image/png";return "image/jpeg";}
     private static WebResourceResponse bytes(String mime,byte[] data){return new WebResourceResponse(mime,null,new ByteArrayInputStream(data));}
@@ -278,8 +287,8 @@ public final class NovaActivity extends Activity {
                 if(path.equals("/icon"))return bytes("image/png",icon(u.getQueryParameter("id")));
                 if(path.equals("/art")){String url=u.getQueryParameter("url");if(!allowedArt(url))return notFound();byte[] d=art(url);return bytes(bitmapType(d),d);}
                 if(path.equals("/"))path="/index.html";
-                if(!path.matches("/(index\\.html|app\\.js|style\\.css|manrope\\.woff2|img/(dolomitas|cosmo|cidade|areia)\\.webp)"))return notFound();
-                String mime=type(path);return new WebResourceResponse(mime,mime.startsWith("text/")||mime.equals("application/javascript")?"UTF-8":null,getAssets().open(path.substring(1)));
+                if(!path.matches("/(index\\.html|app\\.js|style\\.css|manrope\\.woff2|wallpapers/(list\\.json|(braies|moraine|reine|aoraki)\\.webp)|img/(dolomitas|brand/(apple|hbo|netflix|nova-os-header|plex|prime|spotify|youtube)|media/(dune|hunger|interstellar|severance)(-poster)?)\\.webp)"))return notFound();
+                String mime=type(path);return new WebResourceResponse(mime,mime.startsWith("text/")||(mime.equals("application/javascript")||mime.equals("application/json"))?"UTF-8":null,getAssets().open(path.substring(1)));
             }catch(Exception ignored){return notFound();}
         }
     }

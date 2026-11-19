@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local UI preview, using the identical assets shipped in the APK."""
+"""Local Nova OS design preview."""
 import argparse
 from collections import OrderedDict
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -27,6 +27,10 @@ class Preview(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ASSETS), **kwargs)
 
+    def log_message(self, fmt, *args):
+        if len(args) > 1 and str(args[1]).startswith(('4', '5')) and '/favicon.ico' not in str(args[0]):
+            super().log_message(fmt, *args)
+
     def respond(self, mime, data):
         self.send_response(200)
         self.send_header('Content-Type', mime)
@@ -52,7 +56,7 @@ class Preview(SimpleHTTPRequestHandler):
                 self.send_error(400)
                 return
         if not url:
-            if route.path != '/' and not re.fullmatch(r'/(index\.html|app\.js|style\.css|manrope\.woff2|img/(dolomitas|cosmo|cidade|areia)\.webp)', route.path):
+            if route.path != '/' and not re.fullmatch(r'/(index\.html|app\.js|style\.css|manrope\.woff2|wallpapers/(?:list\.json|(?:braies|moraine|reine|aoraki)\.webp)|img/(?:dolomitas|brand/(?:netflix|youtube|prime|hbo|spotify|apple|plex|nova-os-header)|media/(?:interstellar|severance|hunger|dune|interstellar-poster|severance-poster|hunger-poster|dune-poster))\.webp)', route.path):
                 self.send_error(404)
                 return
             return super().do_GET()
@@ -89,5 +93,5 @@ if __name__ == '__main__':
     parser.add_argument('--port', type=int, default=8080)
     opts = parser.parse_args()
     server = ThreadingHTTPServer(('0.0.0.0', opts.port), Preview)
-    print(f'Nova OS preview · porta {opts.port}', flush=True)
+    print(f'Nova OS · Prévia de design · porta {opts.port}', flush=True)
     server.serve_forever()

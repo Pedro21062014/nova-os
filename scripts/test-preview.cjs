@@ -1,24 +1,68 @@
-const { chromium }=require('playwright-core');const assert=require('node:assert/strict');
+const { chromium } = require('playwright-core');
+const assert = require('node:assert/strict');
 const base = process.env.NOVA_PREVIEW_URL || 'http://127.0.0.1:8080/';
-(async()=>{
- const browser=await chromium.launch({executablePath:process.env.CHROMIUM_BIN || '/usr/bin/chromium',args:['--no-sandbox']});
- const p=await browser.newPage({viewport:{width:1600,height:900}}); const errors=[];p.on('pageerror',e=>errors.push(e.message)); const btn=(name)=>p.getByRole('button',{name,exact:true});
- await p.goto(base);await p.locator('.movie').first().waitFor();await p.evaluate(()=>document.fonts.ready);
- assert.equal(await p.locator('.tile').count(),8);assert.equal(await p.locator('.movie').count(),3);
- await p.keyboard.press('ArrowRight');assert.equal(await p.evaluate(()=>document.activeElement.getAttribute('aria-label')),'Netflix');
- await p.keyboard.press('ArrowRight');assert.equal(await p.evaluate(()=>document.activeElement.getAttribute('aria-label')),'YouTube');
- await p.keyboard.down('Enter');await p.waitForTimeout(630);await p.keyboard.up('Enter');await p.getByRole('dialog').waitFor();await p.keyboard.press('Escape');assert.equal(await p.getByRole('heading',{name:'Organizar apps'}).count(),1);
- await btn('Concluir').click(); await p.locator('.movie').first().click();await btn('Salvar na minha lista').click();await btn('Fechar').click();await btn('Minha lista').click();assert.equal(await p.locator('.movie').count(),1);
- await p.locator('.movie').click();await btn('Remover da lista').click();await btn('Fechar').click();assert.equal(await p.locator('.movie').count(),0);
- await btn('Configurações').click();
- await p.getByRole('switch',{name:/Efeito de vidro/}).click();await p.getByRole('switch',{name:/Filmes e séries no início/}).click();await btn('Início').click();assert.equal(await p.locator('.movie').count(),0);
- await p.reload();assert(await p.locator('body.solid').count());assert.equal(await p.locator('.movie').count(),0);
- await btn('Filmes').click();await p.waitForFunction(()=>document.querySelectorAll('.movie').length===12);await p.waitForFunction(()=>Array.from(document.querySelectorAll('.movie img')).some(i=>i.complete&&i.naturalWidth>0));
- await btn('Séries').click();await p.waitForFunction(()=>document.querySelectorAll('.movie').length===12); 
- await btn('Buscar').click();await p.getByRole('searchbox').fill('youtube');assert.equal(await p.locator('#results .tile').count(),1);
- await btn('Início').click();await p.getByRole('button',{name:/Dolomitas/}).click();assert(await p.locator('body.ambient').count());await p.keyboard.press('Escape');assert(await p.locator('body.home').count());
- assert.deepEqual(errors,[]);
- const phone=await browser.newPage({viewport:{width:390,height:780}});await phone.goto(base);assert.equal(await phone.locator('.tile').count(),8);
- const o=await browser.newPage({viewport:{width:1280,height:720}});await o.route('**/catalog/**',r=>r.abort());await o.goto(base);await o.getByRole('button',{name:'Filmes',exact:true}).click();await o.getByText('Não foi possível atualizar.',{exact:false}).waitFor();assert.equal(await o.locator('.movie').count(),2);
- await browser.close();console.log('Nova OS: navegação, OK prolongado, lista, ajustes persistentes, catálogo com imagens, busca, ambiente e fallback offline passaram.');
-})().catch(e=>{console.error(e);process.exit(1);});
+async function run() {
+  const browser = await chromium.launch({executablePath: process.env.CHROMIUM_BIN || '/usr/bin/chromium', args:['--no-sandbox']});
+  try {
+    const p = await browser.newPage({viewport:{width:1600,height:900}});
+    p.setDefaultTimeout(9000);
+    const errors=[]; p.on('pageerror',e=>errors.push(e.message));
+    const button=(name)=>p.getByRole('button',{name,exact:true});
+    await p.clock.install(); await p.goto(base);
+    await p.waitForFunction(()=>document.querySelector('.scenery').dataset.wallpaper==='braies');
+    assert.equal(await p.locator('.tile').count(),8);
+    assert.equal(await p.locator('.banner').count(),4);
+    await button('Início').focus(); await p.keyboard.press('ArrowRight');
+    assert.equal(await button('Filmes').getAttribute('aria-current'),'page');
+    await p.waitForFunction(()=>document.querySelectorAll('.portrait-frame').length===12);
+    await p.keyboard.press('ArrowRight');
+    assert.equal(await button('Séries').getAttribute('aria-current'),'page');
+    await p.waitForFunction(()=>document.querySelectorAll('.portrait-frame').length===12);
+    await p.clock.fastForward(240100);
+    assert.equal(await p.locator('.idle-ambient').count(),1);
+    await p.keyboard.press('Enter');
+    assert.equal(await p.locator('.idle-ambient').count(),0);
+    assert.equal(await button('Séries').getAttribute('aria-current'),'page');
+    await button('Configurações').click();
+    await p.getByRole('switch',{name:/Efeito de vidro/}).click();
+    assert.equal(await p.locator('body.solid').count(),1);
+    await p.getByRole('button',{name:/Tela inicial/}).click();
+    await p.getByRole('switch',{name:/Filmes e séries no início/}).click();
+    await button('Início').click(); assert.equal(await p.locator('.banner').count(),0);
+    await p.reload(); assert.equal(await p.locator('body.solid').count(),1);
+    assert.equal(await p.locator('.banner').count(),0);
+    assert.deepEqual(errors,[]);
+
+    // Drive the updater's WebView interface with a deterministic fake Android bridge.
+    const n=await browser.newPage({viewport:{width:1600,height:900}});n.setDefaultTimeout(9000);
+    await n.addInitScript(()=>{
+      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.1.0',available:'',progress:0};
+      const post=(patch={})=>window.NovaUi.updateState(JSON.stringify(Object.assign(state,patch)));
+      window.installerCalled=false;
+      window.NovaNative={
+        isOnline(){return true;},
+        ready(){post();window.NovaUi.updateApps(JSON.stringify([{id:'com.netflix.ninja/.TV',pkg:'com.netflix.ninja',label:'Netflix'}]));},
+        catalog(type){window.NovaUi.catalogReply(type,false,'');},
+        updaterState(){post();},
+        updaterConfigure(repo,automatic){post({repo,automatic,status:'idle',message:'Fonte de atualização salva.'});},
+        updaterCheck(){post({status:'available',available:'1.2.0',message:'Nova versão disponível: 1.2.0.'});},
+        updaterDownload(){post({status:'downloading',progress:55,message:'Baixando a atualização…'});setTimeout(()=>post({status:'ready',progress:100,message:'Atualização validada.'}),80);},
+        updaterInstall(){window.installerCalled=true;post({status:'installing',message:'Confirme no instalador do Android.'});}
+      };
+    });
+    await n.goto(base);
+    await n.getByRole('button',{name:'Configurações',exact:true}).click();
+    await n.getByRole('button',{name:/Sistema/}).click();
+    await n.getByRole('button',{name:/Atualizações/}).click();
+    await n.getByRole('textbox',{name:'Repositório'}).fill('dono/nova-os');
+    await n.getByRole('button',{name:'Salvar fonte',exact:true}).click();
+    await n.getByRole('button',{name:'Verificar agora',exact:true}).click();
+    assert.match(await n.locator('#update-message').textContent(),/1\.2\.0/);
+    await n.getByRole('button',{name:'Baixar atualização',exact:true}).click();
+    await n.getByRole('button',{name:'Instalar atualização',exact:true}).click();
+    assert(await n.evaluate(()=>window.installerCalled));
+    assert.match(await n.locator('#update-message').textContent(),/instalador do Android/);
+    console.log('Validados: layouts, setas, filme/série, fundo, descanso, preferências e interface do atualizador com ponte Android simulada.');
+  } finally {await browser.close();}
+}
+run().catch(e=>{console.error(e);process.exit(1);});
