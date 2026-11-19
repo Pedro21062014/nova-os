@@ -56,7 +56,7 @@ class Preview(SimpleHTTPRequestHandler):
                 self.send_error(400)
                 return
         if not url:
-            if route.path != '/' and not re.fullmatch(r'/(index\.html|app\.js|style\.css|manrope\.woff2|wallpapers/(?:list\.json|(?:braies|moraine|reine|aoraki)\.webp)|img/(?:dolomitas|brand/(?:netflix|youtube|prime|hbo|spotify|apple|plex|nova-os-header)|media/(?:interstellar|severance|hunger|dune|interstellar-poster|severance-poster|hunger-poster|dune-poster))\.webp)', route.path):
+            if route.path != '/' and not re.fullmatch(r'/(index\.html|app\.js|style\.css|manrope\.woff2|fonts/manrope-(?:400|600|650|700|750|800)\.woff2|wallpapers/(?:list\.json|glass-(?:dolomitas|braies|moraine|reine|aoraki)\.webp|(?:braies|moraine|reine|aoraki)\.webp)|img/(?:dolomitas|brand/(?:netflix|youtube|prime|hbo|spotify|apple|plex|nova-os-header)|media/(?:interstellar|severance|hunger|dune|interstellar-poster|severance-poster|hunger-poster|dune-poster))\.webp)', route.path):
                 self.send_error(404)
                 return
             return super().do_GET()

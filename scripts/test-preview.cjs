@@ -51,7 +51,7 @@ async function run() {
       delete NodeList.prototype.forEach;
       delete Element.prototype.closest;
       delete window.fetch;
-      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.1.1',available:'',progress:0};
+      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.1.2',available:'',progress:0};
       const post=(patch={})=>window.NovaUi.updateState(JSON.stringify(Object.assign(state,patch)));
       window.installerCalled=false;
       window.NovaNative={

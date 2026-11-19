@@ -95,35 +95,81 @@ body.no-wall.idle-ambient #tv-screen .wall-photo{visibility:visible}
 .update-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:21px;align-items:start}.update-card{padding:25px;border-radius:20px;min-width:0}.update-card h2{font-size:27px;letter-spacing:-.55px;margin:9px 0}.update-card p{color:#c5d2e3;font-size:15px;line-height:1.55;min-height:45px}.update-card .actions{flex-wrap:wrap;margin:14px 0}.update-card .actions:empty{display:none}.update-card>small,.update-card>label{display:block;font-size:13px;color:#b2c2d7;margin-top:13px}.update-card>label{font-weight:800;margin-bottom:6px}.update-card progress{width:100%;margin:14px 0;accent-color:#e8eff8}.update-card>.setting{width:100%;margin-top:8px}.has-update .top [data-do="settings"]{position:relative}.has-update .top [data-do="settings"]::after{content:'';position:absolute;top:6px;right:5px;width:9px;height:9px;background:#eff6ff;border-radius:50%;box-shadow:0 0 0 2px #1b293b}
 body:not(.solid) .update-card{background:linear-gradient(150deg,#253b5667,#111d2ed4);box-shadow:inset 0 1px 0 #d9ebff38,inset 0 -1px 0 #cee3ff27,0 12px 22px #02071130}
 
-/* Flexbox and literal colors for firmware with an old Chromium WebView. */
-body.legacy-layout{background:#080d15;color:#f6f7f9}
+/* Chromium 52 replacements. Keep the same track sizes, type weights and material. */
+@font-face{font-family:Nova Manrope;src:url(fonts/manrope-400.woff2) format('woff2');font-weight:400}
+@font-face{font-family:Nova Manrope;src:url(fonts/manrope-600.woff2) format('woff2');font-weight:600}
+@font-face{font-family:Nova Manrope;src:url(fonts/manrope-700.woff2) format('woff2');font-weight:700}
+@font-face{font-family:Nova Manrope;src:url(fonts/manrope-800.woff2) format('woff2');font-weight:800}
+@font-face{font-family:"Nova Manrope 650";src:url(fonts/manrope-650.woff2) format('woff2');font-weight:400}
+@font-face{font-family:"Nova Manrope 750";src:url(fonts/manrope-750.woff2) format('woff2');font-weight:400}
+body.legacy-layout{color:#f6f7f9;font-family:Nova Manrope,Arial,sans-serif}
+.legacy-layout .foot kbd{font-family:Nova Manrope,Arial,sans-serif}
+.legacy-layout .settings-nav-caption{display:block}
 .legacy-layout #tv-screen{width:100vw;height:56.25vw;background:#080d15}
 .legacy-layout #stage{width:1600px;height:900px}
-.legacy-layout.dpad button:focus,.legacy-layout.dpad input:focus,.legacy-layout .preset-focus{outline:2px solid #f4f6f9;outline-offset:4px}
 .legacy-layout .nav button,.legacy-layout .nav button.active{width:44px}
-.legacy-layout .nav button.active,.legacy-layout .nav .nav-indicator{width:102px}
-.legacy-layout .nav button.active{color:#121b25}
-.legacy-layout .nav .nav-label{margin-left:0}
-.legacy-layout .header-right>*+*,.legacy-layout .actions>*+*{margin-left:9px}
-.legacy-layout .actions>*{margin-bottom:5px}
-.legacy-layout .app-grid,.legacy-layout .card-grid,.legacy-layout .setting-grid,.legacy-layout .update-grid{display:flex;flex-wrap:wrap;align-items:flex-start;margin-left:-7px;margin-right:-7px}
-.legacy-layout .app-grid>.tile,.legacy-layout .card-grid>.movie,.legacy-layout .setting-grid>.setting,.legacy-layout .update-grid>.update-card{margin:0 7px 14px;flex:none}
-.legacy-layout .app-grid>.tile{width:calc(12.5% - 14px)}
-.legacy-layout .card-grid>.movie{width:calc(25% - 14px)}
-.legacy-layout .poster-grid>.movie{width:calc(16.666667% - 14px)}
-.legacy-layout .setting-grid>.setting,.legacy-layout .update-grid>.update-card{width:calc(50% - 14px)}
-.legacy-layout .app-mark,.legacy-layout .round,.legacy-layout .settings-emblem,.legacy-layout .category-icon{display:flex;align-items:center;justify-content:center}
-.legacy-layout .app-mark .app-logo{width:104px;height:32px}
-.legacy-layout .movie .banner{height:0;padding-bottom:56.25%}
+.legacy-layout .nav button.active,.legacy-layout .nav .nav-indicator{width:111px}
+.legacy-layout.dpad button:focus,.legacy-layout.dpad input:focus,.legacy-layout .preset-focus{outline-color:#f4f6f9}
+.legacy-layout .page-head,.legacy-layout .amb-content{align-items:flex-end}
+.legacy-layout .dialog-head,.legacy-layout .settings-layout,.legacy-layout .update-grid{align-items:flex-start}
+.legacy-layout .header-right>*+*,.legacy-layout .actions>*+*{margin-left:12px}
+.legacy-layout .pill>svg{margin-right:10px}
+.legacy-layout .eyebrow:before,.legacy-layout .dialog-head>*+*{margin-right:10px}
+.legacy-layout .dialog-head>*+*{margin:0 0 0 10px}
+.legacy-layout .ambient-card>*+*,.legacy-layout .category>*+*{margin-left:11px}
+.legacy-layout .section-head>p{margin-left:16px}
+.legacy-layout .small>svg,.legacy-layout .nav .active .nav-label{margin-left:8px}
+.legacy-layout .foot>span:not(:first-child):not(.signature){margin-left:21px}
+.legacy-layout .foot kbd,.legacy-layout .foot .signature i{margin-right:7px}
+.legacy-layout .page-head>.actions{margin-left:22px}
+.legacy-layout .setting>*+*{margin-left:15px}
+.legacy-layout .setting .switch,.legacy-layout .setting>svg:last-child{margin-left:auto}
+.legacy-layout .settings-title>*+*{margin-left:14px}
+.legacy-layout .settings-note>svg{margin-right:9px}
+.legacy-layout .movie-info>*+*{margin-top:3px}
+.legacy-layout .app-grid,.legacy-layout .card-grid,.legacy-layout .setting-grid,.legacy-layout .mini-list,.legacy-layout .update-grid{display:flex;flex-wrap:wrap}
+.legacy-layout .app-grid{margin:0 -14px -14px 0}
+.legacy-layout .app-grid>.tile{width:calc(12.5% - 14px);margin:0 14px 14px 0;flex:none}
+.legacy-layout .panel .app-grid{margin-bottom:-23px}
+.legacy-layout .panel .app-grid>.tile{margin-bottom:23px}
+.legacy-layout .card-grid{margin:0 -16px -16px 0}
+.legacy-layout .card-grid>.movie{width:calc(25% - 16px);margin:0 16px 16px 0;flex:none}
+.legacy-layout .panel .card-grid{margin:0 -17px -17px 0}
+.legacy-layout .panel .card-grid>.movie{width:calc(25% - 17px);margin:0 17px 17px 0}
+.legacy-layout .panel .poster-grid>.movie{width:calc(100% / 6 - 17px)}
+.legacy-layout .setting-grid{margin:0 -15px -15px 0}
+.legacy-layout .setting-grid>.setting{width:calc(50% - 15px);margin:0 15px 15px 0}
+.legacy-layout .settings .setting-grid{margin:0 -12px -12px 0}
+.legacy-layout .settings .setting-grid>.setting{width:calc(50% - 12px);margin:0 12px 12px 0}
+.legacy-layout .mini-list{margin:0 -10px -10px 0}
+.legacy-layout .mini-list>.setting{width:calc(50% - 10px);margin:0 10px 10px 0}
+.legacy-layout .update-grid{margin:0 -21px 0 0}
+.legacy-layout .update-grid>.update-card{width:calc(50% - 21px);margin-right:21px}
+.legacy-layout .app-mark,.legacy-layout .app-mark .generic,.legacy-layout .round,.legacy-layout .settings-emblem,.legacy-layout .category-icon,.legacy-layout .setting-icon,.legacy-layout .ambient-card .picture,.legacy-layout .play-dot{display:flex;align-items:center;justify-content:center}
+.legacy-layout .movie .banner{height:0;padding-bottom:56.25%;z-index:0}
 .legacy-layout .movie .portrait-frame{height:0;padding-bottom:150%}
-.legacy-layout .movie .banner .art{z-index:0}
-.legacy-layout .movie .banner::after,.legacy-layout .movie .tag{z-index:1}
-.legacy-layout .settings-layout{display:flex;align-items:flex-start}
+.legacy-layout .movie .banner .poster-art{width:37.5%;right:auto}
+.legacy-layout .movie .portrait-frame .poster-art{width:100%}
+.legacy-layout .settings-layout{display:flex}
 .legacy-layout .settings-nav{display:block;flex:0 0 300px;margin-right:20px}
+.legacy-layout .settings-nav>.category{margin-top:6px}
 .legacy-layout .settings-card{flex:1}
-.legacy-layout .category-copy,.legacy-layout .settings-title>div+div{margin-left:11px}
-.legacy-layout .mini-list{display:block}
-.legacy-layout .mini-list>.setting{width:100%;margin-bottom:8px}
 .legacy-layout #tv-screen #overlay{display:flex;align-items:center;justify-content:center}
-body.legacy-layout:not(.solid) .glass{background-color:rgba(26,41,61,.88);border-color:rgba(210,226,247,.25)}
-body.legacy-layout .eyebrow{color:#dce8f7}
+.legacy-layout.ambient .page-surface{display:block}
+/* Match rounded focus rims on Chromium versions that draw square outlines. */
+body.legacy-layout.dpad .tile:focus .app-mark,body.legacy-layout .tile.preset-focus .app-mark{outline:0}
+body.legacy-layout.dpad .tile:focus .app-mark::after,body.legacy-layout .tile.preset-focus .app-mark::after{content:'';position:absolute;inset:0;border:2px solid #f4f6f9;border-radius:inherit;pointer-events:none}
+body.legacy-layout .movie .banner{outline:0;box-shadow:inset 0 0 0 1px #b8cfe038}
+body.legacy-layout .movie:hover .banner,body.legacy-layout.dpad .movie:focus .banner{outline:0;box-shadow:0 0 0 2px #f4f6f9}
+/* Composite only the sampled wallpaper under the original glass gradients. */
+body.legacy-glass:not(.solid):not(.no-wall) .top .nav,body.legacy-glass:not(.solid):not(.no-wall) .top .round:not([aria-current="page"]),body.legacy-glass:not(.solid):not(.no-wall) .pill.ghost{
+ background-image:var(--glass-glint),var(--glass-face),var(--glass-floor),var(--legacy-scene-tint),var(--legacy-wall);
+ background-size:auto,auto,auto,auto,1600px 900px;background-position:0 0,0 0,0 0,0 0,var(--legacy-sample-position);background-repeat:no-repeat;
+}
+body.legacy-glass:not(.solid):not(.no-wall) .ambient-card{
+ background-image:var(--glass-glint),var(--glass-face),linear-gradient(180deg,#1424384a,#07111e7a),var(--legacy-scene-tint),var(--legacy-wall)!important;
+ background-size:auto,auto,auto,auto,1600px 900px!important;background-position:0 0,0 0,0 0,0 0,var(--legacy-sample-position)!important;background-repeat:no-repeat!important;
+}
+body.legacy-glass .top .nav,body.legacy-glass .top .round,body.legacy-glass .pill.ghost,body.legacy-glass .ambient-card{--legacy-scene-tint:linear-gradient(#080d15c4,#080d15c4);--legacy-sample-position:0 0}
+body.legacy-glass.home .top .nav,body.legacy-glass.home .top .round,body.legacy-glass.home .pill.ghost,body.legacy-glass.home .ambient-card{--legacy-scene-tint:linear-gradient(#080d1508,#080d1508)}
+body.legacy-glass.ambient .top .nav,body.legacy-glass.ambient .top .round,body.legacy-glass.ambient .pill.ghost{--legacy-scene-tint:linear-gradient(transparent,transparent)}

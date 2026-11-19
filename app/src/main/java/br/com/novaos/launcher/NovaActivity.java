@@ -330,7 +330,7 @@ public final class NovaActivity extends Activity {
                 if(path.equals("/icon"))return bytes("image/png",icon(u.getQueryParameter("id")));
                 if(path.equals("/art")){String url=u.getQueryParameter("url");if(!allowedArt(url))return notFound();byte[] d=art(url);return bytes(bitmapType(d),d);}
                 if(path.equals("/"))path="/index.html";
-                if(!path.matches("/(index\\.html|app\\.js|style\\.css|manrope\\.woff2|wallpapers/(list\\.json|(braies|moraine|reine|aoraki)\\.webp)|img/(dolomitas|brand/(apple|hbo|netflix|nova-os-header|plex|prime|spotify|youtube)|media/(dune|hunger|interstellar|severance)(-poster)?)\\.webp)"))return notFound();
+                if(!path.matches("/(index\\.html|app\\.js|style\\.css|manrope\\.woff2|fonts/manrope-(400|600|650|700|750|800)\\.woff2|wallpapers/(list\\.json|glass-(dolomitas|braies|moraine|reine|aoraki)\\.webp|(braies|moraine|reine|aoraki)\\.webp)|img/(dolomitas|brand/(apple|hbo|netflix|nova-os-header|plex|prime|spotify|youtube)|media/(dune|hunger|interstellar|severance)(-poster)?)\\.webp)"))return notFound();
                 String mime=type(path);return new WebResourceResponse(mime,mime.startsWith("text/")||(mime.equals("application/javascript")||mime.equals("application/json"))?"UTF-8":null,getAssets().open(path.substring(1)));
             }catch(Exception ignored){return notFound();}
         }
