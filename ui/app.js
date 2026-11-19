@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.1.4';
+const VERSION = '1.2.0';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -41,7 +41,7 @@ function sampleGlass(){
  });
 }
 function glassWallpaper(id){if(legacyGlass)$('tv-screen').style.setProperty('--legacy-wall',`url("${location.origin}/wallpapers/glass-${id||'dolomitas'}.webp")`);}
-const pref = {glass:true, films:true, wall:true, rotate:true, hero:true, motion:true, auto:true, trending:false, pins:null, saved:[]};
+const pref = {glass:true, films:true, wall:true, rotate:true, moreHome:true, hero:true, motion:true, auto:true, trending:false, pins:null, saved:[]};
 try { Object.assign(pref, JSON.parse(localStorage.getItem('nova.v1')||'{}')); } catch (_) {}
 const persist = () => {try{localStorage.setItem('nova.v1',JSON.stringify(pref));}catch(_){}};
 const paths = {
@@ -58,8 +58,190 @@ const curated = [
  {id:'nova:severance',title:'Ruptura',meta:'2022 · Suspense e mistério',tag:'SÉRIE',art:'img/media/severance.webp',poster:'img/media/severance-poster.webp',url:'https://tv.apple.com/br/show/ruptura/umc.cmc.1srk2goyh2q2zdxcx605w8vtx',source:'Apple TV',summary:'Um procedimento separa as memórias do trabalho e da vida pessoal de funcionários de uma empresa, até que as fronteiras começam a falhar.'},
  {id:'nova:duna',title:'Duna: Parte Dois',meta:'2024 · Ficção científica · 2h46',tag:'FILME',art:'img/media/dune.webp',poster:'img/media/dune-poster.webp',url:'https://tv.apple.com/br/movie/duna-parte-dois/umc.cmc.363aycnv6vy9qgekvew6fveb9',source:'Apple TV',summary:'Paul Atreides se une a Chani e aos Fremen enquanto procura vingar a destruição da sua família.'},
  {id:'nova:jogos',title:'Jogos Vorazes',fullTitle:'Jogos Vorazes: A Cantiga dos Pássaros e das Serpentes',meta:'2023 · Ação e aventura · 2h37',tag:'FILME',art:'img/media/hunger.webp',poster:'img/media/hunger-poster.webp',url:'https://tv.apple.com/br/movie/jogos-vorazes-a-cantiga-dos-passaros-e-das-serpentes/umc.cmc.4vck516h5k6fsg7r7srnfyp4w',source:'Apple TV',summary:'A cantiga dos pássaros e das serpentes volta ao início da história de Coriolanus Snow e dos Jogos Vorazes.'}];
+const primeMovies = [
+ {
+  "id": "prime:contador",
+  "title": "O Contador 2",
+  "tag": "FILME",
+  "meta": "2025 · Ação · 2h14",
+  "art": "img/prime/contador.webp",
+  "poster": "img/prime/contador-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0TDY5ZV7OX9E4MJYBTL5ODPZVI?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Christian Wolff se reúne com o irmão para investigar um assassinato e acaba no centro de uma conspiração."
+ },
+ {
+  "id": "prime:mapa",
+  "title": "O Mapa Que Leva Até Você",
+  "tag": "FILME",
+  "meta": "2025 · Romance · 1h38",
+  "art": "img/prime/mapa.webp",
+  "poster": "img/prime/mapa-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0FQ3FRT54P5UTYEE2JNMN6KOEA?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Uma viagem pela Europa muda de rumo quando Heather conhece Jack e começa a questionar os planos para seu futuro."
+ },
+ {
+  "id": "prime:matador",
+  "title": "Matador de Aluguel",
+  "tag": "FILME",
+  "meta": "2024 · Ação · 1h56",
+  "art": "img/prime/matador.webp",
+  "poster": "img/prime/matador-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0FC3O0LQUX1IKRA19XD4UKJASF?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Um ex-lutador aceita trabalhar como segurança em um bar da Flórida e descobre que a tarefa é mais perigosa do que imaginava."
+ },
+ {
+  "id": "prime:ideia",
+  "title": "Uma Ideia de Você",
+  "tag": "FILME",
+  "meta": "2024 · Romance · 1h51",
+  "art": "img/prime/ideia.webp",
+  "poster": "img/prime/ideia-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0NRT15S2XG06SG5HBV5NQAW3E3?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Uma mãe solteira conhece o vocalista de uma boy band e precisa lidar com os holofotes de um romance inesperado."
+ },
+ {
+  "id": "prime:air",
+  "title": "AIR: A História por Trás do Logo",
+  "tag": "FILME",
+  "meta": "2023 · Drama esportivo · 1h47",
+  "art": "img/prime/air.webp",
+  "poster": "img/prime/air-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0HU8NSAWO6AEW0DH1RNPMTRGLP?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "A equipe de basquete da Nike aposta em um jovem Michael Jordan e muda os rumos da indústria esportiva."
+ },
+ {
+  "id": "prime:guerra",
+  "title": "A Guerra do Amanhã",
+  "tag": "FILME",
+  "meta": "2021 · Ficção científica · 2h11",
+  "art": "img/prime/guerra.webp",
+  "poster": "img/prime/guerra-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0HBQNYK934NCSB5O4DWA3EJ8CP?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Viajantes de 2051 chegam ao presente em busca de ajuda para vencer uma guerra que ameaça o futuro da humanidade."
+ },
+ {
+  "id": "prime:operacao-natal",
+  "title": "Operação Natal",
+  "tag": "FILME",
+  "meta": "2024 · Aventura · 1h53",
+  "art": "img/prime/operacao-natal.webp",
+  "poster": "img/prime/operacao-natal-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0RNA7FGRLKHSV1BNM01TY8Q33T?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Um chefe de segurança do Polo Norte e um caçador de recompensas procuram o Papai Noel desaparecido."
+ },
+ {
+  "id": "prime:ricky",
+  "title": "Ricky Stanicky",
+  "tag": "FILME",
+  "meta": "2024 · Comédia · 1h48",
+  "art": "img/prime/ricky.webp",
+  "poster": "img/prime/ricky-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0FU1IH3XI75U5QKDVT2XPPJ648?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Três amigos contratam um ator para interpretar o amigo imaginário que usam como desculpa há vinte anos."
+ },
+ {
+  "id": "prime:vermelho",
+  "title": "Vermelho, Branco & Sangue Azul",
+  "tag": "FILME",
+  "meta": "2023 · Romance · 2h01",
+  "art": "img/prime/vermelho.webp",
+  "poster": "img/prime/vermelho-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0G09O3U0SEXYXD3GGQIDZEH32I?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Uma trégua pública entre o filho da presidenta dos EUA e um príncipe britânico dá lugar a uma afeição inesperada."
+ },
+ {
+  "id": "prime:minha-culpa",
+  "title": "Minha Culpa",
+  "tag": "FILME",
+  "meta": "2023 · Romance · 1h58",
+  "art": "img/prime/minha-culpa.webp",
+  "poster": "img/prime/minha-culpa-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0S0OIMOTSETYIWA2EVTWWH7JR9?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Ao mudar para a casa da nova família, Noah conhece Nick e os dois precisam lidar com uma atração inesperada."
+ },
+ {
+  "id": "prime:nossa-culpa",
+  "title": "Nossa Culpa",
+  "tag": "FILME",
+  "meta": "2025 · Romance · 1h52",
+  "art": "img/prime/nossa-culpa.webp",
+  "poster": "img/prime/nossa-culpa-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0PCRKKG8397FYGEC8X1RH994X0?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "O casamento de dois amigos reúne Noah e Nick e reacende sentimentos mal resolvidos."
+ },
+ {
+  "id": "prime:sua-culpa",
+  "title": "Sua Culpa",
+  "tag": "FILME",
+  "meta": "2024 · Drama romântico · 2h",
+  "art": "img/prime/sua-culpa.webp",
+  "poster": "img/prime/sua-culpa-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0G5EHVLC83CC57Z5DG60LLI69L?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Conforme Noah entra na faculdade e Nick começa a trabalhar, novas pessoas e conflitos testam a relação."
+ },
+ {
+  "id": "prime:som",
+  "title": "O Som do Silêncio",
+  "tag": "FILME",
+  "meta": "2020 · Drama · 2h01",
+  "art": "img/prime/som.webp",
+  "poster": "img/prime/som-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0OWOY28NCAYY94VCM9FFFXRKS1?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Um baterista começa a perder a audição e precisa repensar seu futuro e a forma como se relaciona com a música."
+ },
+ {
+  "id": "prime:pisque",
+  "title": "Pisque Duas Vezes",
+  "tag": "FILME",
+  "meta": "2024 · Suspense · 1h42",
+  "art": "img/prime/pisque.webp",
+  "poster": "img/prime/pisque-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0LOZEJ7DV129EESYFH1GFI0RZB?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Uma viagem a uma ilha privada toma um rumo inquietante quando uma convidada começa a desconfiar do anfitrião."
+ },
+ {
+  "id": "prime:musica",
+  "title": "Música",
+  "tag": "FILME",
+  "meta": "2024 · Comédia romântica · 1h31",
+  "art": "img/prime/musica.webp",
+  "poster": "img/prime/musica-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0L09R39KTOOPZS3KN0H28WOM4B?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Um jovem artista com sinestesia tenta conciliar a carreira, a vida amorosa e a cultura brasileira da família."
+ },
+ {
+  "id": "prime:natal",
+  "title": "A Batalha de Natal",
+  "tag": "FILME",
+  "meta": "2023 · Comédia · 1h52",
+  "art": "img/prime/natal.webp",
+  "poster": "img/prime/natal-poster.webp",
+  "url": "https://www.primevideo.com/-/pt/detail/0HRQ67NQZWBZNAJCML7WX8VXYY?language=pt_BR",
+  "source": "Prime Video",
+  "summary": "Para vencer a competição de enfeites do bairro, um pai faz um acordo que dá vida às decorações natalinas."
+ }
+];
+const isPrime = t => t.source==='Prime Video';
+const MOVIE_BATCH=12;
+let movieFilter='all', movieLimit=MOVIE_BATCH;
+
 const catalogs = {movies:{items:[],state:'idle'},series:{items:[],state:'idle'}};
-let apps = native ? [] : demoApps.slice(), page='home', dialog=null, previousFocus='', useDpad=!!native, toastTimer, searchValue='', organizeFrom='home', paintedHeader=false, headerPage='', clockMinute=-1, onlineState=null;
+let apps = native ? [] : demoApps.slice(), page='home', dialog=null, previousFocus='', useDpad=!!native, toastTimer, searchValue='', organizeFrom='home', paintedHeader=false, headerPage='', clockMinute=-1, onlineState=null, homeReturn=null;
 const escape = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const attr=escape;
 const slug=s=>{const text=String(s||'');return (text.normalize?text.normalize('NFD'):text).replace(/[\u0300-\u036f]/g,'').toLowerCase();};
@@ -92,13 +274,33 @@ function card(t,vertical=false){
  const artwork=image&&'art?url='+encodeURIComponent(image);
  const src=portrait?(t.poster||artwork):t.art||artwork;
  const contained=!portrait&&!t.art;
- return `<button class="movie" data-do="detail" data-arg="${attr(t.id)}" aria-label="${attr(t.fullTitle||t.title)}"><span class="banner${portrait?' portrait-frame':contained?' poster-banner':''}">${src?`<img alt="" class="art${contained?' poster-art':''}" src="${attr(src)}" loading="lazy">`:''}<span class="tag">${escape(t.tag||'DESTAQUE')}</span><span class="play-dot">${ico('chev',17)}</span></span><span class="movie-info"><span class="movie-title">${escape(t.title)}</span><span class="movie-meta">${escape(t.meta||'')}</span></span></button>`;
+ return `<button class="movie" data-do="detail" data-arg="${attr(t.id)}" aria-label="${attr(t.fullTitle||t.title)}"><span class="banner${portrait?' portrait-frame':contained?' poster-banner':''}">${src?`<img alt="" class="art${contained?' poster-art':''}" src="${attr(src)}" loading="lazy">`:''}${isPrime(t)?'<span class="provider-prime">Prime Video</span>':`<span class="tag">${escape(t.tag||'DESTAQUE')}</span>`}<span class="play-dot">${ico('chev',17)}</span></span><span class="movie-info"><span class="movie-title">${escape(t.title)}</span><span class="movie-meta">${escape(t.meta||'')}</span></span></button>`;
+}
+const moreDestinations=[
+ ['movies','Filmes','Histórias para a sua próxima sessão','film','cinema'],
+ ['series','Séries','Encontre a sua próxima maratona','tv','series'],
+ ['live','Ao vivo','Acesse seus apps de transmissão','live','live']
+];
+const tvShortcuts=[
+ ['apps','Todos os apps','Abra sua biblioteca de aplicativos','grid'],
+ ['search','Buscar','Encontre apps, filmes e séries','search'],
+ ['ambient','Modo ambiente','Deixe só a paisagem na tela','mountain']
+];
+function primeHome(){
+ return bool('films')?`<section class="more-section prime-home" aria-label="No Prime Video">${section('No Prime Video','Filmes selecionados para abrir no streaming.','homeMore','Ver Prime Video','arrow','primeMovies')}<div class="card-grid">${primeMovies.slice(0,4).map(card).join('')}</div></section>`:'';
+}
+function extraHome(){
+ if(!bool('moreHome'))return '';
+ const category=([dest,title,desc,icon,art])=>`<button type="button" class="more-category glass cat-${art}" data-do="homeMore" data-arg="${dest}" aria-label="${title}, explorar"><span class="category-picture" aria-hidden="true"></span><span class="more-copy"><span class="more-symbol">${ico(icon,20)}</span><strong>${title}</strong><small>${desc}</small></span><span class="more-arrow" aria-hidden="true">${ico('arrow',18)}</span></button>`;
+ const quick=([dest,title,desc,icon])=>`<button type="button" class="more-quick glass" data-do="homeMore" data-arg="${dest}" aria-label="${title}, atalho da TV"><span class="more-symbol">${ico(icon,23)}</span><span class="quick-copy"><strong>${title}</strong><small>${desc}</small></span>${ico('chev',19)}</button>`;
+ const watchlist=pref.saved.slice(-4).reverse();
+ return `<div class="home-more" id="home-more"><section class="more-section more-discover" aria-labelledby="discover-more-heading"><header class="more-intro"><span class="eyebrow">EXPLORE O NOVA OS</span><h2 id="discover-more-heading">Descubra mais</h2><p>Vá direto ao que você quer assistir.</p></header><div class="more-grid">${moreDestinations.map(category).join('')}</div></section>${primeHome()}<section class="more-section" aria-label="Minha lista de títulos">${section('Minha lista','Filmes e séries que você guardou.','homeMore','Ver lista','arrow','saved')}${watchlist.length?`<div class="card-grid">${watchlist.map(card).join('')}</div>`:`<div class="home-watchlist glass"><span class="watchlist-art" aria-hidden="true"><i></i><i></i><i>${ico('bookmark',26)}</i></span><div class="watchlist-copy"><strong>Guarde algo para assistir depois</strong><p>Salve um filme ou uma série e encontre seus títulos aqui.</p></div><div class="actions">${btn('Explorar catálogo','homeMore','arrow','ghost glass','movies')}</div></div>`}</section><section class="more-section" aria-label="Atalhos da TV">${section('Atalhos da TV','Controles úteis sempre à mão.')}<div class="more-grid">${tvShortcuts.map(quick).join('')}</div></section></div>`;
 }
 function home(){
  const appsMarkup=`<section class="shelf" aria-label="Seus apps">${section('Seus apps','Seus favoritos, sempre à mão.','organize','Organizar','sliders')}<div class="app-grid">${[...tiles(),{id:'__more',label:'Todos os apps'}].map(appTile).join('')}</div></section>`;
  const display=bool('trending')&&catalogs.movies.items.length?catalogs.movies.items.slice(0,4):curated;
  const shelf=bool('films')?`<section class="shelf" aria-label="Descobrir">${section('Para sua próxima sessão','Filmes e séries em destaque' ,'page','Ver catálogo','arrow','movies')}<div class="card-grid">${display.map(card).join('')}</div></section>`:'';
- return `${bool('hero')?`<section class="hero" aria-label="Atalhos do início"><div class="actions">${btn(bool('films')?'Explorar':'Seus apps','page',bool('films')?'film':'grid','primary',bool('films')?'movies':'apps')}${btn('Minha lista','page','bookmark','ghost glass','saved')}</div><button class="ambient-card glass" data-do="page" data-arg="ambient"><span class="picture">${ico('mountain',22)}</span><span class="words"><small>MODO AMBIENTE</small><b data-wall-title>${escape(wallNow.title)}</b></span><span class="chev">${ico('chev',18)}</span></button></section>`:'<div class="section-label" style="margin-top:36px">Tela inicial</div>'}${appsMarkup}${shelf}`;
+ return `${bool('hero')?`<section class="hero" aria-label="Atalhos do início"><div class="actions">${btn(bool('films')?'Explorar':'Seus apps','page',bool('films')?'film':'grid','primary',bool('films')?'movies':'apps')}${btn('Minha lista','page','bookmark','ghost glass','saved')}</div><button class="ambient-card glass" data-do="page" data-arg="ambient"><span class="picture">${ico('mountain',22)}</span><span class="words"><small>MODO AMBIENTE</small><b data-wall-title>${escape(wallNow.title)}</b></span><span class="chev">${ico('chev',18)}</span></button></section>`:'<div class="section-label" style="margin-top:36px">Tela inicial</div>'}${appsMarkup}${shelf}${extraHome()}`;
 }
 const head=(mark,title,desc,actions='')=>`<div class="page-head"><div><span class="eyebrow">${mark}</span><h1>${title}</h1><p>${desc}</p></div>${actions?`<div class="actions">${actions}</div>`:''}</div>`;
 const empty=(title,descr,actions='')=>`<div class="empty glass"><h2>${title}</h2><p>${descr}</p>${actions?`<div class="actions">${actions}</div>`:''}</div>`;
@@ -113,6 +315,7 @@ const groups={
  home:{title:'Tela inicial',icon:'home',hint:'Atalhos e favoritos',copy:'Decida o que aparece quando você abre o launcher.',rows:()=>[
    setting('Atalhos do início','Mostra Explorar, Minha lista e Modo ambiente sobre a paisagem.','star','toggle','hero',bool('hero')),
    setting('Filmes e séries no início','Mostra a vitrine de recomendações na tela inicial.','film','toggle','films',bool('films')),
+   setting('Seções extras no início','Mostra Descubra mais, Minha lista e Atalhos da TV ao rolar a tela.','layers','toggle','moreHome',bool('moreHome')),
    setting('Organizar favoritos','Fixe até sete aplicativos e altere a ordem.','sliders','organize'),
    setting('Modo ambiente','Abre a paisagem em tela cheia. Sem interação por 4 minutos, os controles também somem.','mountain','page','ambient')]},
  catalog:{title:'Catálogo',icon:'film',hint:'Vitrine e atualização',copy:'Controle quais recomendações aparecem e quando o catálogo é atualizado.',rows:()=>[
@@ -139,14 +342,41 @@ function updateSettingsToggle(key){
  applyAppearance();
 }
 
-function catalog(which){const m=which==='movies', s=catalogs[which], data=s.items.length?s.items:curated.filter(x=>x.tag===(m?'FILME':'SÉRIE'));return head('DESCOBRIR',m?'Filmes':'Séries',m?'Explore os títulos em destaque na iTunes Store do Brasil.':'Explore as séries do TVmaze. Alguns dados estão em inglês.',btn('Atualizar','refresh','reload','ghost glass',which))+(s.state==='loading'?'<p class="status" role="status">Atualizando o catálogo…</p>':s.state==='error'?'<p class="status offline" role="status">Não foi possível atualizar. Mostrando os títulos disponíveis localmente.</p>':s.state==='cache'?'<p class="status" role="status">Exibindo a última seleção salva no dispositivo.</p>':'')+`<div class="card-grid poster-grid">${data.map(t=>card(t,true)).join('')}</div>`;}
+function mergeMovieSources(first,second){
+ const out=[];for(let i=0;i<Math.max(first.length,second.length);i++){if(i<first.length)out.push(first[i]);if(i<second.length)out.push(second[i]);}return out;
+}
+function displayedMovies(){
+ const itunes=catalogs.movies.items;
+ const other=itunes.length?itunes:curated.filter(x=>x.tag==='FILME');
+ return movieFilter==='prime'?primeMovies:movieFilter==='itunes'?itunes:mergeMovieSources(primeMovies,other);
+}
+function moreMovies(){
+ const data=displayedMovies(), grid=$('movie-posters'), row=$('movie-more-row');
+ if(page!=='movies'||!grid||!row||movieLimit>=data.length)return;
+ const start=movieLimit;movieLimit+=MOVIE_BATCH;
+ grid.insertAdjacentHTML('beforeend',data.slice(start,movieLimit).map(t=>card(t,true)).join(''));
+ $('movie-count').textContent=movieCount(data.length);
+ if(movieLimit>=data.length)row.hidden=true;
+ const first=grid.children[start];if(first)first.focus();
+}
+const movieCount=count=>`${Math.min(count,movieLimit)} de ${count} ${count===1?'filme':'filmes'}`;
+function catalog(which){
+ const isMovie=which==='movies', state=catalogs[which];
+ const primeOnly=isMovie&&movieFilter==='prime';
+ const local=curated.filter(x=>x.tag===(isMovie?'FILME':'SÉRIE'));
+ const listing=state.items.length?state.items:local;
+ const data=isMovie?displayedMovies():listing;
+ const filters=isMovie?`<div class="movie-filter-row"><div class="movie-filters" role="group" aria-label="Filtrar origem">${[['all','Todos','grid'],['prime','Prime Video','play'],['itunes','iTunes Store','film']].map(([id,title,icon])=>`<button type="button" class="movie-filter glass" data-do="movieFilter" data-arg="${id}" aria-pressed="${movieFilter===id}">${ico(icon,17)}<span>${title}</span></button>`).join('')}</div><span id="movie-count" class="source-note">${movieCount(data.length)}</span></div>`:'';
+ const notice=primeOnly?'':state.state==='loading'?'<p class="status" role="status">Atualizando o catálogo…</p>':state.state==='error'?`<p class="status offline" role="status">${isMovie?'Não foi possível atualizar a iTunes Store.':'Não foi possível atualizar. Mostrando os títulos disponíveis localmente.'}</p>`:state.state==='cache'?'<p class="status" role="status">Exibindo a última seleção salva no dispositivo.</p>':'';
+ return head('DESCOBRIR',isMovie?'Filmes':'Séries',isMovie?'Explore títulos da iTunes Store e uma seleção para assistir no Prime Video.':'Explore as séries do TVmaze. Alguns dados estão em inglês.',primeOnly?'':btn('Atualizar','refresh','reload','ghost glass',which))+filters+notice+(data.length?`<div class="card-grid poster-grid" ${isMovie?'id="movie-posters"':''}>${(isMovie?data.slice(0,movieLimit):data).map(t=>card(t,true)).join('')}</div>${isMovie&&movieLimit<data.length?`<div class="movie-more-row" id="movie-more-row">${btn('Mostrar mais filmes','moreMovies','down')}</div>`:''}`:state.state==='loading'?'':empty('Catálogo indisponível',isMovie?'Você ainda pode escolher um título no filtro Prime Video.':'Tente atualizar o catálogo mais tarde.'));
+}
 function live(){const matches=apps.filter(a=>/globoplay|pluto|samsung tv|tv aberta|tv ao vivo|brasil tv|sbt|record|soul tv|zapping|tivimate|distro|sling|youtube/i.test(a.label));return head('CANAIS E TRANSMISSÕES','Ao vivo','Abra apps que oferecem canais ou transmissões. O Nova OS não fornece canais próprios.')+(matches.length?`<div class="app-grid">${matches.map(appTile).join('')}</div>`:empty('Nenhum app compatível encontrado','Os atalhos aparecerão aqui quando você instalar um app de TV ao vivo.',btn('Ver todos os apps','page','grid','primary','apps')));}
 function allApps(){return head('BIBLIOTECA','Todos os apps',native?'Aplicativos instalados no seu aparelho.':'Nesta prévia, os atalhos abrem os sites dos serviços.',btn('Organizar','organize','sliders'))+(apps.length?`<div class="app-grid">${apps.map(appTile).join('')}</div>`:empty('Sem apps disponíveis','Aplicativos compatíveis aparecerão aqui depois da instalação.'));}
 function saved(){return head('SUA BIBLIOTECA','Minha lista','Os títulos que você salvar ficam neste dispositivo.')+(pref.saved.length?`<div class="card-grid">${pref.saved.map(card).join('')}</div>`:empty('Sua lista está vazia','Abra os detalhes de um título para adicioná-lo à sua lista.',btn('Explorar catálogo','page','film','primary','movies')));}
 function organizer(){return head('TELA INICIAL','Organizar apps','Escolha até sete favoritos. Selecione um app para fixar, remover ou mover.',btn('Concluir','page','check','primary',organizeFrom))+(apps.length?`<h2 class="section-label">Fixados · ${tiles().length}/7</h2><div class="mini-list">${tiles().map((a,i)=>setting(a.label,`${i+1}ª posição`,'star','manage',a.id)).join('')||'<p class="status">Nenhum favorito fixado.</p>'}</div><h2 class="section-label">Outros aplicativos</h2><div class="mini-list">${apps.filter(a=>!pins().includes(a.id)).map(a=>setting(a.label,'Não fixado','grid','manage',a.id)).join('')||'<p class="status">Nenhum outro aplicativo.</p>'}</div>`:empty('Sem apps para organizar','Quando você instalar um aplicativo, ele aparecerá aqui.'));}
 function search(){return head('ENCONTRE MAIS RÁPIDO','Buscar','Pesquise apps e títulos disponíveis no catálogo.')+`<input class="search-box" id="query" type="search" enterkeyhint="search" aria-label="Buscar por nome" placeholder="Digite o nome de um app, filme ou série…" autocomplete="off" value="${attr(searchValue)}"><div id="results"></div>`;}
 function uniqueTitles(items){const map=new Map();items.forEach(item=>map.set(item.id,item));const out=[];map.forEach(item=>out.push(item));return out;}
-function searchResults(){const box=$('results');if(!box)return; const q=slug(searchValue.trim());if(!q){box.innerHTML='<p class="section-label">Digite para começar</p>';return;}const a=apps.filter(x=>slug(x.label).includes(q)), c=uniqueTitles(curated.concat(catalogs.movies.items,catalogs.series.items,pref.saved)).filter(x=>slug(x.title).includes(q)).slice(0,15);box.innerHTML=(!a.length&&!c.length)?'<p class="section-label">Nenhum resultado encontrado</p>':`${a.length?`<h2 class="section-label">Aplicativos</h2><div class="app-grid">${a.map(appTile).join('')}</div>`:''}${c.length?`<h2 class="section-label">Filmes e séries</h2><div class="card-grid">${c.map(card).join('')}</div>`:''}`;}
+function searchResults(){const box=$('results');if(!box)return; const q=slug(searchValue.trim());if(!q){box.innerHTML='<p class="section-label">Digite para começar</p>';return;}const a=apps.filter(x=>slug(x.label).includes(q)), c=uniqueTitles(curated.concat(primeMovies,catalogs.movies.items,catalogs.series.items,pref.saved)).filter(x=>slug(x.title).includes(q)).slice(0,15);box.innerHTML=(!a.length&&!c.length)?'<p class="section-label">Nenhum resultado encontrado</p>':`${a.length?`<h2 class="section-label">Aplicativos</h2><div class="app-grid">${a.map(appTile).join('')}</div>`:''}${c.length?`<h2 class="section-label">Filmes e séries</h2><div class="card-grid">${c.map(card).join('')}</div>`:''}`;}
 function ambient(){return `<section class="amb-content"><div><span class="eyebrow">MODO AMBIENTE</span><h1 data-wall-title>${escape(wallNow.title)}</h1><p id="ambient-clock"></p><button class="wall-credit" data-do="wallCredit" ${wallNow.author?'':'hidden'}>${wallNow.author?escape(wallNow.author+' · Unsplash'):''}</button></div>${btn('Sair do modo ambiente','page','left','ghost glass','home')}</section>`;}
 let prefsUpdate={repo:'',automatic:true,autoDownload:false,status:'idle',version:VERSION,available:'',message:'',progress:0},repoDraft=null, updateNotice='';
 function updateStatusActions(){
@@ -158,7 +388,7 @@ function updateStatusActions(){
 }
 function updates(){
  if(!native)return head('SISTEMA','Atualizações','Atualizador do Nova OS')+empty('Disponível no Android','Abra o APK para verificar, baixar e instalar atualizações.');
- return head('SISTEMA','Atualizações','Consulte novas versões publicadas e instale pelo Android.',btn('Voltar','page','left','ghost glass','settings'))+`<div class="update-grid"><section class="glass update-card"><span class="eyebrow">STATUS</span><h2 id="update-version">Versão instalada ${escape(prefsUpdate.version)}</h2><p id="update-message" role="status">${escape(prefsUpdate.message||'Pronto para consultar a fonte de atualização.')}</p><progress id="update-progress" max="100" value="${Number(prefsUpdate.progress)||0}" ${prefsUpdate.status==='downloading'?'':'hidden'}></progress><div class="actions" id="update-actions">${updateStatusActions()}</div><small>O Nova OS só aceita uma versão mais recente com a mesma assinatura do app instalado.</small></section><section class="glass update-card"><span class="eyebrow">FONTE DE ATUALIZAÇÃO</span><h2>GitHub Releases</h2><p>Informe o repositório público que publica os APKs assinados do Nova OS.</p><label for="release-repo">Repositório</label><input class="search-box" id="release-repo" inputmode="url" type="text" maxlength="160" autocapitalize="off" spellcheck="false" placeholder="dono/nova-os" value="${attr(repoDraft===null?prefsUpdate.repo:repoDraft)}"><div class="actions">${btn('Salvar fonte','updateSave','check')}</div>${setting('Verificar automaticamente','Ao abrir o app, no máximo uma vez a cada 12 horas quando há um repositório.','reload','updateAuto','',!!prefsUpdate.automatic)}${setting('Baixar automaticamente','Baixa versões novas nesta fonte. O Android ainda pede confirmação para instalar.','down','updateAutoDownload','',!!prefsUpdate.autoDownload)}</section></div>`;
+ return head('SISTEMA','Atualizações','Consulte novas versões publicadas e instale pelo Android.',btn('Voltar','page','left','ghost glass','settings'))+`<div class="update-grid"><section class="glass update-card"><span class="eyebrow">STATUS</span><h2 id="update-version">Versão instalada ${escape(prefsUpdate.version)}</h2><p id="update-message" role="status">${escape(prefsUpdate.message||'Pronto para consultar a fonte de atualização.')}</p><progress id="update-progress" max="100" value="${Number(prefsUpdate.progress)||0}" ${prefsUpdate.status==='downloading'?'':'hidden'}></progress><div class="actions" id="update-actions">${updateStatusActions()}</div><small>O Nova OS só aceita uma versão mais recente com a mesma assinatura do app instalado.</small></section><section class="glass update-card"><span class="eyebrow">FONTE DE ATUALIZAÇÃO</span><h2>GitHub Releases</h2><p>O canal oficial já vem configurado. Você pode trocar a fonte ou desligar a verificação automática.</p><label for="release-repo">Repositório</label><input class="search-box" id="release-repo" inputmode="url" type="text" maxlength="160" autocapitalize="off" spellcheck="false" placeholder="dono/nova-os" value="${attr(repoDraft===null?prefsUpdate.repo:repoDraft)}"><div class="actions">${btn('Salvar fonte','updateSave','check')}</div>${setting('Verificar automaticamente','Ao abrir o app, no máximo uma vez a cada 12 horas quando há um repositório.','reload','updateAuto','',!!prefsUpdate.automatic)}${setting('Baixar automaticamente','Baixa versões novas nesta fonte. O Android ainda pede confirmação para instalar.','down','updateAutoDownload','',!!prefsUpdate.autoDownload)}</section></div>`;
 }
 function updateState(json){
  let next;try{next=JSON.parse(json);}catch(_){return;}
@@ -204,11 +434,12 @@ function focusPage(){
 }
 function go(to,keepNavFocus=false){
  if(!pages[to])return;
+ if(homeReturn&&to!==homeReturn.destination)homeReturn=null;
  const oldPage=page, oldIndex=tabs.findIndex(t=>t[0]===oldPage), newIndex=tabs.findIndex(t=>t[0]===to);
  if(dialog)closeDialog(false);
  if(to!==page&&to!=='search')searchValue='';
  if(to==='search'&&page!=='search')searchValue='';
- page=to;const request=(to==='movies'||to==='series')?prepareCatalog(to,false):null;
+ page=to;const request=(to==='series'||(to==='movies'&&movieFilter!=='prime'))?prepareCatalog(to,false):null;
  render(true,false);if(!keepNavFocus)focusPage();
  if(request)request();
  if(to==='search'){load('movies');load('series');}
@@ -221,6 +452,7 @@ function readCache(which){try{const v=JSON.parse(localStorage.getItem('nova.cata
 const ttl=6*60*60*1000;
 for(const key of ['movies','series']){const v=readCache(key);if(v)catalogs[key]={items:v.items,state:'cache',ts:v.ts};}
 const artOk=s=>typeof s==='string'&&/^https:\/\/(is\d+-ssl\.mzstatic\.com|static\.tvmaze\.com)\//i.test(s)?s:'';
+const primeUrlOk=s=>typeof s==='string'&&/^https:\/\/www\.primevideo\.com\/-\/pt\/detail\/[A-Z0-9]{24,30}(?:\?language=pt_BR)?$/.test(s);
 const urlOk=s=>typeof s==='string'&&/^https:\/\/(itunes\.apple\.com|tv\.apple\.com|www\.tvmaze\.com|www\.justwatch\.com)\//i.test(s)?s:'';
 const year=s=>/^\d{4}/.test(s||'')?String(s).slice(0,4):'';
 function normalize(which,raw){
@@ -249,7 +481,7 @@ function artReady(url,revision){
 function catalogReply(which,good,body){
  const s=catalogs[which];if(!s)return;
  try{const items=good&&normalize(which,JSON.parse(body));if(!items||!items.length)throw Error('Catálogo vazio');s.items=items;s.ts=Date.now();s.state='ready';try{localStorage.setItem('nova.catalog.'+which,JSON.stringify({ts:s.ts,items}));}catch(_){} }catch(_){s.state='error';}
- if(page===which||(page==='home'&&which==='movies'&&bool('trending')))render(false,!dialog);
+ if((page===which&&!(which==='movies'&&movieFilter==='prime'))||(page==='home'&&which==='movies'&&bool('trending')))render(false,!dialog);
  if(page==='search'&&(!document.activeElement||!$('results').contains(document.activeElement))) searchResults();
 }
 function toast(s){clearTimeout(toastTimer);const t=$('toast');t.textContent=s;t.hidden=false;toastTimer=setTimeout(()=>{t.hidden=true;},3100);}
@@ -260,23 +492,35 @@ function openDialog(title,body,tag){
  const first=$('dialog').querySelector('.actions button')||$('dialog').querySelector('button');if(first)first.focus();
 }
 function closeDialog(restore=true){if(!dialog)return;dialog=null;$('overlay').hidden=true;$('viewport').removeAttribute('aria-hidden');if(restore){if(!focusMatching($('stage'),previousFocus))focusPage();}}
-function titleById(id){return [...curated,...catalogs.movies.items,...catalogs.series.items,...pref.saved].find(x=>x.id===id);}
+function titleById(id){return [...curated,...primeMovies,...catalogs.movies.items,...catalogs.series.items,...pref.saved].find(x=>x.id===id);}
 function detail(id){const t=titleById(id);if(!t)return;const isSaved=pref.saved.some(x=>x.id===id);let src=t.art||t.image&&'art?url='+encodeURIComponent(t.image);
- openDialog(t.fullTitle||t.title,`${src?`<img class="detail-art${t.art?'':' poster'}" src="${attr(src)}" alt="">`:''}<div class="detail-meta">${escape([t.tag,t.meta].filter(Boolean).join(' · '))}</div><p>${escape(t.summary||'Sinopse não disponível.')}</p><div class="actions">${t.url?btn(t.source==='JustWatch'?'Onde assistir':'Abrir no '+t.source,'visit','external','primary',id):''}${btn(isSaved?'Remover da lista':'Salvar na minha lista','save',isSaved?'check':'bookmark','ghost glass',id)}</div><p class="credit">Fonte: ${escape(t.source||'Nova OS')}${t.art?' · Banner do título':''}. A reprodução, quando disponível, acontece fora do launcher.</p>`,id);}
+ openDialog(t.fullTitle||t.title,`${src?`<img class="detail-art${t.art?'':' poster'}" src="${attr(src)}" alt="">`:''}<div class="detail-meta">${escape([t.tag,t.meta].filter(Boolean).join(' · '))}</div><p>${escape(t.summary||'Sinopse não disponível.')}</p><div class="actions">${t.url?btn(isPrime(t)?'Assistir no Prime Video':t.source==='JustWatch'?'Onde assistir':'Abrir no '+t.source,'visit',isPrime(t)?'play':'external','primary',id):''}${btn(isSaved?'Remover da lista':'Salvar na minha lista','save',isSaved?'check':'bookmark','ghost glass',id)}</div><p class="credit">Fonte: ${escape(t.source||'Nova OS')}${t.art?' · Banner do título':''}. ${isPrime(t)?'A reprodução abre no Prime Video. A disponibilidade depende da sua região e assinatura.':'A reprodução, quando disponível, acontece fora do launcher.'}</p>`,id);}
 function manage(id){const a=apps.find(x=>x.id===id);if(!a)return;const i=pins().indexOf(id);openDialog(a.label,`<p>${i>=0?`${i+1}º favorito na tela inicial.`:'Este app não está fixado na tela inicial.'}</p><div class="actions">${btn(i>=0?'Desafixar':'Fixar no início','pin',i>=0?'x':'star','primary',id)}${i>0?btn('Mover à esquerda','raise','left','ghost glass',id):''}${i>=0&&i<tiles().length-1?btn('Mover à direita','lower','arrow','ghost glass',id):''}</div>`,'manage');}
 function updatePins(id,mode){const ids=tiles().map(a=>a.id), i=ids.indexOf(id);if(mode==='pin'){if(i>=0)ids.splice(i,1);else if(ids.length<7)ids.push(id);else{toast('Já há sete favoritos. Desafixe um aplicativo primeiro.');return;}}else{const j=i+(mode==='raise'?-1:1);if(i<0||j<0||j>=ids.length)return;[ids[i],ids[j]]=[ids[j],ids[i]];}pref.pins=ids;persist();const focus=describe(document.activeElement);render(false,false);manage(id);focusMatching($('dialog'),focus);toast('Favoritos atualizados.');}
 function navigateExternal(url){if(!url)return;if(native){try{native.openExternal(url);}catch(_){toast('Não foi possível abrir o link.');}}else window.open(url,'_blank','noopener,noreferrer');}
 function doAction(action,arg){switch(action){
  case 'page': if(arg!==page)go(arg,useDpad&&!!document.activeElement.closest('.top .nav'));break;
  case 'settings':case 'search':go(action);break;
+ case 'homeMore':{
+  const stage=$('home-more'), from=document.activeElement;
+  const buttons=stage?Array.from(stage.querySelectorAll('[data-do="homeMore"]')):[];
+  const index=buttons.indexOf(from);
+  const dest=arg==='primeMovies'?'movies':arg;if(arg==='primeMovies'){movieFilter='prime';movieLimit=MOVIE_BATCH;}
+  homeReturn={destination:dest,index,scroll:$('main').scrollTop};go(dest);break;
+ }
  case 'close':closeDialog();break;
  case 'app':{const a=apps.find(v=>v.id===arg);if(!a)break;if(native)native.launch(a.id);else navigateExternal(a.url);break;}
  case 'organize':organizeFrom=page==='organize'?'home':page;go('organize');break;
  case 'manage':manage(arg);break;
  case 'pin':case 'raise':case 'lower':updatePins(arg,action);break;
  case 'detail':detail(arg);break;
- case 'visit':{const t=titleById(arg);if(t)navigateExternal(urlOk(t.url));break;}
- case 'save':{const t=titleById(arg);if(!t)break;const i=pref.saved.findIndex(x=>x.id===arg);if(i>=0)pref.saved.splice(i,1);else{if(pref.saved.length>=100){toast('Remova um título antes de salvar outro.');break;}pref.saved.push(t);}persist();if(page==='saved')render(false,false);if(titleById(arg)){detail(arg);focusMatching($('dialog'),'save\n'+arg);}else closeDialog();toast(i>=0?'Título removido.':'Título salvo na sua lista.');break;}
+ case 'visit':{const t=titleById(arg);if(t){const link=isPrime(t)?(primeUrlOk(t.url)?t.url:''):urlOk(t.url);if(link)navigateExternal(link);}break;}
+ case 'save':{const t=titleById(arg);if(!t)break;const i=pref.saved.findIndex(x=>x.id===arg);if(i>=0)pref.saved.splice(i,1);else{if(pref.saved.length>=100){toast('Remova um título antes de salvar outro.');break;}pref.saved.push(t);}persist();if(page==='saved'||page==='home')render(false,false);if(titleById(arg)){detail(arg);focusMatching($('dialog'),'save\n'+arg);}else closeDialog();toast(i>=0?'Título removido.':'Título salvo na sua lista.');break;}
+ case 'moreMovies':moreMovies();break;
+ case 'movieFilter':{
+  if(page!=='movies'||arg===movieFilter||!['all','prime','itunes'].includes(arg))break;
+  movieFilter=arg;movieLimit=MOVIE_BATCH;const request=arg==='prime'?null:prepareCatalog('movies',false);render(true,false);focusMatching($('main'),'movieFilter\n'+arg);if(request)request();break;
+ }
  case 'settingsGroup':changeSettingsSection(arg);break;
  case 'updateSave': if(native){const v=$('release-repo');if(v)native.updaterConfigure(v.value,prefsUpdate.automatic);}break;
  case 'updateAuto': if(native)native.updaterConfigure(prefsUpdate.repo,!prefsUpdate.automatic);break;
@@ -284,14 +528,20 @@ function doAction(action,arg){switch(action){
  case 'updateCheck': if(native)native.updaterCheck(true);break;
  case 'updateDownload': if(native)native.updaterDownload();break;
  case 'updateInstall': if(native)native.updaterInstall();break;
- case 'toggle': if(['glass','films','wall','hero','auto','trending','motion','rotate'].includes(arg)){pref[arg]=!pref[arg];persist();updateSettingsToggle(arg);if(pref[arg]&&(arg==='auto'||arg==='trending'))load('movies');if(arg==='rotate'||arg==='wall')wallPreferenceChanged(arg);}break;
+ case 'toggle': if(['glass','films','wall','hero','moreHome','auto','trending','motion','rotate'].includes(arg)){pref[arg]=!pref[arg];persist();updateSettingsToggle(arg);if(pref[arg]&&(arg==='auto'||arg==='trending'))load('movies');if(arg==='rotate'||arg==='wall')wallPreferenceChanged(arg);}break;
  case 'wallCredit': if(wallNow.page)navigateExternal(wallNow.page);break;
  case 'refresh':load(arg,true);break;
- case 'about':openDialog('Sobre o Nova OS',`<p>Versão ${VERSION} · Launcher para Android TV e TV boxes.</p><p>Os favoritos e os ajustes são gravados neste aparelho. O catálogo consulta a iTunes Store (filmes) e o TVmaze (séries) e armazena a última seleção localmente. O Nova OS não acessa o seu histórico de reprodução nem faz login em serviços de streaming.</p><p class="credit">Dados de séries: TVmaze (CC BY-SA). Fonte Manrope (SIL OFL). Banners dos títulos: catálogo Apple TV.</p><div class="actions">${btn('Fechar','close','check','primary')}</div>`);break;
+ case 'about':openDialog('Sobre o Nova OS',`<p>Versão ${VERSION} · Launcher para Android TV e TV boxes.</p><p>Os favoritos e os ajustes são gravados neste aparelho. O catálogo reúne uma seleção editorial do Prime Video, filmes da iTunes Store e séries do TVmaze e armazena a última seleção localmente. O Nova OS não acessa o seu histórico de reprodução nem faz login em serviços de streaming.</p><p class="credit">Dados de séries: TVmaze (CC BY-SA). Fonte Manrope (SIL OFL). Banners dos títulos: catálogo Apple TV.</p><div class="actions">${btn('Fechar','close','check','primary')}</div>`);break;
  case 'system': if(native)native.openSystem(arg);else toast('Esta opção fica disponível no aparelho Android.');break;
  }}
 let held=null, suppressClick=false, suppressedArrow='';
-function back(){if(idleMode){wakeIdle();return true;}if(page==='updates'){go('settings');return true;}if(dialog){closeDialog();return true;}if(page==='home')return false;if(page==='organize')go(organizeFrom);else go('home');return true;}
+function back(){
+ if(idleMode){wakeIdle();return true;}
+ if(dialog){closeDialog();return true;}
+ if(homeReturn&&page===homeReturn.destination){const savedPlace=homeReturn;go('home');$('main').scrollTop=savedPlace.scroll;const el=$('home-more');const target=el&&el.querySelectorAll('[data-do="homeMore"]')[savedPlace.index];if(target)target.focus();return true;}
+ if(page==='updates'){go('settings');return true;}
+ if(page==='home')return false;if(page==='organize')go(organizeFrom);else go('home');return true;
+}
 function setDpad(){if(useDpad)return;useDpad=true;document.body.classList.add('dpad');const f=document.querySelector('.preset-focus');if(f)f.classList.remove('preset-focus');}
 function spatial(k){
  const isOverlay=!!dialog;

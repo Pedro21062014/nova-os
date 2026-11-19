@@ -1,4 +1,4 @@
-# Nova OS 1.1.4
+# Nova OS 1.2.0
 
 Launcher em português para Android TV e TV boxes. É um aplicativo de tela inicial, não uma ROM. O pacote Android gerencia aplicativos instalados, controle remoto, rede e o atualizador; a interface é local, renderizada pelo Android System WebView.
 
@@ -14,16 +14,16 @@ Requisitos: Android **6.0/API 23 ou superior** e Android System WebView. A ediç
 
 - Tela 16:9 com tema claro nos controles selecionados, efeito de vidro opcional, rodízio de fotografias do Unsplash ao abrir e a cada 15 minutos, e modo descanso após 4 minutos sem interação. Uma tecla ou toque restaura a interface sem executar a ação do botão. As quatro paisagens já vêm no APK e giram mesmo offline.
 - Filmes e séries em cartazes verticais 2:3, banners 16:9 no Início, favoritos reordenáveis, busca, lista de títulos e atalhos de transmissão. A aba **Ao vivo** indexa apps instalados compatíveis por nome; não é uma lista IPTV.
-- Filmes: feed regional da iTunes Store Brasil; séries: TVmaze (CC BY-SA). Não são necessárias chaves de API. Os links de detalhe abrem fora do launcher. Não há reprodução integrada nem acesso ao histórico de serviços de streaming.
+- Filmes: seleção editorial com 16 filmes do Prime Video Brasil que abrem o título no streaming, além do feed regional da iTunes Store Brasil; séries: TVmaze (CC BY-SA). Não são necessárias chaves de API. Em Filmes, filtre por origem e use **Mostrar mais filmes** para ver os próximos cartazes sem carregar tudo de uma vez. A disponibilidade do streaming depende da sua conta e região. Consulte [o catálogo Prime](docs/PRIME-CATALOG.md) para a origem dos links e artes. Os links de detalhe abrem fora do launcher. Não há reprodução integrada nem acesso ao histórico de serviços de streaming.
 - Consulte [docs/ASSETS.md](docs/ASSETS.md) para fontes e licenças. As fotos do Unsplash constam em `app/src/main/assets/wallpapers/list.json`, com créditos no modo ambiente. A tipografia Manrope usa [SIL OFL](licenses/Manrope-OFL.txt).
 
 ## Atualizador dentro do app
 
-1. Abra **Configurações → Sistema → Atualizações** e informe um repositório **público** no formato `dono/repositório` ou `https://github.com/dono/repositório`.
+1. Abra **Configurações → Sistema → Atualizações**. O canal oficial `Pedro21062014/nova-os` já vem definido em instalações novas da 1.2.0; uma fonte previamente salva é preservada. Se desejar, você pode informar outro repositório **público** no formato `dono/repositório` ou `https://github.com/dono/repositório`.
 2. Com **Verificar automaticamente** ligado, o app consulta a origem ao abrir ou voltar ao primeiro plano, respeitando um intervalo de 12 horas após uma consulta bem-sucedida, ou a cada 12 horas enquanto aberto. Também é possível consultar manualmente. Não há serviço que fique rodando fora do launcher.
 3. Uma versão nova aparece no painel. Use **Baixar atualização** ou ative **Baixar automaticamente**. Em seguida, escolha **Instalar atualização** e confirme no instalador do Android. Em Android 8+, o sistema pode pedir permissão de instalação para o Nova OS. Não há instalação silenciosa.
 
-A origem é o endpoint público GitHub Releases `releases/latest`, sem token. Não há nenhuma origem de releases preenchida de fábrica. Use uma release estável com tag como `v1.2.0` e um asset `Nova-OS-1.2.0.apk` (também aceitos `Nova-OS.apk` e `Nova-OS-1.2.0-debug.apk`). O aplicativo exige versão superior, mesmo `applicationId`, mesmo certificado de assinatura, tamanho compatível e SHA-256 correspondente ao digest fornecido pelo GitHub. O instalador Android também verifica o pacote. Não publique chaves ou tokens.
+A origem é o endpoint público GitHub Releases `releases/latest`, sem token. O atualizador consulta **Releases**, não os commits de `main`. Use uma release estável com tag como `v1.2.0` e um asset `Nova-OS-1.2.0.apk` (também aceitos `Nova-OS.apk` e `Nova-OS-1.2.0-debug.apk`). O aplicativo exige versão superior, mesmo `applicationId`, mesmo certificado de assinatura, tamanho compatível e SHA-256 correspondente ao digest fornecido pelo GitHub. O instalador Android também verifica o pacote. Não publique chaves ou tokens.
 
 ## Compilar
 
@@ -33,7 +33,7 @@ Com JDK 11+ (o CI usa 17), Android SDK Platform 35, Build Tools 35.0.1 e `zip` d
 sdkmanager 'platforms;android-35' 'build-tools;35.0.1'
 export ANDROID_SDK_ROOT=/caminho/do/android-sdk
 ./scripts/build-apk.sh
-adb install -r artifacts/Nova-OS-1.1.4-debug.apk
+adb install -r artifacts/Nova-OS-1.2.0-debug.apk
 ```
 
 A chave de teste fica em `~/.android/debug.keystore` por padrão. Para compilar com uma chave própria, defina `NOVA_KEYSTORE`, `NOVA_KEY_ALIAS` e `NOVA_KEYSTORE_PASS`; se a senha da chave for diferente, defina `NOVA_KEY_PASS`. Mantenha esses valores fora do Git. O script alinha, assina e verifica a saída. O APK utiliza os assets gerados já incluídos no repositório; após editar `ui/app.js` ou `ui/style.css`, regenere-os com `npm ci && npm run build:ui` (Node 20+).

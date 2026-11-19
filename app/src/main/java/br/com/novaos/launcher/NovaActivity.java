@@ -72,7 +72,7 @@ public final class NovaActivity extends Activity {
     private static final String SERIES = "https://api.tvmaze.com/shows?page=0";
     private static final long ART_TTL = 7L * 24 * 60 * 60 * 1000;
     private static final long ART_LIMIT = 6L * 1024 * 1024;
-    private static final Pattern ASSET_PATH = Pattern.compile("/(index\\.html|app\\.js|style\\.css|manrope\\.woff2|fonts/manrope-(400|600|650|700|750|800)\\.woff2|wallpapers/(list\\.json|glass-(dolomitas|braies|moraine|reine|aoraki)\\.webp|(braies|moraine|reine|aoraki)\\.webp)|img/(dolomitas|brand/(apple|hbo|netflix|nova-os-header|plex|prime|spotify|youtube)|media/(dune|hunger|interstellar|severance)(-poster)?)\\.webp)");
+    private static final Pattern ASSET_PATH = Pattern.compile("/(index\\.html|app\\.js|style\\.css|manrope\\.woff2|fonts/manrope-(400|600|650|700|750|800)\\.woff2|wallpapers/(list\\.json|glass-(dolomitas|braies|moraine|reine|aoraki)\\.webp|(braies|moraine|reine|aoraki)\\.webp)|img/(dolomitas|discover/(cinema|series|live)|prime/(air|contador|guerra|ideia|mapa|matador|minha-culpa|musica|natal|nossa-culpa|operacao-natal|pisque|ricky|som|sua-culpa|vermelho)(-poster)?|brand/(apple|hbo|netflix|nova-os-header|plex|prime|spotify|youtube)|media/(dune|hunger|interstellar|severance)(-poster)?)\\.webp)");
     private final ExecutorService requests = Executors.newFixedThreadPool(3);
     private final LruCache<String, byte[]> icons = new LruCache<String, byte[]>(1024 * 1024) {
         @Override protected int sizeOf(String key, byte[] data) {return data.length;}
@@ -270,7 +270,16 @@ public final class NovaActivity extends Activity {
         @JavascriptInterface public void openExternal(String url){
             if(!allowedLink(url))return;
             runOnUiThread(()->{
-                try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)).addCategory(Intent.CATEGORY_BROWSABLE));}
+                try{
+                    Uri uri=Uri.parse(url);
+                    if("www.primevideo.com".equals(uri.getHost())){
+                        for(String pkg:new String[]{"com.amazon.amazonvideo.livingroom","com.amazon.avod.thirdpartyclient"}){
+                            try{startActivity(new Intent(Intent.ACTION_VIEW,uri).addCategory(Intent.CATEGORY_BROWSABLE).setPackage(pkg));return;}
+                            catch(ActivityNotFoundException|SecurityException ignored){}
+                        }
+                    }
+                    startActivity(new Intent(Intent.ACTION_VIEW,uri).addCategory(Intent.CATEGORY_BROWSABLE));
+                }
                 catch(RuntimeException none){error("Instale um navegador ou aplicativo compatível para abrir este link.");}
             });
         }
@@ -284,7 +293,7 @@ public final class NovaActivity extends Activity {
         });}
     }
     private static boolean allowedLink(String raw){
-        try{if(raw==null||raw.length()>1024)return false;URL u=new URL(raw);String h=u.getHost().toLowerCase(Locale.ROOT);return secure(u)&&(h.equals("itunes.apple.com")||h.equals("tv.apple.com")||h.equals("www.tvmaze.com")||h.equals("www.justwatch.com")||(h.equals("unsplash.com")&&u.getPath().startsWith("/photos/")));}catch(Exception e){return false;}
+        try{if(raw==null||raw.length()>1024)return false;URL u=new URL(raw);String h=u.getHost().toLowerCase(Locale.ROOT);return secure(u)&&(h.equals("itunes.apple.com")||h.equals("tv.apple.com")||h.equals("www.tvmaze.com")||h.equals("www.justwatch.com")||(h.equals("www.primevideo.com")&&u.getPath().matches("/-/pt/detail/[A-Z0-9]{24,30}")&&(u.getQuery()==null||u.getQuery().equals("language=pt_BR"))&&u.getRef()==null)||(h.equals("unsplash.com")&&u.getPath().startsWith("/photos/")));}catch(Exception e){return false;}
     }
     private static boolean secure(URL u){return "https".equalsIgnoreCase(u.getProtocol())&&(u.getPort()==-1||u.getPort()==443)&&u.getUserInfo()==null;}
     private static boolean allowedArt(String raw){
@@ -386,7 +395,7 @@ public final class NovaActivity extends Activity {
                 if(!ASSET_PATH.matcher(path).matches())return notFound();
                 String mime=type(path);
                 WebResourceResponse response=new WebResourceResponse(mime,mime.startsWith("text/")||(mime.equals("application/javascript")||mime.equals("application/json"))?"UTF-8":null,getAssets().open(path.substring(1)));
-                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"114".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
+                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"120".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
                 response.setResponseHeaders(Collections.singletonMap("Cache-Control",cache));
                 return response;
             }catch(Exception ignored){return notFound();}

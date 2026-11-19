@@ -29,6 +29,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 final class UpdateManager {
     interface Listener { void state(JSONObject state); }
+    static final String DEFAULT_REPO = "Pedro21062014/nova-os";
     private static final long MAX_APK = 25L * 1024 * 1024;
     private static final long CHECK_INTERVAL = 12L * 60 * 60 * 1000;
     private final Activity activity;
@@ -50,8 +51,8 @@ final class UpdateManager {
     UpdateManager(Activity activity,Listener listener) {
         this.activity=activity;this.listener=listener;
         prefs=activity.getSharedPreferences("nova_updater",Activity.MODE_PRIVATE);
-        repo=prefs.getString("repo","");automatic=prefs.getBoolean("automatic",true);autoDownload=prefs.getBoolean("autoDownload",false);
-        String v="1.1.4";
+        repo=prefs.getString("repo",DEFAULT_REPO);automatic=prefs.getBoolean("automatic",true);autoDownload=prefs.getBoolean("autoDownload",false);
+        String v="1.2.0";
         try {v=installed(0).versionName;} catch(Exception ignored){}
         runningVersion=v;
     }
@@ -220,7 +221,7 @@ final class UpdateManager {
     private static boolean secure(URL u){return "https".equalsIgnoreCase(u.getProtocol())&&(u.getPort()==-1||u.getPort()==443)&&u.getUserInfo()==null;}
     private static HttpsURLConnection connect(URL u,boolean meta) throws IOException {
         if(!secure(u))throw new IOException("HTTPS required");
-        HttpsURLConnection c=(HttpsURLConnection)u.openConnection();c.setUseCaches(false);c.setConnectTimeout(5000);c.setReadTimeout(7000);c.setInstanceFollowRedirects(false);c.setRequestProperty("User-Agent","Nova-OS-Updater/1.1.4");
+        HttpsURLConnection c=(HttpsURLConnection)u.openConnection();c.setUseCaches(false);c.setConnectTimeout(5000);c.setReadTimeout(7000);c.setInstanceFollowRedirects(false);c.setRequestProperty("User-Agent","Nova-OS-Updater/1.2.0");
         if(meta){c.setRequestProperty("Accept","application/vnd.github+json");c.setRequestProperty("X-GitHub-Api-Version","2022-11-28");}
         return c;
     }

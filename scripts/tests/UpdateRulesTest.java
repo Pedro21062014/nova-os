@@ -5,6 +5,7 @@ public final class UpdateRulesTest {
         equal(UpdateManager.normalizeRepo("https://github.com/NovaOwner/nova-os.git/"), "NovaOwner/nova-os");
         equal(UpdateManager.normalizeRepo(" owner/nova-os "), "owner/nova-os");
         equal(UpdateManager.normalizeRepo(""), "");
+        equal(UpdateManager.normalizeRepo("https://github.com/"+UpdateManager.DEFAULT_REPO), "Pedro21062014/nova-os");
         for (String bad : new String[]{"https://otro.tld/team/app", "user/../repo", "user/..", "user/repo?tag=2", "user/repo%2Fother", "user@github.com/repo", "user/repo/releases"}) {
             rejects(() -> UpdateManager.normalizeRepo(bad));
         }

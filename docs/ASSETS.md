@@ -19,3 +19,8 @@ Marca do Nova OS no cabeçalho: PNG enviado pelo usuário, armazenado em `docs/n
 ## Paisagens rotativas
 
 As quatro fotografias são do Unsplash e estão identificadas por URL, fotógrafo e local no catálogo `app/src/main/assets/wallpapers/list.json`. As quatro fotos são distribuídas como WebP locais, com créditos no modo ambiente.
+
+## Início expandido e Prime Video
+
+- As imagens decorativas de categorias de `assets/img/discover/` foram geradas para a prévia do Nova OS.
+- As capas editoriais de `assets/img/prime/` vieram das páginas de divulgação oficiais: [catálogo e fontes](PRIME-CATALOG.md).

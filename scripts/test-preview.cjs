@@ -11,7 +11,7 @@ async function run() {
     await p.clock.install(); await p.goto(base);
     await p.waitForFunction(()=>document.querySelector('.scenery').dataset.wallpaper==='braies');
     assert.equal(await p.locator('.tile').count(),8);
-    assert.equal(await p.locator('.banner').count(),4);
+    assert.equal(await p.locator('.page-surface > .shelf .banner').count(),4);
     await button('Início').focus(); await p.keyboard.press('ArrowRight');
     assert.equal(await button('Filmes').getAttribute('aria-current'),'page');
     await p.waitForFunction(()=>document.querySelectorAll('.portrait-frame').length===12);
@@ -51,7 +51,7 @@ async function run() {
       delete NodeList.prototype.forEach;
       delete Element.prototype.closest;
       delete window.fetch;
-      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.1.4',available:'',progress:0};
+      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.2.0',available:'',progress:0};
       const post=(patch={})=>window.NovaUi.updateState(JSON.stringify(Object.assign(state,patch)));
       window.installerCalled=false;
       window.NovaNative={
@@ -122,7 +122,7 @@ async function run() {
       NovaUi.catalogReply('movies',true,JSON.stringify({feed:{entry:[{'im:name':{label:'Filme de teste'},'im:image':[{label:image}],id:{label:'https://itunes.apple.com/us/movie/example'}}]}}));
       NovaUi.artReady(image.replace('100x100bb','300x450bb'),123);
     });
-    assert.match(await sw.locator('.poster-frame img,.portrait-frame img').first().getAttribute('src'),/&rev=123$/);
+    assert.match(await sw.locator('.poster-frame img[src*="art?"],.portrait-frame img[src*="art?"]').first().getAttribute('src'),/&rev=123$/);
 
     console.log('Validados: software Android simulado, modo legado simulado, layouts, setas, filme/série, fundo, descanso, preferências e interface do atualizador com ponte Android simulada.');
   } finally {await browser.close();}
