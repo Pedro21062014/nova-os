@@ -52,7 +52,7 @@ final class UpdateManager {
         this.activity=activity;this.listener=listener;
         prefs=activity.getSharedPreferences("nova_updater",Activity.MODE_PRIVATE);
         repo=prefs.getString("repo",DEFAULT_REPO);automatic=prefs.getBoolean("automatic",true);autoDownload=prefs.getBoolean("autoDownload",false);
-        String v="1.2.0";
+        String v="1.2.1";
         try {v=installed(0).versionName;} catch(Exception ignored){}
         runningVersion=v;
     }
@@ -100,7 +100,7 @@ final class UpdateManager {
             JSONObject release=new JSONObject(new String(readSmall(connection.getInputStream(),512*1024),StandardCharsets.UTF_8));
             String tag=release.optString("tag_name","");
             if(!tag.matches("v?[0-9]{1,7}\\.[0-9]{1,7}\\.[0-9]{1,7}")||release.optBoolean("draft")||release.optBoolean("prerelease")){
-                show("error","A release precisa usar uma versão estável como v1.2.0.");return;
+                show("error","A release precisa usar uma versão estável como v1.2.1.");return;
             }
             String current=tag.startsWith("v")?tag.substring(1):tag;
             saveCheck();
@@ -221,7 +221,7 @@ final class UpdateManager {
     private static boolean secure(URL u){return "https".equalsIgnoreCase(u.getProtocol())&&(u.getPort()==-1||u.getPort()==443)&&u.getUserInfo()==null;}
     private static HttpsURLConnection connect(URL u,boolean meta) throws IOException {
         if(!secure(u))throw new IOException("HTTPS required");
-        HttpsURLConnection c=(HttpsURLConnection)u.openConnection();c.setUseCaches(false);c.setConnectTimeout(5000);c.setReadTimeout(7000);c.setInstanceFollowRedirects(false);c.setRequestProperty("User-Agent","Nova-OS-Updater/1.2.0");
+        HttpsURLConnection c=(HttpsURLConnection)u.openConnection();c.setUseCaches(false);c.setConnectTimeout(5000);c.setReadTimeout(7000);c.setInstanceFollowRedirects(false);c.setRequestProperty("User-Agent","Nova-OS-Updater/1.2.1");
         if(meta){c.setRequestProperty("Accept","application/vnd.github+json");c.setRequestProperty("X-GitHub-Api-Version","2022-11-28");}
         return c;
     }

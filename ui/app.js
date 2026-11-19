@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.2.0';
+const VERSION = '1.2.1';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -265,7 +265,20 @@ function clock(){
 function net(){const el=$('net');if(!el)return;const online=native?connection():navigator.onLine;if(online===onlineState)return;onlineState=online;el.classList.toggle('off',!online);el.title=online?'Conectado':'Sem conexão';}
 function connection(){try{return native.isOnline();}catch(_){return false;}}
 const section=(title,sub,action,text,icon='arrow',arg='')=>`<div class="section-head"><h2>${title}</h2>${sub?`<p>${sub}</p>`:''}${action?`<button class="small" data-do="${action}" data-arg="${arg}">${text}${ico(icon,16)}</button>`:''}</div>`;
-function appTile(a){const more=a.id==='__more';const mark=more?ico('grid',33):logos.includes(a.brand)?`<img alt="" class="app-logo logo-${a.brand}" src="img/brand/${a.brand}.webp">`:a.icon&&native?`<img alt="" loading="lazy" src="${attr(a.icon)}">`:`<span class="generic">${escape(a.label.charAt(0).toUpperCase())}</span>`;return `<button class="tile" data-do="${more?'page':'app'}" data-arg="${more?'apps':attr(a.id)}" aria-label="${attr(a.label)}"><span class="app-mark glass${more?' more':''}">${mark}</span><span class="app-label">${escape(a.label)}</span></button>`;}
+// Chromium 52 ignores loading=lazy. Observe in the scrolling panel and only
+// assign a URL when an image is close enough to be needed.
+const imageObserver=window.IntersectionObserver?new IntersectionObserver(entries=>{
+ for(const entry of entries){
+  if(!entry.isIntersecting&&entry.intersectionRatio<=0)continue;
+  const img=entry.target, src=img.getAttribute('data-image');
+  imageObserver.unobserve(img);
+  if(src&&$('main').contains(img)){img.removeAttribute('data-image');img.setAttribute('src',src);}
+ }
+},{root:$('main'),rootMargin:'0px 0px 72px 0px'}):null;
+function imageSource(src){return imageObserver?`data-image="${attr(src)}"`:`src="${attr(src)}" loading="lazy"`;}
+function watchImages(root){if(imageObserver)each.call(root.querySelectorAll('img[data-image]'),img=>imageObserver.observe(img));}
+function forgetImages(root){if(imageObserver)each.call(root.querySelectorAll('img[data-image]'),img=>imageObserver.unobserve(img));}
+function appTile(a){const more=a.id==='__more';const mark=more?ico('grid',33):logos.includes(a.brand)?`<img alt="" class="app-logo logo-${a.brand}" src="img/brand/${a.brand}.webp">`:a.icon&&native?`<img alt="" ${imageSource(a.icon)}>`:`<span class="generic">${escape(a.label.charAt(0).toUpperCase())}</span>`;return `<button class="tile" data-do="${more?'page':'app'}" data-arg="${more?'apps':attr(a.id)}" aria-label="${attr(a.label)}"><span class="app-mark glass${more?' more':''}">${mark}</span><span class="app-label">${escape(a.label)}</span></button>`;}
 function pins(){if(Array.isArray(pref.pins))return pref.pins; return apps.slice(0,7).map(a=>a.id);}
 function tiles(){const map=new Map();apps.forEach(a=>map.set(a.id,a));return pins().map(id=>map.get(id)).filter(Boolean).slice(0,7);}
 function card(t,vertical=false){
@@ -274,7 +287,7 @@ function card(t,vertical=false){
  const artwork=image&&'art?url='+encodeURIComponent(image);
  const src=portrait?(t.poster||artwork):t.art||artwork;
  const contained=!portrait&&!t.art;
- return `<button class="movie" data-do="detail" data-arg="${attr(t.id)}" aria-label="${attr(t.fullTitle||t.title)}"><span class="banner${portrait?' portrait-frame':contained?' poster-banner':''}">${src?`<img alt="" class="art${contained?' poster-art':''}" src="${attr(src)}" loading="lazy">`:''}${isPrime(t)?'<span class="provider-prime">Prime Video</span>':`<span class="tag">${escape(t.tag||'DESTAQUE')}</span>`}<span class="play-dot">${ico('chev',17)}</span></span><span class="movie-info"><span class="movie-title">${escape(t.title)}</span><span class="movie-meta">${escape(t.meta||'')}</span></span></button>`;
+ return `<button class="movie" data-do="detail" data-arg="${attr(t.id)}" aria-label="${attr(t.fullTitle||t.title)}"><span class="banner${portrait?' portrait-frame':contained?' poster-banner':''}">${src?`<img alt="" class="art${contained?' poster-art':''}" ${imageSource(src)}>`:''}${isPrime(t)?'<span class="provider-prime">Prime Video</span>':`<span class="tag">${escape(t.tag||'DESTAQUE')}</span>`}<span class="play-dot">${ico('chev',17)}</span></span><span class="movie-info"><span class="movie-title">${escape(t.title)}</span><span class="movie-meta">${escape(t.meta||'')}</span></span></button>`;
 }
 const moreDestinations=[
  ['movies','Filmes','Histórias para a sua próxima sessão','film','cinema'],
@@ -296,8 +309,16 @@ function extraHome(){
  const watchlist=pref.saved.slice(-4).reverse();
  return `<div class="home-more" id="home-more"><section class="more-section more-discover" aria-labelledby="discover-more-heading"><header class="more-intro"><span class="eyebrow">EXPLORE O NOVA OS</span><h2 id="discover-more-heading">Descubra mais</h2><p>Vá direto ao que você quer assistir.</p></header><div class="more-grid">${moreDestinations.map(category).join('')}</div></section>${primeHome()}<section class="more-section" aria-label="Minha lista de títulos">${section('Minha lista','Filmes e séries que você guardou.','homeMore','Ver lista','arrow','saved')}${watchlist.length?`<div class="card-grid">${watchlist.map(card).join('')}</div>`:`<div class="home-watchlist glass"><span class="watchlist-art" aria-hidden="true"><i></i><i></i><i>${ico('bookmark',26)}</i></span><div class="watchlist-copy"><strong>Guarde algo para assistir depois</strong><p>Salve um filme ou uma série e encontre seus títulos aqui.</p></div><div class="actions">${btn('Explorar catálogo','homeMore','arrow','ghost glass','movies')}</div></div>`}</section><section class="more-section" aria-label="Atalhos da TV">${section('Atalhos da TV','Controles úteis sempre à mão.')}<div class="more-grid">${tvShortcuts.map(quick).join('')}</div></section></div>`;
 }
+const homeAppTiles=()=>[...tiles(),{id:'__more',label:'Todos os apps'}].map(appTile).join('');
+function refreshHomeApps(){
+ const grid=$('home-app-grid');if(!grid)return;
+ const anchor=grid.contains(document.activeElement)?describe(document.activeElement):'';
+ forgetImages(grid);grid.innerHTML=homeAppTiles();watchImages(grid);
+ if(anchor&&!dialog)focusMatching(grid,anchor);
+ if(!useDpad){const first=grid.querySelector('.tile');if(first)first.classList.add('preset-focus');}
+}
 function home(){
- const appsMarkup=`<section class="shelf" aria-label="Seus apps">${section('Seus apps','Seus favoritos, sempre à mão.','organize','Organizar','sliders')}<div class="app-grid">${[...tiles(),{id:'__more',label:'Todos os apps'}].map(appTile).join('')}</div></section>`;
+ const appsMarkup=`<section class="shelf" aria-label="Seus apps">${section('Seus apps','Seus favoritos, sempre à mão.','organize','Organizar','sliders')}<div class="app-grid" id="home-app-grid">${homeAppTiles()}</div></section>`;
  const display=bool('trending')&&catalogs.movies.items.length?catalogs.movies.items.slice(0,4):curated;
  const shelf=bool('films')?`<section class="shelf" aria-label="Descobrir">${section('Para sua próxima sessão','Filmes e séries em destaque' ,'page','Ver catálogo','arrow','movies')}<div class="card-grid">${display.map(card).join('')}</div></section>`:'';
  return `${bool('hero')?`<section class="hero" aria-label="Atalhos do início"><div class="actions">${btn(bool('films')?'Explorar':'Seus apps','page',bool('films')?'film':'grid','primary',bool('films')?'movies':'apps')}${btn('Minha lista','page','bookmark','ghost glass','saved')}</div><button class="ambient-card glass" data-do="page" data-arg="ambient"><span class="picture">${ico('mountain',22)}</span><span class="words"><small>MODO AMBIENTE</small><b data-wall-title>${escape(wallNow.title)}</b></span><span class="chev">${ico('chev',18)}</span></button></section>`:'<div class="section-label" style="margin-top:36px">Tela inicial</div>'}${appsMarkup}${shelf}${extraHome()}`;
@@ -355,6 +376,7 @@ function moreMovies(){
  if(page!=='movies'||!grid||!row||movieLimit>=data.length)return;
  const start=movieLimit;movieLimit+=MOVIE_BATCH;
  grid.insertAdjacentHTML('beforeend',data.slice(start,movieLimit).map(t=>card(t,true)).join(''));
+ watchImages(grid);
  $('movie-count').textContent=movieCount(data.length);
  if(movieLimit>=data.length)row.hidden=true;
  const first=grid.children[start];if(first)first.focus();
@@ -376,7 +398,7 @@ function saved(){return head('SUA BIBLIOTECA','Minha lista','Os títulos que voc
 function organizer(){return head('TELA INICIAL','Organizar apps','Escolha até sete favoritos. Selecione um app para fixar, remover ou mover.',btn('Concluir','page','check','primary',organizeFrom))+(apps.length?`<h2 class="section-label">Fixados · ${tiles().length}/7</h2><div class="mini-list">${tiles().map((a,i)=>setting(a.label,`${i+1}ª posição`,'star','manage',a.id)).join('')||'<p class="status">Nenhum favorito fixado.</p>'}</div><h2 class="section-label">Outros aplicativos</h2><div class="mini-list">${apps.filter(a=>!pins().includes(a.id)).map(a=>setting(a.label,'Não fixado','grid','manage',a.id)).join('')||'<p class="status">Nenhum outro aplicativo.</p>'}</div>`:empty('Sem apps para organizar','Quando você instalar um aplicativo, ele aparecerá aqui.'));}
 function search(){return head('ENCONTRE MAIS RÁPIDO','Buscar','Pesquise apps e títulos disponíveis no catálogo.')+`<input class="search-box" id="query" type="search" enterkeyhint="search" aria-label="Buscar por nome" placeholder="Digite o nome de um app, filme ou série…" autocomplete="off" value="${attr(searchValue)}"><div id="results"></div>`;}
 function uniqueTitles(items){const map=new Map();items.forEach(item=>map.set(item.id,item));const out=[];map.forEach(item=>out.push(item));return out;}
-function searchResults(){const box=$('results');if(!box)return; const q=slug(searchValue.trim());if(!q){box.innerHTML='<p class="section-label">Digite para começar</p>';return;}const a=apps.filter(x=>slug(x.label).includes(q)), c=uniqueTitles(curated.concat(primeMovies,catalogs.movies.items,catalogs.series.items,pref.saved)).filter(x=>slug(x.title).includes(q)).slice(0,15);box.innerHTML=(!a.length&&!c.length)?'<p class="section-label">Nenhum resultado encontrado</p>':`${a.length?`<h2 class="section-label">Aplicativos</h2><div class="app-grid">${a.map(appTile).join('')}</div>`:''}${c.length?`<h2 class="section-label">Filmes e séries</h2><div class="card-grid">${c.map(card).join('')}</div>`:''}`;}
+function searchResults(){const box=$('results');if(!box)return;forgetImages(box);const q=slug(searchValue.trim());if(!q){box.innerHTML='<p class="section-label">Digite para começar</p>';return;}const a=apps.filter(x=>slug(x.label).includes(q)), c=uniqueTitles(curated.concat(primeMovies,catalogs.movies.items,catalogs.series.items,pref.saved)).filter(x=>slug(x.title).includes(q)).slice(0,15);box.innerHTML=(!a.length&&!c.length)?'<p class="section-label">Nenhum resultado encontrado</p>':`${a.length?`<h2 class="section-label">Aplicativos</h2><div class="app-grid">${a.map(appTile).join('')}</div>`:''}${c.length?`<h2 class="section-label">Filmes e séries</h2><div class="card-grid">${c.map(card).join('')}</div>`:''}`;watchImages(box);}
 function ambient(){return `<section class="amb-content"><div><span class="eyebrow">MODO AMBIENTE</span><h1 data-wall-title>${escape(wallNow.title)}</h1><p id="ambient-clock"></p><button class="wall-credit" data-do="wallCredit" ${wallNow.author?'':'hidden'}>${wallNow.author?escape(wallNow.author+' · Unsplash'):''}</button></div>${btn('Sair do modo ambiente','page','left','ghost glass','home')}</section>`;}
 let prefsUpdate={repo:'',automatic:true,autoDownload:false,status:'idle',version:VERSION,available:'',message:'',progress:0},repoDraft=null, updateNotice='';
 function updateStatusActions(){
@@ -419,8 +441,8 @@ function animateIn(el,distance=8){
 function render(reset=false,refocus=true){
  const main=$('main'), old=document.activeElement, wasMain=main.contains(old), anchor=describe(old), y=main.scrollTop;
  applyAppearance();
- syncHeader(); main.innerHTML=page==='home'||page==='ambient'?`<div class="page-surface">${pages[page]()}</div>`:`<section class="panel page-surface">${pages[page]()}</section>`;
- main.scrollTop=reset?0:y;
+ syncHeader();forgetImages(main);main.innerHTML=page==='home'||page==='ambient'?`<div class="page-surface">${pages[page]()}</div>`:`<section class="panel page-surface">${pages[page]()}</section>`;
+ main.scrollTop=reset?0:y;watchImages(main);
  if(page==='updates'){const input=$('release-repo');if(input)input.addEventListener('input',()=>{repoDraft=input.value;});}
  if(page==='search'){const q=$('query');q.addEventListener('input',()=>{searchValue=q.value;searchResults();});searchResults();}
  clock();
@@ -472,10 +494,17 @@ function prepareCatalog(which,force){
  };
 }
 function load(which,force=false){const request=prepareCatalog(which,force);if(request){if(page===which)render();request();}}
+const coverUpdates=Object.create(null);let coverFrame=0;
 function artReady(url,revision){
- const source='art?url='+encodeURIComponent(url);
- each.call(document.querySelectorAll('img.art[src],img.detail-art[src]'),el=>{
-  if(el.getAttribute('src').split('&rev=')[0]===source)el.setAttribute('src',source+'&rev='+revision);
+ coverUpdates['art?url='+encodeURIComponent(url)]=revision;
+ if(coverFrame)return;
+ coverFrame=requestAnimationFrame(()=>{
+  coverFrame=0;
+  each.call(document.querySelectorAll('img.art[src^="art?"],img.detail-art[src^="art?"]'),el=>{
+   const src=el.getAttribute('src'),base=src.split('&rev=')[0],rev=coverUpdates[base];
+   if(rev!==undefined&&src!==base+'&rev='+rev)el.setAttribute('src',base+'&rev='+rev);
+  });
+  for(const src of Object.keys(coverUpdates))delete coverUpdates[src];
  });
 }
 function catalogReply(which,good,body){
@@ -689,7 +718,7 @@ function resize(){
  sampleGlass();
 }
 window.NovaUi={
- updateApps(raw){try{const rows=JSON.parse(raw);if(!Array.isArray(rows))return;apps=rows.filter(a=>a&&a.id&&a.label).map(a=>{const entry=services.find(x=>x[3].includes(a.pkg));return {...a,brand:entry&&entry[0]};});apps.sort((a,b)=>{const rank=x=>x.brand?services.findIndex(s=>s[0]===x.brand):999;return rank(a)-rank(b)||a.label.localeCompare(b.label,'pt-BR');});if(['home','apps','organize','live'].includes(page)){render(false,!dialog);if(document.activeElement===document.body&&useDpad&&!dialog)focusPage();}if(page==='search')searchResults();}catch(_){}},
+ updateApps(raw){try{const rows=JSON.parse(raw);if(!Array.isArray(rows))return;apps=rows.filter(a=>a&&a.id&&a.label).map(a=>{const entry=services.find(x=>x[3].includes(a.pkg));return {...a,brand:entry&&entry[0]};});apps.sort((a,b)=>{const rank=x=>x.brand?services.findIndex(s=>s[0]===x.brand):999;return rank(a)-rank(b)||a.label.localeCompare(b.label,'pt-BR');});if(['home','apps','organize','live'].includes(page)){if(page==='home')refreshHomeApps();else render(false,!dialog);if(document.activeElement===document.body&&useDpad&&!dialog)focusPage();}if(page==='search')searchResults();}catch(_){}},
  catalogReply, artReady, updateState, toast, back, key, remoteArrow, net,
  suspend(){nativePaused=true;clearTimeout(wallTimer);clearTimeout(idleTimer);idleTimer=0;},
  reopen(){nativePaused=false;clock();net();queueIdle();if((bool('rotate')||!wallActive)&&Date.now()-lastWallChange>1000)rotateWallpaper(bool('rotate'));else scheduleWallpaper();},

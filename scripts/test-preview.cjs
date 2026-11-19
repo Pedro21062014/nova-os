@@ -51,7 +51,7 @@ async function run() {
       delete NodeList.prototype.forEach;
       delete Element.prototype.closest;
       delete window.fetch;
-      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.2.0',available:'',progress:0};
+      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.2.1',available:'',progress:0};
       const post=(patch={})=>window.NovaUi.updateState(JSON.stringify(Object.assign(state,patch)));
       window.installerCalled=false;
       window.NovaNative={
@@ -120,9 +120,11 @@ async function run() {
     await sw.evaluate(()=>{
       const image='https://is1-ssl.mzstatic.com/image/100x100bb.jpg';
       NovaUi.catalogReply('movies',true,JSON.stringify({feed:{entry:[{'im:name':{label:'Filme de teste'},'im:image':[{label:image}],id:{label:'https://itunes.apple.com/us/movie/example'}}]}}));
-      NovaUi.artReady(image.replace('100x100bb','300x450bb'),123);
     });
-    assert.match(await sw.locator('.poster-frame img[src*="art?"],.portrait-frame img[src*="art?"]').first().getAttribute('src'),/&rev=123$/);
+    const cover=sw.locator('.portrait-frame img[src^="art?"]').first();
+    await cover.waitFor();
+    await sw.evaluate(()=>NovaUi.artReady('https://is1-ssl.mzstatic.com/image/300x450bb.jpg',123));
+    await sw.locator('.portrait-frame img[src$="&rev=123"]').first().waitFor();
 
     console.log('Validados: software Android simulado, modo legado simulado, layouts, setas, filme/série, fundo, descanso, preferências e interface do atualizador com ponte Android simulada.');
   } finally {await browser.close();}

@@ -37,6 +37,7 @@ import android.widget.Button;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -332,12 +333,18 @@ public final class NovaActivity extends Activity {
     }
     private WebResourceResponse art(String url) throws Exception{
         File base=new File(getCacheDir(),"covers"), file=new File(base,hash(url));
-        if(file.isFile()){
+        if(file.isFile()&&file.length()<=340*1024){
+            BufferedInputStream input=null;
             try{
-                byte[] data=read(new FileInputStream(file),340*1024);
+                input=new BufferedInputStream(new FileInputStream(file));
+                byte[] header=new byte[12];input.mark(header.length);
+                for(int i=0;i<header.length;i++){
+                    int next=input.read();if(next<0)throw new IOException("Incomplete cover");header[i]=(byte)next;
+                }
+                input.reset();
                 if(System.currentTimeMillis()-file.lastModified()>=ART_TTL)queueArtwork(url,base,file);
-                return bytes(bitmapType(data),data);
-            }catch(IOException ignored){}
+                return new WebResourceResponse(bitmapType(header),null,input);
+            }catch(IOException ignored){if(input!=null)try{input.close();}catch(IOException unused){}}
         }
         queueArtwork(url,base,file);
         WebResourceResponse response=bytes("image/png",EMPTY_ART);
@@ -360,9 +367,11 @@ public final class NovaActivity extends Activity {
                     finally{if(tmp.exists())tmp.delete();}
                     File[] files=base.listFiles();
                     if(files!=null){
-                        Arrays.sort(files,(a,b)->Long.compare(a.lastModified(),b.lastModified()));
                         long size=0;for(File f:files)size+=f.length();
-                        for(File f:files){if(size<=ART_LIMIT)break;long len=f.length();if(f.delete())size-=len;}
+                        if(size>ART_LIMIT){
+                            Arrays.sort(files,(a,b)->Long.compare(a.lastModified(),b.lastModified()));
+                            for(File f:files){if(size<=ART_LIMIT)break;long len=f.length();if(f.delete())size-=len;}
+                        }
                     }
                 }
             }catch(IOException ignored){}
@@ -395,7 +404,7 @@ public final class NovaActivity extends Activity {
                 if(!ASSET_PATH.matcher(path).matches())return notFound();
                 String mime=type(path);
                 WebResourceResponse response=new WebResourceResponse(mime,mime.startsWith("text/")||(mime.equals("application/javascript")||mime.equals("application/json"))?"UTF-8":null,getAssets().open(path.substring(1)));
-                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"120".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
+                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"121".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
                 response.setResponseHeaders(Collections.singletonMap("Cache-Control",cache));
                 return response;
             }catch(Exception ignored){return notFound();}
