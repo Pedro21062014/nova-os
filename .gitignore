@@ -1,0 +1,12 @@
+/artifacts/
+/.test/
+/local.properties
+/.android/
+*.apk
+*.idsig
+*.keystore
+*.jks
+*.p12
+.env*
+.DS_Store
+__pycache__/

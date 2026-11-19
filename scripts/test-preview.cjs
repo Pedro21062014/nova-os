@@ -1,0 +1,24 @@
+const { chromium }=require('playwright-core');const assert=require('node:assert/strict');
+const base = process.env.NOVA_PREVIEW_URL || 'http://127.0.0.1:8080/';
+(async()=>{
+ const browser=await chromium.launch({executablePath:process.env.CHROMIUM_BIN || '/usr/bin/chromium',args:['--no-sandbox']});
+ const p=await browser.newPage({viewport:{width:1600,height:900}}); const errors=[];p.on('pageerror',e=>errors.push(e.message)); const btn=(name)=>p.getByRole('button',{name,exact:true});
+ await p.goto(base);await p.locator('.movie').first().waitFor();await p.evaluate(()=>document.fonts.ready);
+ assert.equal(await p.locator('.tile').count(),8);assert.equal(await p.locator('.movie').count(),3);
+ await p.keyboard.press('ArrowRight');assert.equal(await p.evaluate(()=>document.activeElement.getAttribute('aria-label')),'Netflix');
+ await p.keyboard.press('ArrowRight');assert.equal(await p.evaluate(()=>document.activeElement.getAttribute('aria-label')),'YouTube');
+ await p.keyboard.down('Enter');await p.waitForTimeout(630);await p.keyboard.up('Enter');await p.getByRole('dialog').waitFor();await p.keyboard.press('Escape');assert.equal(await p.getByRole('heading',{name:'Organizar apps'}).count(),1);
+ await btn('Concluir').click(); await p.locator('.movie').first().click();await btn('Salvar na minha lista').click();await btn('Fechar').click();await btn('Minha lista').click();assert.equal(await p.locator('.movie').count(),1);
+ await p.locator('.movie').click();await btn('Remover da lista').click();await btn('Fechar').click();assert.equal(await p.locator('.movie').count(),0);
+ await btn('Configurações').click();
+ await p.getByRole('switch',{name:/Efeito de vidro/}).click();await p.getByRole('switch',{name:/Filmes e séries no início/}).click();await btn('Início').click();assert.equal(await p.locator('.movie').count(),0);
+ await p.reload();assert(await p.locator('body.solid').count());assert.equal(await p.locator('.movie').count(),0);
+ await btn('Filmes').click();await p.waitForFunction(()=>document.querySelectorAll('.movie').length===12);await p.waitForFunction(()=>Array.from(document.querySelectorAll('.movie img')).some(i=>i.complete&&i.naturalWidth>0));
+ await btn('Séries').click();await p.waitForFunction(()=>document.querySelectorAll('.movie').length===12); 
+ await btn('Buscar').click();await p.getByRole('searchbox').fill('youtube');assert.equal(await p.locator('#results .tile').count(),1);
+ await btn('Início').click();await p.getByRole('button',{name:/Dolomitas/}).click();assert(await p.locator('body.ambient').count());await p.keyboard.press('Escape');assert(await p.locator('body.home').count());
+ assert.deepEqual(errors,[]);
+ const phone=await browser.newPage({viewport:{width:390,height:780}});await phone.goto(base);assert.equal(await phone.locator('.tile').count(),8);
+ const o=await browser.newPage({viewport:{width:1280,height:720}});await o.route('**/catalog/**',r=>r.abort());await o.goto(base);await o.getByRole('button',{name:'Filmes',exact:true}).click();await o.getByText('Não foi possível atualizar.',{exact:false}).waitFor();assert.equal(await o.locator('.movie').count(),2);
+ await browser.close();console.log('Nova OS: navegação, OK prolongado, lista, ajustes persistentes, catálogo com imagens, busca, ambiente e fallback offline passaram.');
+})().catch(e=>{console.error(e);process.exit(1);});
