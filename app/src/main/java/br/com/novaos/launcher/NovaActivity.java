@@ -212,6 +212,7 @@ public final class NovaActivity extends Activity {
         return true;
     }
     private void js(String call) {runOnUiThread(()->{if(web!=null&&ready)web.evaluateJavascript("window.NovaUi&&NovaUi."+call,null);});}
+    void showStoreOpenError(){error("Não foi possível abrir a Nova Store neste aparelho.");}
     private void error(String text){if(ready)js("toast("+JSONObject.quote(text)+")");else Toast.makeText(this,text,Toast.LENGTH_SHORT).show();}
     private void refreshApps(boolean force) {
         final long now=android.os.SystemClock.elapsedRealtime();if(!force&&now-lastAppQuery<600)return;lastAppQuery=now;
@@ -243,6 +244,7 @@ public final class NovaActivity extends Activity {
         Bridge(WebView owner){this.owner=owner;}
         @JavascriptInterface public void ready(){runOnUiThread(()->{if(web!=owner||ready)return;cancelBootDeadline();ready=true;lastApps="";refreshApps(true);if(updater!=null){updater.send();updater.onResume();}if(store!=null){store.send();js("storeInvite()");}});}
         @JavascriptInterface public boolean claimStoreInvitation(){return web==owner&&store!=null&&store.claimInvitation();}
+        @JavascriptInterface public boolean openStoreIfInstalled(){return web==owner&&store!=null&&store.openIfInstalled();}
         @JavascriptInterface public void storeStatus(){if(web==owner&&store!=null)store.send();}
         @JavascriptInterface public void storeAction(String action){
             if(web!=owner||store==null)return;
@@ -415,7 +417,7 @@ public final class NovaActivity extends Activity {
                 if(!ASSET_PATH.matcher(path).matches())return notFound();
                 String mime=type(path);
                 WebResourceResponse response=new WebResourceResponse(mime,mime.startsWith("text/")||(mime.equals("application/javascript")||mime.equals("application/json"))?"UTF-8":null,getAssets().open(path.substring(1)));
-                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"122".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
+                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"123".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
                 response.setResponseHeaders(Collections.singletonMap("Cache-Control",cache));
                 return response;
             }catch(Exception ignored){return notFound();}

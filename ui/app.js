@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.2.2';
+const VERSION = '1.2.3';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -45,6 +45,7 @@ const pref = {glass:true, films:true, wall:true, rotate:true, moreHome:true, her
 try { Object.assign(pref, JSON.parse(localStorage.getItem('nova.v1')||'{}')); } catch (_) {}
 const persist = () => {try{localStorage.setItem('nova.v1',JSON.stringify(pref));}catch(_){}};
 const paths = {
+store:'<path d="M5.5 8h13l1.2 12.5H4.3L5.5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="m11 12 3.3 2.3L11 16.5Z" fill="currentColor" stroke="none"/>',
 star:'<path d="M12 2c1.2 6.2 3.8 8.8 10 10-6.2 1.2-8.8 3.8-10 10C10.8 15.8 8.2 13.2 2 12c6.2-1.2 8.8-3.8 10-10Z" fill="currentColor" stroke="none"/><path d="M19 3v4m-2-2h4"/>',
 home:'<path d="m3.5 10 8.5-6.5 8.5 6.5v9.5a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1Z"/>',film:'<rect x="3" y="3.5" width="18" height="17" rx="2"/><path d="M7 4v16m10-16v16M3 9h4m-4 6h4m10-6h4m-4 6h4"/>',tv:'<rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 22h8"/>',live:'<circle cx="12" cy="12" r="2"/><path d="M7.7 7.7a6 6 0 0 0 0 8.6m8.6-8.6a6 6 0 0 1 0 8.6M4.2 4.2a11 11 0 0 0 0 15.6m15.6-15.6a11 11 0 0 1 0 15.6"/>',search:'<circle cx="10.8" cy="10.8" r="5.8"/><path d="m15.4 15.4 4.1 4.1"/>',wifi:'<path d="M2.5 8a15.6 15.6 0 0 1 19 0M5.5 11.6a10.6 10.6 0 0 1 13 0M8.5 15.1a5.7 5.7 0 0 1 7 0"/><circle cx="12" cy="18.6" r="1" fill="currentColor" stroke="none"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M10 3h4l.7 2.3 2.1 1.2 2.3-.5 2 3.5-1.6 1.7v2.4l1.6 1.7-2 3.5-2.3-.5-2.1 1.2L14 22h-4l-.7-2.5-2.1-1.2-2.3.5-2-3.5 1.6-1.7v-2.4L2.9 9.5l2-3.5 2.3.5 2.1-1.2Z"/>',
 play:'<path d="M8 5.3a.8.8 0 0 0-1.2.7v12a.8.8 0 0 0 1.2.7l10-6a.8.8 0 0 0 0-1.4Z" fill="currentColor" stroke="none"/>',bookmark:'<path d="M6 4h12v17l-6-4-6 4Z"/>',mountain:'<path d="m2 18 6-9 4 5 3-8 7 12ZM6 12l2 1.5 2-1m3-2 2 1.5 2-1.5"/>',chev:'<path d="m9 5 7 7-7 7"/>',arrow:'<path d="M4 12h15m-6-6 6 6-6 6"/>',left:'<path d="M20 12H5m6-6-6 6 6 6"/>',grid:'<rect x="3.5" y="3.5" width="6" height="6" rx="1"/><rect x="14.5" y="3.5" width="6" height="6" rx="1"/><rect x="3.5" y="14.5" width="6" height="6" rx="1"/><rect x="14.5" y="14.5" width="6" height="6" rx="1"/>',sliders:'<path d="M4 7h5m4 0h7M4 17h9m4 0h3M9 4v6m8 4v6"/>',x:'<path d="m6 6 12 12M6 18 18 6"/>',check:'<path d="m5 12 5 5 9-10"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/>',reload:'<path d="M20 11a8 8 0 1 0-2 6m2-12v6h-6"/>',external:'<path d="M13 4h7v7m0-7-9 9m8 0v7H4V5h7"/>',up:'<path d="m6 14 6-6 6 6"/>',down:'<path d="m6 10 6 6 6-6"/>',layers:'<path d="m3 9 9-5 9 5-9 5Zm0 4 9 5 9-5M3 17l9 5 9-5"/>',bolt:'<path d="m13 3-8 11h6l-1 7 9-12h-6Z"/>'};
@@ -251,7 +252,7 @@ const btn=(text,action,icon='',cls='ghost glass',arg='')=>`<button class="pill $
 const rnd=(name,action,icon=action)=>`<button type="button" class="round glass" aria-label="${name}" title="${name}" data-do="${action}">${ico(icon,21)}</button>`;
 const tabs=[['home','Início','home'],['movies','Filmes','film'],['series','Séries','tv'],['live','Ao vivo','live']];
 const syncHeader=()=>{
- if(!paintedHeader){$('top').innerHTML=`<button class="brand" aria-label="Nova OS, início" data-do="page" data-arg="home"><img class="nova-wordmark" src="img/brand/nova-os-header.webp" alt="" width="174" height="54" decoding="async"></button><nav class="nav glass" aria-label="Navegação principal"><span class="nav-indicator" aria-hidden="true"></span>${tabs.map(([id,name,i])=>`<button data-do="page" data-arg="${id}" aria-label="${name}">${ico(i,18)}<span class="nav-label" aria-hidden="true">${name}</span></button>`).join('')}</nav><div class="header-right">${rnd('Buscar','search')}<span class="net" id="net" title="Conexão">${ico('wifi',21)}</span><div class="time"><b id="clock"></b><span id="date"></span></div>${rnd('Configurações','settings')}</div>`;paintedHeader=true;}
+ if(!paintedHeader){$('top').innerHTML=`<button class="brand" aria-label="Nova OS, início" data-do="page" data-arg="home"><img class="nova-wordmark" src="img/brand/nova-os-header.webp" alt="" width="174" height="54" decoding="async"></button><nav class="nav glass" aria-label="Navegação principal"><span class="nav-indicator" aria-hidden="true"></span>${tabs.map(([id,name,i])=>`<button data-do="page" data-arg="${id}" aria-label="${name}">${ico(i,18)}<span class="nav-label" aria-hidden="true">${name}</span></button>`).join('')}</nav><div class="header-right">${rnd('Nova Store','storeShortcut','store')}${rnd('Buscar','search')}<span class="net" id="net" title="Conexão">${ico('wifi',21)}</span><div class="time"><b id="clock"></b><span id="date"></span></div>${rnd('Configurações','settings')}</div>`;paintedHeader=true;}
  if(headerPage===page)return;headerPage=page;
  const nav=$('top').querySelector('.nav');const index=tabs.findIndex(t=>t[0]===page);nav.classList.toggle('has-current',index>=0);if(index>=0){nav.style.setProperty('--nav-index',index);if(legacyLayout)nav.querySelector('.nav-indicator').style.transform='translateX('+(index*44)+'px)';}
  nav.querySelectorAll('button').forEach(el=>{const active=el.dataset.arg===page;el.classList.toggle('active',active);if(active)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
@@ -345,7 +346,7 @@ const groups={
  system:{title:'Sistema',icon:'settings',hint:'Android e informações',copy:'Gerencie a integração do Nova OS com o seu aparelho.',rows:()=>[
    setting('Launcher padrão','Abre a configuração de tela inicial do Android.','home','system','home'),
    setting('Configurações do Android','Acesse rede, tela e outros ajustes do aparelho.','settings','system','all'),
-   setting('Nova Store','Baixe, instale ou abra o catálogo de apps para TV.','down','novaStore'),
+   setting('Nova Store','Baixe, instale ou abra o catálogo de apps para TV.','store','novaStore'),
    setting('Atualizações','Consulte, baixe e instale novas versões do Nova OS.','reload','page','updates'),
    setting('Sobre o Nova OS','Versão, fontes de catálogo e informações de privacidade.','info','about')]}
 };
@@ -576,6 +577,8 @@ function doAction(action,arg){switch(action){
   if(page!=='movies'||arg===movieFilter||!['all','prime','itunes'].includes(arg))break;
   movieFilter=arg;movieLimit=MOVIE_BATCH;const request=arg==='prime'?null:prepareCatalog('movies',false);render(true,false);focusMatching($('main'),'movieFilter\n'+arg);if(request)request();break;
  }
+ case 'storeShortcut':if(native&&native.openStoreIfInstalled&&native.openStoreIfInstalled())break;
+  // Otherwise show the same install controls available in System settings.
  case 'novaStore':renderStore();if(native&&native.storeStatus)native.storeStatus();break;
  case 'storeDownload':startStoreDownload();break;
  case 'storeInstall':if(native&&native.storeAction)native.storeAction('install');break;

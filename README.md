@@ -1,4 +1,4 @@
-# Nova OS 1.2.1
+# Nova OS 1.2.3
 
 Launcher em português para Android TV e TV boxes. É um aplicativo de tela inicial, não uma ROM. O pacote Android gerencia aplicativos instalados, controle remoto, rede e o atualizador; a interface é local, renderizada pelo Android System WebView.
 
@@ -62,6 +62,6 @@ Pode-se definir `CHROMIUM_BIN` ou `NOVA_PREVIEW_URL`. O teste web simula a ponte
 
 ### Nova Store (Android TV)
 
-A partir do Nova OS 1.2.2, o convite aparece uma única vez por instalação/dados do app, somente se a loja ainda não estiver instalada. Recusar, fechar ou usar Voltar não impede abrir **Configurações → Sistema → Nova Store** a qualquer momento. O atalho baixa e verifica o APK oficial da loja (versão, pacote, tamanho e SHA-256), oferece instalação com confirmação do Android e permite abrir a loja quando ela já estiver instalada. Não há download automático.
+A partir do Nova OS 1.2.2, o convite aparece uma única vez por instalação/dados do app, somente se a loja ainda não estiver instalada. Recusar, fechar ou usar Voltar não impede abrir **Configurações → Sistema → Nova Store** a qualquer momento. O atalho baixa e verifica o APK oficial da loja (versão, pacote, tamanho e SHA-256), oferece instalação com confirmação do Android e permite abrir a loja quando ela já estiver instalada. Não há download automático. Na versão 1.2.3, o botão de sacola imediatamente à esquerda da busca abre a loja se ela estiver instalada; caso contrário, mostra as opções de download e instalação.
 
 A loja é um app independente desenvolvido na branch independente `nova-store-app`, que não contém o código nem o histórico do launcher; seu APK é distribuído na release separada `nova-store-v1.0.0` do repositório `Pedro21062014/nova-os`, que não deve ser marcada como Latest. Antes de distribuir o launcher, confirme que o link público da loja disponibiliza exatamente o binário com o hash fixado em `StoreInstaller.java`.

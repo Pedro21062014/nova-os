@@ -53,13 +53,20 @@ final class StoreInstaller {
         }catch(Exception invalid){UpdateFileProvider.storeStaged(activity).delete();publish();}
         else publish();
     });}
+    boolean openIfInstalled(){
+        if(closed||!installed())return false;
+        open();return true;
+    }
     void open(){activity.runOnUiThread(()->{
         try{
             PackageManager pm=activity.getPackageManager();Intent intent=pm.getLeanbackLaunchIntentForPackage(PACKAGE);
             if(intent==null)intent=pm.getLaunchIntentForPackage(PACKAGE);
             if(intent==null)throw new IllegalStateException();
             activity.startActivity(intent);
-        }catch(RuntimeException unavailable){run(()->show(installed()?"installed":"available","Não foi possível abrir a Nova Store neste aparelho."));}
+        }catch(RuntimeException unavailable){
+            activity.showStoreOpenError();
+            run(()->show(installed()?"installed":"available","Não foi possível abrir a Nova Store neste aparelho."));
+        }
     });}
     void download(){skipInvitation();run(this::downloadNow);}
     private void downloadNow(){
