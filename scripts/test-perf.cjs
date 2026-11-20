@@ -23,13 +23,18 @@ const pixel=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR
   await p.evaluate(()=>NovaUi.updateApps(JSON.stringify(window.appFixtures.map(a=>a.id==='000'?{...a,label:'App 000 atualizado'}:a))));
   assert.equal(await p.evaluate(()=>initialMore===document.getElementById('home-more')),true);
   assert.equal(await p.evaluate(()=>document.activeElement.dataset.arg),'000');
+  await p.evaluate(()=>{
+   window.stableTile=document.querySelector('#home-app-grid [data-arg="000"]');
+   NovaUi.updateApps(JSON.stringify(window.appFixtures.map(a=>a.id==='000'?{...a,label:'App 000 atualizado'}:a.id==='139'?{...a,label:'App 139 renomeado'}:a)));
+  });
+  assert.equal(await p.evaluate(()=>stableTile===document.activeElement&&stableTile.isConnected),true);
   await p.getByRole('button',{name:'Todos os apps',exact:true}).click();
   await p.waitForFunction(()=>document.querySelector('button[data-arg="010"] img[src]'));
   assert.equal(await p.locator('#main .tile').count(),140);
   assert.equal(await p.locator('button[data-arg="139"] img[src]').count(),0);
   const initial=iconRequests.size;
   assert(initial>0&&initial<100,`Unexpected initial icon count: ${initial}`);
-  await p.getByRole('button',{name:'App 139',exact:true}).focus();
+  await p.getByRole('button',{name:'App 139 renomeado',exact:true}).focus();
   await p.waitForFunction(()=>document.querySelector('button[data-arg="139"] img[src]'));
   assert.equal(await p.evaluate(()=>document.activeElement.dataset.arg),'139');
   assert.deepEqual(errors,[]);

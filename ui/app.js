@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.2.3';
+const VERSION = '1.2.4';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -247,6 +247,13 @@ const escape = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<'
 const attr=escape;
 const slug=s=>{const text=String(s||'');return (text.normalize?text.normalize('NFD'):text).replace(/[\u0300-\u036f]/g,'').toLowerCase();};
 const compact=s=>String(s||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+let appIndexSource=null, installedById=new Map(), appNames=[], lastAppPayload='';
+const brandByPackage=Object.create(null), brandOrder=Object.create(null);
+services.forEach(([brand,label,url,packages],i)=>{brandOrder[brand]=i;packages.forEach(pkg=>{if(!brandByPackage[pkg])brandByPackage[pkg]=brand;});});
+function ensureAppIndex(){
+ if(appIndexSource===apps)return;
+ appIndexSource=apps;installedById=new Map();appNames=apps.map(a=>{installedById.set(a.id,a);return {app:a,name:slug(a.label)};});
+}
 const bool=(key)=>!!pref[key];
 const btn=(text,action,icon='',cls='ghost glass',arg='')=>`<button class="pill ${cls}" data-do="${action}" data-arg="${attr(arg)}">${icon?ico(icon,18):''}${escape(text)}</button>`;
 const rnd=(name,action,icon=action)=>`<button type="button" class="round glass" aria-label="${name}" title="${name}" data-do="${action}">${ico(icon,21)}</button>`;
@@ -281,7 +288,7 @@ function watchImages(root){if(imageObserver)each.call(root.querySelectorAll('img
 function forgetImages(root){if(imageObserver)each.call(root.querySelectorAll('img[data-image]'),img=>imageObserver.unobserve(img));}
 function appTile(a){const more=a.id==='__more';const mark=more?ico('grid',33):logos.includes(a.brand)?`<img alt="" class="app-logo logo-${a.brand}" src="img/brand/${a.brand}.webp">`:a.icon&&native?`<img alt="" ${imageSource(a.icon)}>`:`<span class="generic">${escape(a.label.charAt(0).toUpperCase())}</span>`;return `<button class="tile" data-do="${more?'page':'app'}" data-arg="${more?'apps':attr(a.id)}" aria-label="${attr(a.label)}"><span class="app-mark glass${more?' more':''}">${mark}</span><span class="app-label">${escape(a.label)}</span></button>`;}
 function pins(){if(Array.isArray(pref.pins))return pref.pins; return apps.slice(0,7).map(a=>a.id);}
-function tiles(){const map=new Map();apps.forEach(a=>map.set(a.id,a));return pins().map(id=>map.get(id)).filter(Boolean).slice(0,7);}
+function tiles(){ensureAppIndex();return pins().map(id=>installedById.get(id)).filter(Boolean).slice(0,7);}
 function card(t,vertical=false){
  const portrait=vertical===true;
  const image=portrait&&t.image?t.image.replace(/\/\d+x\d+bb\.(png|jpg)$/i,'/300x450bb.jpg'):t.image;
@@ -313,13 +320,16 @@ function extraHome(){
 const homeAppTiles=()=>[...tiles(),{id:'__more',label:'Todos os apps'}].map(appTile).join('');
 function refreshHomeApps(){
  const grid=$('home-app-grid');if(!grid)return;
+ const html=homeAppTiles();if(grid._tiles===html)return;grid._tiles=html;
  const anchor=grid.contains(document.activeElement)?describe(document.activeElement):'';
- forgetImages(grid);grid.innerHTML=homeAppTiles();watchImages(grid);
+ forgetImages(grid);grid.innerHTML=html;watchImages(grid);
  if(anchor&&!dialog)focusMatching(grid,anchor);
  if(!useDpad){const first=grid.querySelector('.tile');if(first)first.classList.add('preset-focus');}
 }
+let paintedTiles='';
 function home(){
- const appsMarkup=`<section class="shelf" aria-label="Seus apps">${section('Seus apps','Seus favoritos, sempre à mão.','organize','Organizar','sliders')}<div class="app-grid" id="home-app-grid">${homeAppTiles()}</div></section>`;
+ paintedTiles=homeAppTiles();
+ const appsMarkup=`<section class="shelf" aria-label="Seus apps">${section('Seus apps','Seus favoritos, sempre à mão.','organize','Organizar','sliders')}<div class="app-grid" id="home-app-grid">${paintedTiles}</div></section>`;
  const display=bool('trending')&&catalogs.movies.items.length?catalogs.movies.items.slice(0,4):curated;
  const shelf=bool('films')?`<section class="shelf" aria-label="Descobrir">${section('Para sua próxima sessão','Filmes e séries em destaque' ,'page','Ver catálogo','arrow','movies')}<div class="card-grid">${display.map(card).join('')}</div></section>`:'';
  return `${bool('hero')?`<section class="hero" aria-label="Atalhos do início"><div class="actions">${btn(bool('films')?'Explorar':'Seus apps','page',bool('films')?'film':'grid','primary',bool('films')?'movies':'apps')}${btn('Minha lista','page','bookmark','ghost glass','saved')}</div><button class="ambient-card glass" data-do="page" data-arg="ambient"><span class="picture">${ico('mountain',22)}</span><span class="words"><small>MODO AMBIENTE</small><b data-wall-title>${escape(wallNow.title)}</b></span><span class="chev">${ico('chev',18)}</span></button></section>`:'<div class="section-label" style="margin-top:36px">Tela inicial</div>'}${appsMarkup}${shelf}${extraHome()}`;
@@ -400,7 +410,12 @@ function saved(){return head('SUA BIBLIOTECA','Minha lista','Os títulos que voc
 function organizer(){return head('TELA INICIAL','Organizar apps','Escolha até sete favoritos. Selecione um app para fixar, remover ou mover.',btn('Concluir','page','check','primary',organizeFrom))+(apps.length?`<h2 class="section-label">Fixados · ${tiles().length}/7</h2><div class="mini-list">${tiles().map((a,i)=>setting(a.label,`${i+1}ª posição`,'star','manage',a.id)).join('')||'<p class="status">Nenhum favorito fixado.</p>'}</div><h2 class="section-label">Outros aplicativos</h2><div class="mini-list">${apps.filter(a=>!pins().includes(a.id)).map(a=>setting(a.label,'Não fixado','grid','manage',a.id)).join('')||'<p class="status">Nenhum outro aplicativo.</p>'}</div>`:empty('Sem apps para organizar','Quando você instalar um aplicativo, ele aparecerá aqui.'));}
 function search(){return head('ENCONTRE MAIS RÁPIDO','Buscar','Pesquise apps e títulos disponíveis no catálogo.')+`<input class="search-box" id="query" type="search" enterkeyhint="search" aria-label="Buscar por nome" placeholder="Digite o nome de um app, filme ou série…" autocomplete="off" value="${attr(searchValue)}"><div id="results"></div>`;}
 function uniqueTitles(items){const map=new Map();items.forEach(item=>map.set(item.id,item));const out=[];map.forEach(item=>out.push(item));return out;}
-function searchResults(){const box=$('results');if(!box)return;forgetImages(box);const q=slug(searchValue.trim());if(!q){box.innerHTML='<p class="section-label">Digite para começar</p>';return;}const a=apps.filter(x=>slug(x.label).includes(q)), c=uniqueTitles(curated.concat(primeMovies,catalogs.movies.items,catalogs.series.items,pref.saved)).filter(x=>slug(x.title).includes(q)).slice(0,15);box.innerHTML=(!a.length&&!c.length)?'<p class="section-label">Nenhum resultado encontrado</p>':`${a.length?`<h2 class="section-label">Aplicativos</h2><div class="app-grid">${a.map(appTile).join('')}</div>`:''}${c.length?`<h2 class="section-label">Filmes e séries</h2><div class="card-grid">${c.map(card).join('')}</div>`:''}`;watchImages(box);}
+let titleSearch=null;
+function titleIndex(){
+ if(!titleSearch)titleSearch=uniqueTitles(curated.concat(primeMovies,catalogs.movies.items,catalogs.series.items,pref.saved)).map(item=>({item,name:slug(item.title)}));
+ return titleSearch;
+}
+function searchResults(){const box=$('results');if(!box)return;const q=slug(searchValue.trim());if(box._query===q&&box._catalog===titleSearch&&box._apps===apps)return;forgetImages(box);box._query=q;box._apps=apps;if(!q){box.innerHTML='<p class="section-label">Digite para começar</p>';return;}ensureAppIndex();const a=appNames.filter(x=>x.name.includes(q)).map(x=>x.app),c=[];for(const x of titleIndex()){if(x.name.includes(q))c.push(x.item);if(c.length===15)break;}box._catalog=titleSearch;box.innerHTML=(!a.length&&!c.length)?'<p class="section-label">Nenhum resultado encontrado</p>':`${a.length?`<h2 class="section-label">Aplicativos</h2><div class="app-grid">${a.map(appTile).join('')}</div>`:''}${c.length?`<h2 class="section-label">Filmes e séries</h2><div class="card-grid">${c.map(card).join('')}</div>`:''}`;watchImages(box);}
 function ambient(){return `<section class="amb-content"><div><span class="eyebrow">MODO AMBIENTE</span><h1 data-wall-title>${escape(wallNow.title)}</h1><p id="ambient-clock"></p><button class="wall-credit" data-do="wallCredit" ${wallNow.author?'':'hidden'}>${wallNow.author?escape(wallNow.author+' · Unsplash'):''}</button></div>${btn('Sair do modo ambiente','page','left','ghost glass','home')}</section>`;}
 let prefsUpdate={repo:'',automatic:true,autoDownload:false,status:'idle',version:VERSION,available:'',message:'',progress:0},repoDraft=null, updateNotice='';
 function updateStatusActions(){
@@ -419,7 +434,7 @@ function updateState(json){
  if(!next||typeof next.status!=='string')return;
  const changedStatus=next.status!==prefsUpdate.status||next.repo!==prefsUpdate.repo;
  if(next.repo!==prefsUpdate.repo)repoDraft=null;
- prefsUpdate=next;applyAppearance();
+ prefsUpdate=next;if(changedStatus)applyAppearance();
  const message=$('update-message');if(message){
   message.textContent=next.message||'Pronto para consultar a fonte de atualização.';
   $('update-version').textContent='Versão instalada '+next.version;
@@ -432,7 +447,7 @@ function updateState(json){
 }
 const pages={home,movies:()=>catalog('movies'),series:()=>catalog('series'),live,apps:allApps,saved,organize:organizer,settings,search,ambient,updates};
 const describe=el=>el&&el.dataset&&el.dataset.do?`${el.dataset.do}\n${el.dataset.arg||''}`:'';
-function focusMatching(scope,signature){if(!signature)return false;const hit=Array.from(scope.querySelectorAll('button[data-do]')).find(el=>describe(el)===signature);if(hit){hit.focus();return true;}return false;}
+function focusMatching(scope,signature){if(!signature)return false;const at=signature.indexOf('\n'),action=signature.slice(0,at),arg=signature.slice(at+1),nodes=scope.querySelectorAll('button[data-do]');for(let i=0;i<nodes.length;i++){const hit=nodes[i];if(hit.dataset.do===action&&(hit.dataset.arg||'')===arg){hit.focus();return true;}}return false;}
 function applyAppearance(){
  document.body.className=`${page} ${legacyLayout?'legacy-layout':''} ${legacyGlass?'legacy-glass':''} ${softwareRendering?'software-rendering':''} ${prefsUpdate.status==='available'||prefsUpdate.status==='ready'?'has-update':''} ${pref.glass?'':'solid'} ${pref.wall?'':'no-wall'} ${useDpad?'dpad':''} ${pref.motion?'':'motion-off'} ${idleMode?'idle-ambient':''}`;sampleGlass();
 }
@@ -444,6 +459,7 @@ function render(reset=false,refocus=true){
  const main=$('main'), old=document.activeElement, wasMain=main.contains(old), anchor=describe(old), y=main.scrollTop;
  applyAppearance();
  syncHeader();forgetImages(main);main.innerHTML=page==='home'||page==='ambient'?`<div class="page-surface">${pages[page]()}</div>`:`<section class="panel page-surface">${pages[page]()}</section>`;
+ if(page==='home'){const grid=$('home-app-grid');if(grid)grid._tiles=paintedTiles;}
  main.scrollTop=reset?0:y;watchImages(main);
  if(page==='updates'){const input=$('release-repo');if(input)input.addEventListener('input',()=>{repoDraft=input.value;});}
  if(page==='search'){const q=$('query');q.addEventListener('input',()=>{searchValue=q.value;searchResults();});searchResults();}
@@ -511,7 +527,7 @@ function artReady(url,revision){
 }
 function catalogReply(which,good,body){
  const s=catalogs[which];if(!s)return;
- try{const items=good&&normalize(which,JSON.parse(body));if(!items||!items.length)throw Error('Catálogo vazio');s.items=items;s.ts=Date.now();s.state='ready';try{localStorage.setItem('nova.catalog.'+which,JSON.stringify({ts:s.ts,items}));}catch(_){} }catch(_){s.state='error';}
+ try{const items=good&&normalize(which,JSON.parse(body));if(!items||!items.length)throw Error('Catálogo vazio');s.items=items;titleSearch=null;s.ts=Date.now();s.state='ready';try{localStorage.setItem('nova.catalog.'+which,JSON.stringify({ts:s.ts,items}));}catch(_){} }catch(_){s.state='error';}
  if((page===which&&!(which==='movies'&&movieFilter==='prime'))||(page==='home'&&which==='movies'&&bool('trending')))render(false,!dialog);
  if(page==='search'&&(!document.activeElement||!$('results').contains(document.activeElement))) searchResults();
 }
@@ -571,7 +587,7 @@ function doAction(action,arg){switch(action){
  case 'pin':case 'raise':case 'lower':updatePins(arg,action);break;
  case 'detail':detail(arg);break;
  case 'visit':{const t=titleById(arg);if(t){const link=isPrime(t)?(primeUrlOk(t.url)?t.url:''):urlOk(t.url);if(link)navigateExternal(link);}break;}
- case 'save':{const t=titleById(arg);if(!t)break;const i=pref.saved.findIndex(x=>x.id===arg);if(i>=0)pref.saved.splice(i,1);else{if(pref.saved.length>=100){toast('Remova um título antes de salvar outro.');break;}pref.saved.push(t);}persist();if(page==='saved'||page==='home')render(false,false);if(titleById(arg)){detail(arg);focusMatching($('dialog'),'save\n'+arg);}else closeDialog();toast(i>=0?'Título removido.':'Título salvo na sua lista.');break;}
+ case 'save':{const t=titleById(arg);if(!t)break;const i=pref.saved.findIndex(x=>x.id===arg);if(i>=0)pref.saved.splice(i,1);else{if(pref.saved.length>=100){toast('Remova um título antes de salvar outro.');break;}pref.saved.push(t);}titleSearch=null;persist();if(page==='saved'||page==='home')render(false,false);if(titleById(arg)){detail(arg);focusMatching($('dialog'),'save\n'+arg);}else closeDialog();toast(i>=0?'Título removido.':'Título salvo na sua lista.');break;}
  case 'moreMovies':moreMovies();break;
  case 'movieFilter':{
   if(page!=='movies'||arg===movieFilter||!['all','prime','itunes'].includes(arg))break;
@@ -751,7 +767,7 @@ function resize(){
  sampleGlass();
 }
 window.NovaUi={
- updateApps(raw){try{const rows=JSON.parse(raw);if(!Array.isArray(rows))return;apps=rows.filter(a=>a&&a.id&&a.label).map(a=>{const entry=services.find(x=>x[3].includes(a.pkg));return {...a,brand:entry&&entry[0]};});apps.sort((a,b)=>{const rank=x=>x.brand?services.findIndex(s=>s[0]===x.brand):999;return rank(a)-rank(b)||a.label.localeCompare(b.label,'pt-BR');});if(['home','apps','organize','live'].includes(page)){if(page==='home')refreshHomeApps();else render(false,!dialog);if(document.activeElement===document.body&&useDpad&&!dialog)focusPage();}if(page==='search')searchResults();}catch(_){}},
+ updateApps(raw){try{if(raw===lastAppPayload)return;const rows=JSON.parse(raw);if(!Array.isArray(rows))return;lastAppPayload=raw;apps=rows.filter(a=>a&&a.id&&a.label).map(a=>({...a,brand:brandByPackage[a.pkg]}));const rank=x=>x.brand?brandOrder[x.brand]:999;apps.sort((a,b)=>rank(a)-rank(b)||a.label.localeCompare(b.label,'pt-BR'));if(['home','apps','organize','live'].includes(page)){if(page==='home')refreshHomeApps();else render(false,!dialog);if(document.activeElement===document.body&&useDpad&&!dialog)focusPage();}if(page==='search')searchResults();}catch(_){}},
  catalogReply, artReady, updateState, storeState, storeInvite, toast, back, key, remoteArrow, net,
  suspend(){nativePaused=true;clearTimeout(wallTimer);clearTimeout(idleTimer);idleTimer=0;},
  reopen(){nativePaused=false;clock();net();queueIdle();if((bool('rotate')||!wallActive)&&Date.now()-lastWallChange>1000)rotateWallpaper(bool('rotate'));else scheduleWallpaper();},
