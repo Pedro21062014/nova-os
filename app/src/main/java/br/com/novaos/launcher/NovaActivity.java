@@ -250,6 +250,7 @@ public final class NovaActivity extends Activity {
         @JavascriptInterface public void storeAction(String action){
             if(web!=owner||store==null)return;
             if("download".equals(action))store.download();
+            else if("check".equals(action))store.check();
             else if("install".equals(action))store.install();
             else if("open".equals(action))store.open();
             else if("dismiss".equals(action))store.skipInvitation();

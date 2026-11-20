@@ -7,7 +7,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.SystemClock;
 import android.provider.Settings;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Locale;
@@ -26,18 +29,24 @@ import org.json.JSONObject;
 
 final class StoreInstaller {
     static final String PACKAGE = "br.com.novaos.store";
-    private static final class Release {
+    private static final String CHANNEL="https://raw.githubusercontent.com/Pedro21062014/nova-os/refs/heads/nova-store-app/atualizacao.json";
+    private static final String ASSETS="https://github.com/Pedro21062014/nova-os/releases/download/nova-store-v";
+    private static final String STORE_CERT="126fdf162c910bbf65b66c4f225f4adbec1ca102f8368fdf9f5ce0b5b7f4c004";
+    static final class Release {
         final String version,url,sha;
         final long size;
         final int code;
         Release(String version,int code,long size,String sha){this.code=code;
             this.version=version;this.size=size;this.sha=sha;
-            this.url="https://github.com/Pedro21062014/nova-os/releases/download/nova-store-v"+version+"/Nova-Store-"+version+".apk";
+            this.url=ASSETS+version+"/Nova-Store-"+version+".apk";
         }
     }
-    private static final Release CURRENT=new Release("1.0.2",3,5076713L,"067e141949dfd0f83487dd77dfd4d45ff2eb8446ae56ef70a6a74619902f8212");
-    // Keeps the shortcut usable if the new asset isn't public yet. Both releases are pinned.
-    private static final Release BACKUP=new Release("1.0.1",2,4965053L,"7cfe35833d0aab705c7687d7b69f5329006bcbb01420cc769ced993812173266");
+    private static final Release PINNED=new Release("1.0.4",5,5080809L,"253c4e1819f02078b210233f57efd13ddd0553cb98fbf243df5c1711f84e7208");
+    private static final Release BACKUP=new Release("1.0.3",4,5080809L,"ba8bdf96e82f190a5df6b7f49d25f5565344ba37493e300d63dbded82ad4e5d8");
+    private volatile Release target=PINNED;
+    private Release stagedRelease;
+    private long lastCheck=-1;
+    private String checkStatus="idle";
     interface Callback { void state(JSONObject data); }
     private final NovaActivity activity;
     private final SharedPreferences prefs;
@@ -46,7 +55,11 @@ final class StoreInstaller {
     private volatile boolean closed;
     private String status="available", message="Baixe a Nova Store para explorar o catálogo de apps para TV.";
     private int progress, installedCode;
-    StoreInstaller(NovaActivity a, Callback c){activity=a;callback=c;prefs=a.getSharedPreferences("nova-store-invitation",0);}
+    StoreInstaller(NovaActivity a, Callback c){
+        activity=a;callback=c;prefs=a.getSharedPreferences("nova-store-invitation",0);
+        try{Release saved=parseChannel(new JSONObject(prefs.getString("last-channel","")));if(saved.code>target.code)target=saved;}
+        catch(Exception ignored){}
+    }
     private PackageInfo installedInfo(int flags){try{return activity.getPackageManager().getPackageInfo(PACKAGE,flags);}catch(PackageManager.NameNotFoundException e){return null;}}
     private boolean installed(){return installedInfo(0)!=null;}
     private int readInstalledCode(){
@@ -55,26 +68,27 @@ final class StoreInstaller {
         long code=Build.VERSION.SDK_INT>=28?info.getLongVersionCode():info.versionCode;
         return (int)Math.min(Integer.MAX_VALUE,Math.max(1,code));
     }
-    private boolean hasUpdate(){return installedCode>0&&installedCode<CURRENT.code;}
+    private boolean hasUpdate(){return installedCode>0&&installedCode<target.code;}
     synchronized boolean claimUpdateNotice(){
-        int version=readInstalledCode();
-        return !closed&&version>0&&version<CURRENT.code&&prefs.getInt("update-notice-code",0)<CURRENT.code
-            &&prefs.edit().putInt("update-notice-code",CURRENT.code).commit();
+        int version=readInstalledCode(), notice=target.code;
+        return !closed&&version>0&&version<notice&&prefs.getInt("update-notice-code",0)<notice
+            &&prefs.edit().putInt("update-notice-code",notice).commit();
     }
     private boolean reachedCurrent(){
         installedCode=readInstalledCode();
-        if(installedCode<CURRENT.code)return false;
-        UpdateFileProvider.storeStaged(activity).delete();
+        if(installedCode<target.code)return false;
+        UpdateFileProvider.storeStaged(activity).delete();stagedRelease=null;progress=0;
         show("installed","A Nova Store já está atualizada neste aparelho.");return true;
     }
-    private String offerMessage(){return hasUpdate()?"Nova Store "+CURRENT.version+" disponível. Baixe a atualização sem desinstalar a loja.":"Baixe a Nova Store para explorar o catálogo de apps para TV.";}
+    private String offerMessage(){return hasUpdate()?"Nova Store "+target.version+" disponível. Baixe a atualização sem desinstalar a loja.":"Baixe a Nova Store para explorar o catálogo de apps para TV.";}
     synchronized boolean claimInvitation(){
         return !closed&&!installed()&&!prefs.getBoolean("shown",false)&&prefs.edit().putBoolean("shown",true).commit();
     }
     void skipInvitation(){prefs.edit().putBoolean("shown",true).apply();}
     private void run(Runnable task){if(!closed)try{worker.execute(task);}catch(RejectedExecutionException ignored){}}
     void close(){closed=true;worker.shutdownNow();}
-    void send(){run(()->{
+    void send(){run(()->{refreshState();checkNow(false);});}
+    private void refreshState(){
         if(reachedCurrent())return;
         if("installed".equals(status))show("available",offerMessage());
         else if("permission".equals(status)&&Build.VERSION.SDK_INT>=26&&activity.getPackageManager().canRequestPackageInstalls())show("ready","Permissão concedida. Selecione Instalar para continuar.");
@@ -83,7 +97,47 @@ final class StoreInstaller {
             verifyStaged(UpdateFileProvider.storeStaged(activity));progress=100;show("ready","APK verificado. Pronto para instalar.");
         }catch(Exception invalid){UpdateFileProvider.storeStaged(activity).delete();show("available",offerMessage());}
         else if("available".equals(status))show("available",offerMessage());else publish();
-    });}
+    }
+    static Release parseChannel(JSONObject json) throws Exception {
+        String version=json.getString("version"),hash=json.getString("sha256");
+        long size=json.getLong("bytes"),code=json.getLong("versionCode");
+        if(json.getInt("schema")!=1||!PACKAGE.equals(json.getString("package"))||code<1||code>Integer.MAX_VALUE||size<10000||size>80L*1024*1024||
+            !version.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")||!hash.matches("[a-f0-9]{64}"))throw new IOException("Channel rules");
+        Release release=new Release(version,(int)code,size,hash);
+        if(!release.url.equals(json.getString("url")))throw new IOException("Channel asset");
+        return release;
+    }
+    private static Release queryChannel(boolean manual) throws Exception {
+        HttpsURLConnection c=(HttpsURLConnection)new URL(CHANNEL+(manual?"?check="+System.currentTimeMillis():"")).openConnection();
+        try{
+            c.setConnectTimeout(4500);c.setReadTimeout(5000);c.setInstanceFollowRedirects(false);c.setUseCaches(false);c.setRequestProperty("Cache-Control","no-cache");
+            if(c.getResponseCode()!=200||c.getContentLength()>8192)throw new IOException("Channel response");
+            try(InputStream in=c.getInputStream();ByteArrayOutputStream out=new ByteArrayOutputStream()){
+                byte[] b=new byte[1024];int n;while((n=in.read(b))!=-1){if(out.size()+n>8192)throw new IOException("Channel too large");out.write(b,0,n);}
+                return parseChannel(new JSONObject(new String(out.toByteArray(),StandardCharsets.UTF_8)));
+            }
+        }finally{c.disconnect();}
+    }
+    void check(){run(()->checkNow(true));}
+    private void checkNow(boolean manual){
+        long now=SystemClock.elapsedRealtime();
+        if(closed||"installing".equals(status)||(!manual&&lastCheck>=0&&now-lastCheck<300000))return;
+        lastCheck=now;if(manual){checkStatus="checking";publish();}
+        try{
+            Release fresh=queryChannel(manual);
+            if(closed)return;
+            if(fresh.code>target.code){
+                target=fresh;
+                prefs.edit().putString("last-channel",new JSONObject().put("schema",1).put("package",PACKAGE).put("version",fresh.version)
+                    .put("versionCode",fresh.code).put("url",fresh.url).put("bytes",fresh.size).put("sha256",fresh.sha).toString()).apply();
+                if("ready".equals(status)||"permission".equals(status)){
+                    UpdateFileProvider.storeStaged(activity).delete();stagedRelease=null;status="available";progress=0;
+                }
+            }
+            if(manual)checkStatus="success";
+            refreshState();
+        }catch(Exception failure){if(manual){checkStatus="error";publish();}}
+    }
     boolean openIfInstalled(){
         if(closed||!installed())return false;
         open();return true;
@@ -107,7 +161,7 @@ final class StoreInstaller {
         File temp=null,staged=UpdateFileProvider.storeStaged(activity);HttpsURLConnection c=null;
         try{
             temp=File.createTempFile("nova-store-",".tmp",activity.getCacheDir());
-            Release selected=CURRENT;
+            Release selected=target;
             try{c=connect(selected);}catch(FileNotFoundException unavailable){if(hasUpdate())throw unavailable;selected=BACKUP;c=connect(selected);}
             long total=0;
             try(InputStream in=c.getInputStream();FileOutputStream out=new FileOutputStream(temp)){
@@ -122,7 +176,7 @@ final class StoreInstaller {
             if(closed)throw new IOException("Canceled");
             if(staged.exists()&&!staged.delete())throw new IOException("Cache");
             if(!temp.renameTo(staged))throw new IOException("Cache");
-            progress=100;show("ready","APK verificado. Pronto para instalar.");
+            stagedRelease=selected;progress=100;show("ready","APK verificado. Pronto para instalar.");
         }catch(SecurityException bad){show("available","APK rejeitado: o arquivo não confere com a versão oficial esperada.");}
         catch(Exception failure){show("available","Não foi possível baixar a Nova Store. Verifique a conexão ou tente novamente mais tarde.");}
         finally{if(temp!=null)temp.delete();if(c!=null)c.disconnect();}
@@ -158,7 +212,13 @@ final class StoreInstaller {
     }
     private static final class SignatureMismatch extends SecurityException {}
     private void verifyStaged(File apk) throws Exception {
-        verify(apk,hasUpdate()||apk.length()==CURRENT.size?CURRENT:BACKUP);
+        Release staged=stagedRelease;
+        if(staged==null&&installedCode==0){
+            try{verify(apk,target);return;}catch(SecurityException unknown){verify(apk,BACKUP);return;}
+        }
+        if(staged==null)staged=target;
+        if(staged.code<=installedCode||hasUpdate()&&staged.code!=target.code)throw new SecurityException("Outdated package");
+        verify(apk,staged);
         if(hasUpdate()){
             PackageInfo installed=installedInfo(PackageManager.GET_SIGNATURES);
             PackageInfo next=activity.getPackageManager().getPackageArchiveInfo(apk.getAbsolutePath(),PackageManager.GET_SIGNATURES);
@@ -171,9 +231,13 @@ final class StoreInstaller {
         try(InputStream in=new FileInputStream(apk)){byte[] b=new byte[16384];int n;while((n=in.read(b))!=-1)sha.update(b,0,n);}
         StringBuilder value=new StringBuilder(64);for(byte b:sha.digest())value.append(String.format(Locale.ROOT,"%02x",b&255));
         if(!release.sha.contentEquals(value))throw new SecurityException("SHA-256");
-        PackageInfo apkInfo=activity.getPackageManager().getPackageArchiveInfo(apk.getAbsolutePath(),0);
+        PackageInfo apkInfo=activity.getPackageManager().getPackageArchiveInfo(apk.getAbsolutePath(),PackageManager.GET_SIGNATURES);
         if(apkInfo==null||!PACKAGE.equals(apkInfo.packageName)||!release.version.equals(apkInfo.versionName)||apkInfo.versionCode!=release.code)throw new SecurityException("Package");
+        if(apkInfo.signatures==null||apkInfo.signatures.length!=1)throw new SecurityException("Signer");
+        value.setLength(0);
+        for(byte b:sha.digest(apkInfo.signatures[0].toByteArray()))value.append(String.format(Locale.ROOT,"%02x",b&255));
+        if(!STORE_CERT.contentEquals(value))throw new SecurityException("Signer");
     }
     private void show(String state,String detail){status=state;message=detail;publish();}
-    private void publish(){if(!closed)try{callback.state(new JSONObject().put("status",status).put("message",message).put("progress",progress).put("updateAvailable",hasUpdate()).put("targetVersion",CURRENT.version));}catch(Exception ignored){}}
+    private void publish(){if(!closed)try{callback.state(new JSONObject().put("status",status).put("message",message).put("progress",progress).put("updateAvailable",hasUpdate()).put("targetVersion",target.version).put("check",checkStatus));}catch(Exception ignored){}}
 }

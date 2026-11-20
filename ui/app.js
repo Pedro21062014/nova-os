@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.2.5';
+const VERSION = '1.2.6';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -356,7 +356,7 @@ const groups={
  system:{title:'Sistema',icon:'settings',hint:'Android e informações',copy:'Gerencie a integração do Nova OS com o seu aparelho.',rows:()=>[
    setting('Launcher padrão','Abre a configuração de tela inicial do Android.','home','system','home'),
    setting('Configurações do Android','Acesse rede, tela e outros ajustes do aparelho.','settings','system','all'),
-   setting('Nova Store','Baixe, instale ou abra o catálogo de apps para TV.','store','novaStore'),
+   setting('Nova Store','Verifique atualizações, baixe ou abra a loja.','store','novaStore'),
    setting('Atualizações','Consulte, baixe e instale novas versões do Nova OS.','reload','page','updates'),
    setting('Sobre o Nova OS','Versão, fontes de catálogo e informações de privacidade.','info','about')]}
 };
@@ -550,18 +550,26 @@ function maybeStoreUpdate(){
 }
 function storeControls(){
  if(!native||!native.storeAction)return btn('Fechar','close','check','ghost glass');
- if(storeInfo.status==='installed')return btn('Abrir Nova Store','storeOpen','external','primary');
- if(storeInfo.status==='ready'||storeInfo.status==='permission')return btn(storeInfo.status==='permission'?'Autorizar instalação':storeInfo.updateAvailable?'Instalar atualização':'Instalar Nova Store','storeInstall','check','primary');
+ const check=btn('Verificar atualizações','storeCheck','down','ghost glass');
+ if(storeInfo.status==='installed')return btn('Abrir Nova Store','storeOpen','external','primary')+check;
+ if(storeInfo.status==='ready'||storeInfo.status==='permission')return btn(storeInfo.status==='permission'?'Autorizar instalação':storeInfo.updateAvailable?'Instalar atualização':'Instalar Nova Store','storeInstall','check','primary')+check;
  if(storeInfo.status==='downloading'||storeInfo.status==='installing')return btn('Fechar','close','x','ghost glass');
- return storeInfo.updateAvailable?btn('Baixar atualização','storeDownload','down','primary')+btn('Abrir Nova Store','storeOpen','external','ghost glass'):btn('Baixar Nova Store','storeDownload','down','primary');
+ return (storeInfo.updateAvailable?btn('Baixar atualização','storeDownload','down','primary')+btn('Abrir Nova Store','storeOpen','external','ghost glass'):btn('Baixar Nova Store','storeDownload','down','primary'))+check;
+}
+function storeCheckText(){
+ if(storeInfo.check==='checking')return 'Verificando atualizações da Nova Store…';
+ if(storeInfo.check==='error')return 'Não foi possível consultar o canal. Confira a conexão e tente de novo.';
+ if(storeInfo.check==='success')return storeInfo.updateAvailable?'Atualização encontrada.':storeInfo.status==='installed'?'A Nova Store já está atualizada.':'Canal consultado. A Nova Store ainda não está instalada.';
+ return '';
 }
 function renderStore(){
- openDialog('Nova Store',`<p id="nova-store-status" role="status">${escape(native&&native.storeAction?storeInfo.message:'O download integrado está disponível no aplicativo Android do Nova OS.')}</p><progress aria-label="Progresso do download" id="nova-store-progress" max="100" value="${Number(storeInfo.progress)||0}" ${storeInfo.status==='downloading'?'':'hidden'}></progress><div class="actions">${storeControls()}</div><p class="credit">A Nova Store é um aplicativo separado. O Android pede confirmação para instalar.</p>`,'novaStore');
+ openDialog('Nova Store',`<p id="nova-store-status" role="status">${escape(native&&native.storeAction?storeInfo.message:'O download integrado está disponível no aplicativo Android do Nova OS.')}</p><progress aria-label="Progresso do download" id="nova-store-progress" max="100" value="${Number(storeInfo.progress)||0}" ${storeInfo.status==='downloading'?'':'hidden'}></progress><p id="nova-store-check" role="status" ${storeCheckText()?'':'hidden'}>${escape(storeCheckText())}</p><div class="actions">${storeControls()}</div><p class="credit">A Nova Store é um aplicativo separado. O Android pede confirmação para instalar.</p>`,'novaStore');
 }
 function storeState(raw){
  try{const previous=storeInfo.status,wasUpdate=!!storeInfo.updateAvailable;storeInfo=JSON.parse(raw);if(dialog!=='novaStore'){maybeStoreUpdate();return;}
   if(previous!==storeInfo.status||wasUpdate!==!!storeInfo.updateAvailable){renderStore();return;}
   const msg=$('nova-store-status'), bar=$('nova-store-progress');if(msg&&msg.textContent!==storeInfo.message)msg.textContent=storeInfo.message;if(bar)bar.value=Number(storeInfo.progress)||0;
+  const check=$('nova-store-check'),text=storeCheckText();if(check){check.hidden=!text;if(check.textContent!==text)check.textContent=text;}
  }catch(_){}
 }
 function startStoreDownload(){
@@ -600,6 +608,7 @@ function doAction(action,arg){switch(action){
  case 'storeShortcut':if(native&&native.openStoreIfInstalled&&native.openStoreIfInstalled())break;
   // Otherwise show the same install controls available in System settings.
  case 'novaStore':renderStore();if(native&&native.storeStatus)native.storeStatus();break;
+ case 'storeCheck':if(native&&native.storeAction&&storeInfo.check!=='checking'){storeState(JSON.stringify({...storeInfo,check:'checking'}));native.storeAction('check');}break;
  case 'storeDownload':startStoreDownload();break;
  case 'storeInstall':if(native&&native.storeAction)native.storeAction('install');break;
  case 'storeOpen':if(native&&native.storeAction)native.storeAction('open');break;
