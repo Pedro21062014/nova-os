@@ -335,6 +335,10 @@ function related(a){
  if(list.length<3)list=wellKnownIds.map(appById).filter(function(x){return x&&x.id!==a.id;}).slice(0,8);
  return '<section class="related"><div class="shelf-head"><div><span class="eyebrow">TALVEZ VOCÊ GOSTE</span><h2>Parecidos com este</h2><p>Outros apps de '+esc(category(a.cat))+' na mesma fonte.</p></div></div>'+rail(list)+'</section>';
 }
+function officialAlternative(){
+ var alternate=appById('smarttube');if(!alternate||(byApp[alternate.id]||[]).length===0)return '';
+ return '<div class="official-alternative"><h3>Sem Google Play?</h3><p class="note">SmartTube é um app independente para assistir a vídeos do YouTube na TV, com APK para download direto. Não é o app oficial do Google.</p><button type="button" class="secondary" data-app="smarttube">Ver SmartTube '+icon('chev',14)+'</button></div>';
+}
 function renderDetail(){
  var a=appById(detailId);if(!a)return;
  var files=byApp[a.id],media=artwork[a.id],official=!files.length;shotIndex=0;
@@ -346,7 +350,7 @@ function renderDetail(){
  +'<div class="product-columns"><div class="overview">'+gallery(a,media)
  +'<section class="about-section"><h2>Sobre o app</h2><p>'+esc(a.desc)+'</p>'+(official?'':specs(a,files))+'</section>'
  +related(a)+'</div>'
- +(official?'<aside class="download-panel"><div class="download-head"><div><span class="eyebrow">GOOGLE LLC</span><h2>Instalação oficial</h2></div></div><p class="note">Se o YouTube já estiver instalado, você pode abri-lo daqui. Senão, instale pelo Google Play. A Nova Store não oferece APK avulso do YouTube.</p><a class="text-button source-link" href="'+esc(a.source)+'" target="_blank" rel="noopener noreferrer">Ajuda oficial '+icon('external',14)+'</a></aside>':'<aside class="download-panel" aria-label="Download direto"><div class="download-head"><div><span class="eyebrow">DOWNLOAD DIRETO</span><h2>Baixar APK</h2></div><span class="panel-icon">'+icon('download',21)+'</span></div>'
+ +(official?'<aside class="download-panel"><div class="download-head"><div><span class="eyebrow">GOOGLE LLC</span><h2>Instalação oficial</h2></div></div><p class="note">Se o YouTube já estiver instalado, você pode abri-lo daqui. Senão, instale pelo Google Play. A Nova Store não oferece APK avulso do YouTube.</p><a class="text-button source-link" href="'+esc(a.source)+'" target="_blank" rel="noopener noreferrer">Ajuda oficial '+icon('external',14)+'</a>'+officialAlternative()+'</aside>':'<aside class="download-panel" aria-label="Download direto"><div class="download-head"><div><span class="eyebrow">DOWNLOAD DIRETO</span><h2>Baixar APK</h2></div><span class="panel-icon">'+icon('download',21)+'</span></div>'
  +'<div id="transfer-slot"></div><div class="variants">'+files.map(variant).join('')+'</div>'
  +'<p class="note">'+(a.rolling?'O link é mantido pelo desenvolvedor e pode oferecer uma versão mais recente. ':'')+(files.length>1?'Escolha a arquitetura do Android da sua TV box. ':'')+(nativeApi?'Acompanhe o progresso aqui e toque em Instalar quando terminar.':'Abra o APK baixado para confirmar a instalação.')+'</p>'
  +'<a class="text-button source-link" href="'+esc(files[0].source)+'" target="_blank" rel="noopener noreferrer">Fonte da versão '+icon('external',14)+'</a>'

@@ -395,3 +395,10 @@ body,.store{background:#101412;color:#eef4ef}.store{grid-template-rows:minmax(0,
 .hero-label{background:#20382b;border-color:#5a8a70}.hero-visual{align-self:center}.top+.intro-row{margin-top:22px}.store-legacy .hero-visual{align-self:center}.store-legacy .update-area{padding:12px 22px}
 
 @media(max-width:980px){.store-legacy .product-columns{display:flex;flex-direction:column}.store-legacy .download-panel{order:-1;margin-top:0;margin-bottom:20px}}
+
+/* TV focus: draw the entire ring inside the card, not in a rail's clipped overflow. */
+.rail-track{padding:5px 5px 10px;scroll-behavior:auto;scroll-snap-type:none}
+button.app-card:focus{outline:none;transform:none;z-index:3}
+button.app-card:focus::after{content:'';position:absolute;top:2px;right:2px;bottom:2px;left:2px;z-index:5;border:3px solid #fff;border-radius:inherit;box-shadow:0 0 0 1px #152018;pointer-events:none}
+.official-alternative{margin-top:14px;padding-top:12px;border-top:1px solid #354339}
+.official-alternative .secondary{margin-top:8px}
