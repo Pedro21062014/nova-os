@@ -120,17 +120,18 @@ public final class StoreActivity extends Activity {
     public final class Bridge {
         @JavascriptInterface public String state(){
             try{JSONObject s=new JSONObject().put("jobs",transfers.states()).put("youtube",youtubeInstalled).put("abis",deviceAbis).put("sdk",Build.VERSION.SDK_INT);
-                StoreUpdates.Offer next=updates.offer();if(next!=null)s.put("update",next.info());return s.toString();}
+                StoreUpdates.Check check=updates.result();s.put("updateCheck",check.status);if(check.offer!=null)s.put("update",check.offer.info());return s.toString();}
             catch(Exception bad){return "{}";}
         }
         @JavascriptInterface public void download(String url){CatalogFeed.Apk apk=downloadFile(url);if(apk!=null)transfers.start(url,apk);}
         @JavascriptInterface public void install(String key){if(key!=null)transfers.install(key);}
         @JavascriptInterface public void cancel(String key){if(key!=null)transfers.cancel(key);}
-        @JavascriptInterface public void update(){StoreUpdates.Offer next=updates.offer();if(next!=null)transfers.start(next.url,next.file);}
+        @JavascriptInterface public void checkUpdates(){updates.check(true);}
+        @JavascriptInterface public void update(){StoreUpdates.Offer next=updates.result().offer;if(next!=null)transfers.start(next.url,next.file);}
         @JavascriptInterface public void openOfficial(){runOnUiThread(()->openYoutube());}
     }
     void notice(String message){runOnUiThread(()->Toast.makeText(this,message,Toast.LENGTH_LONG).show());}
-    @Override protected void onResume(){super.onResume();youtubeInstalled=youtube()!=null;updates.check();if(web!=null)web.evaluateJavascript("window.novaStoreRefresh && window.novaStoreRefresh()",null);}
+    @Override protected void onResume(){super.onResume();youtubeInstalled=youtube()!=null;updates.check(false);if(web!=null)web.evaluateJavascript("window.novaStoreRefresh && window.novaStoreRefresh()",null);}
     @Override public void onBackPressed(){
         if(web==null){super.onBackPressed();return;}
         web.evaluateJavascript("!!(window.novaStoreBack && window.novaStoreBack())",value->{if(!"true".equals(value)&&!isFinishing())finish();});

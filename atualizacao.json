@@ -1,9 +1,9 @@
 {
   "schema": 1,
   "package": "br.com.novaos.store",
-  "version": "1.0.3",
-  "versionCode": 4,
+  "version": "1.0.4",
+  "versionCode": 5,
   "bytes": 5080809,
-  "sha256": "ba8bdf96e82f190a5df6b7f49d25f5565344ba37493e300d63dbded82ad4e5d8",
-  "url": "https://github.com/Pedro21062014/nova-os/releases/download/nova-store-v1.0.3/Nova-Store-1.0.3.apk"
+  "sha256": "253c4e1819f02078b210233f57efd13ddd0553cb98fbf243df5c1711f84e7208",
+  "url": "https://github.com/Pedro21062014/nova-os/releases/download/nova-store-v1.0.4/Nova-Store-1.0.4.apk"
 }

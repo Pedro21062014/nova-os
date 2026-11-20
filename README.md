@@ -10,7 +10,7 @@ Com Java 11, Android Platform 35 e Build Tools 35.0.1:
 
 ```bash
 export ANDROID_SDK_ROOT=/caminho/do/sdk
-NOVA_OUT="$PWD/Nova-Store-1.0.3.apk" ./store-android/scripts/build-apk.sh
+NOVA_OUT="$PWD/Nova-Store-1.0.4.apk" ./store-android/scripts/build-apk.sh
 ```
 
 O APK local é assinado com a chave de teste por padrão. Para publicar usando sua chave, forneça `NOVA_KEYSTORE`, `NOVA_KEY_ALIAS`, `NOVA_KEYSTORE_PASS` e, se diferente, `NOVA_KEY_PASS` via ambiente privado. Use a mesma chave nas atualizações. Não exponha o keystore.
@@ -19,6 +19,6 @@ O APK local é assinado com a chave de teste por padrão. Para publicar usando s
 
 1. Faça commit do código na branch independente `nova-store-app` e preserve todos os APKs já publicados. Use `nova-store-vX.Y.Z` com o asset `Nova-Store-X.Y.Z.apk`, assinado com a **mesma chave** das versões instaladas. Não marque a release da Store como `Latest`: esse canal pertence ao Nova OS.
 2. Preencha `atualizacao.json` com `versionCode` crescente, `version`, URL do asset, tamanho em bytes e SHA-256 do APK assinado. Só avance a branch pública com esse descritor depois de confirmar que o asset da nova release está disponível e corresponde ao tamanho e hash. A tag pode apontar para o commit local até a publicação do descritor.
-3. A Store 1.0.2 em diante consulta esse descritor quando abre ou volta ao primeiro plano. Ela oferece a atualização, mas não baixa sem confirmação. Antes da instalação, verifica o APK contra o hash, o pacote `br.com.novaos.store`, a versão anunciada e a assinatura da cópia instalada.
+3. A Store 1.0.2 em diante consulta esse descritor quando abre ou volta ao primeiro plano. A partir da 1.0.4, **Verificar atualizações** no menu lateral consulta o canal imediatamente e informa o resultado. A loja oferece a atualização, mas não baixa sem confirmação. Antes da instalação, verifica o APK contra o hash, o pacote `br.com.novaos.store`, a versão anunciada e a assinatura da cópia instalada.
 
 Se você estiver na Store 1.0.0 ou 1.0.1, instale a 1.0.2 por cima para receber os próximos avisos. Para alterações de apps e capturas, basta editar o [catálogo](loja/README.md).

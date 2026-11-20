@@ -38,7 +38,7 @@ const RAW=JSON.parse(fs.readFileSync(join(repo,'catalogo.json')));
   });
   await p.addInitScript(()=>{
     window.fixture={jobs:{},youtube:false,abis:['armeabi-v7a'],sdk:25,update:{version:'1.0.4',bytes:5000000}};window.calls=[];
-    window.NovaStore={state:()=>JSON.stringify(fixture),download(url){calls.push(['download',url]);fixture.jobs.vlc={status:'downloading',message:'Baixando…',progress:28,bytes:13929000,total:49645764}},
+    window.NovaStore={state:()=>JSON.stringify(fixture),checkUpdates(){calls.push(['check']);fixture.updateCheck='checking';},download(url){calls.push(['download',url]);fixture.jobs.vlc={status:'downloading',message:'Baixando…',progress:28,bytes:13929000,total:49645764}},
       install(key){calls.push(['install',key]);},cancel(key){delete fixture.jobs[key];},update(){calls.push(['update']);fixture.jobs['store-update']={status:'waiting',message:'Aguardando conexão…',progress:-1}},openOfficial(){calls.push(['youtube']);}};
   });
   await p.goto(host+'/index.html');
@@ -93,6 +93,18 @@ const RAW=JSON.parse(fs.readFileSync(join(repo,'catalogo.json')));
   await p.evaluate(()=>{fixture.jobs['store-update']={status:'ready',message:'Download concluído',progress:100};novaStoreRefresh();});
   await p.locator('#update-job').getByRole('button',{name:'Instalar',exact:true}).click();
   assert.deepEqual((await p.evaluate(()=>calls)).at(-1),['install','store-update']);
+  const check=p.getByRole('button',{name:'Verificar atualizações',exact:true});
+  await p.evaluate(()=>{delete fixture.jobs['store-update'];delete fixture.update;fixture.updateCheck='current';novaStoreRefresh();});
+  await check.click();
+  await p.getByText('Verificando atualizações…',{exact:true}).waitFor();
+  await p.evaluate(()=>{fixture.updateCheck='error';novaStoreRefresh();});
+  await p.getByText('Não foi possível verificar. Confira a conexão e tente de novo.').waitFor();
+  await check.click();await p.evaluate(()=>{fixture.updateCheck='current';novaStoreRefresh();});
+  await p.getByText('A Nova Store já está atualizada.').waitFor();
+  await check.click();await p.evaluate(()=>{fixture.updateCheck='available';fixture.update={version:'1.0.5',bytes:5000000};novaStoreRefresh();});
+  await p.getByRole('heading',{name:'Atualizar a Nova Store?'}).waitFor();
+  await p.getByText(/A versão 1\.0\.5 já está disponível/).waitFor();
+  assert.equal((await p.evaluate(()=>calls.filter(x=>x[0]==='check').length)),3);
   assert.deepEqual(errors,[]);
   console.log('TV e celular: fallback, busca/navegação e galeria, coleção, RAW antigo, YouTube oficial, progresso determinado/indeterminado, erro, instalação e aviso de atualização (ponte Android simulada).');
   await c.close();

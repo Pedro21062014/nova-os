@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-var drawing={download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/>',shield:'<path d="M12 2 3 6v6c0 5 4 8 9 10 5-2 9-5 9-10V6Z"/><path d="m8 12 3 3 5-6"/>',bag:'<path d="M5 8h14l1 12H4L5 8Z"/><path d="M8.5 9V7a3.5 3.5 0 0 1 7 0v2"/><path d="m11 11 4 2.5-4 2.5V11Z" fill="currentColor" stroke="none"/>',home:'<path d="m3 10 9-7 9 7v10h-6v-6H9v6H3Z"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/>',library:'<path d="M6 3h12v18l-6-4-6 4Z"/>',tv:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/>',search:'<circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 5 5"/>',arrow:'<path d="M4 12h15m-6-6 6 6-6 6"/>',chev:'<path d="m9 6 6 6-6 6"/>',video:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m10 8 6 4-6 4V8Z"/>',music:'<path d="M8 17V6l12-2v11M8 10l12-2"/><ellipse cx="5" cy="17" rx="3" ry="2"/><ellipse cx="17" cy="15" rx="3" ry="2"/>',tool:'<path d="M4 7h10m4 0h2M4 17h4m4 0h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>',game:'<path d="M7 6h10c2 0 3 2 4 5l1 4c.6 3-2 5-4 3l-3-3H9l-3 3c-2 2-4.6 0-4-3l1-4c1-3 2-5 4-5Z"/><path d="M6 10h5m-2.5-2v5m7.5-3h.01m3 2h.01"/>',x:'<path d="m6 6 12 12M18 6 6 18"/>',check:'<path d="m5 12 4 4L19 6"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/>',external:'<path d="M13 4h7v7m0-7-9 9m8 0v6H5V5h6"/>',folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>',image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="m4 18 5-5 3 3 3-3 5 5"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/>',palette:'<path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 1-3.7 2 2 0 0 1 1-3.8h2A4 4 0 0 0 21 10c0-4-4-7-9-7Z"/><circle cx="7.5" cy="10" r=".9" fill="currentColor" stroke="none"/><circle cx="10" cy="6.8" r=".9" fill="currentColor" stroke="none"/><circle cx="14" cy="6.8" r=".9" fill="currentColor" stroke="none"/>',spark:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9Z"/>'};
+var drawing={refresh:'<path d="M20 10a8 8 0 1 0-2 8m2-13v5h-5"/>',download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/>',shield:'<path d="M12 2 3 6v6c0 5 4 8 9 10 5-2 9-5 9-10V6Z"/><path d="m8 12 3 3 5-6"/>',bag:'<path d="M5 8h14l1 12H4L5 8Z"/><path d="M8.5 9V7a3.5 3.5 0 0 1 7 0v2"/><path d="m11 11 4 2.5-4 2.5V11Z" fill="currentColor" stroke="none"/>',home:'<path d="m3 10 9-7 9 7v10h-6v-6H9v6H3Z"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/>',library:'<path d="M6 3h12v18l-6-4-6 4Z"/>',tv:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/>',search:'<circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 5 5"/>',arrow:'<path d="M4 12h15m-6-6 6 6-6 6"/>',chev:'<path d="m9 6 6 6-6 6"/>',video:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m10 8 6 4-6 4V8Z"/>',music:'<path d="M8 17V6l12-2v11M8 10l12-2"/><ellipse cx="5" cy="17" rx="3" ry="2"/><ellipse cx="17" cy="15" rx="3" ry="2"/>',tool:'<path d="M4 7h10m4 0h2M4 17h4m4 0h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>',game:'<path d="M7 6h10c2 0 3 2 4 5l1 4c.6 3-2 5-4 3l-3-3H9l-3 3c-2 2-4.6 0-4-3l1-4c1-3 2-5 4-5Z"/><path d="M6 10h5m-2.5-2v5m7.5-3h.01m3 2h.01"/>',x:'<path d="m6 6 12 12M18 6 6 18"/>',check:'<path d="m5 12 4 4L19 6"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/>',external:'<path d="M13 4h7v7m0-7-9 9m8 0v6H5V5h6"/>',folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>',image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="m4 18 5-5 3 3 3-3 5 5"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/>',palette:'<path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 1-3.7 2 2 0 0 1 1-3.8h2A4 4 0 0 0 21 10c0-4-4-7-9-7Z"/><circle cx="7.5" cy="10" r=".9" fill="currentColor" stroke="none"/><circle cx="10" cy="6.8" r=".9" fill="currentColor" stroke="none"/><circle cx="14" cy="6.8" r=".9" fill="currentColor" stroke="none"/>',spark:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9Z"/>'};
 function icon(id,size){size=size||20;return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+drawing[id]+'</svg>';}
 var fallbackCatalog=/*FALLBACK_CATALOG*/null;
 var catalogUrl=/*CATALOG_URL*/null;
@@ -10,7 +10,7 @@ var MAX_CATALOG=12*1024*1024;
 var allCategories=[['video','Vídeo e mídia','video'],['live','TV e listas','tv'],['music','Música','music'],['files','Arquivos','folder'],['photo','Fotos e ambiente','image'],['net','Navegadores','globe'],['game','Jogos','game'],['personal','Personalização','palette'],['tool','Utilitários','tool']];
 var categories=[],apps=[],additions=[],artwork=Object.create(null),packages=[],byApp=Object.create(null),latestWave=0;
 var lookup=Object.create(null),searchIndex=Object.create(null),categoryCounts=Object.create(null);
-var nativeApi=window.NovaStore, nativeState={jobs:{}}, shownUpdate="", updateTimer=null;
+var nativeApi=window.NovaStore, nativeState={jobs:{}}, shownUpdate="", updateTimer=null, manualUntil=0, manualResult=false, manualWaiting=false;
 var featured=[],wellKnownIds=[],essentials=[],pendingCatalog=null,lastCatalogDigest=catalogDigest,catalogRequest=null,lastCatalogCheck=0;
 function text(v,max,empty){return typeof v==='string'&&(empty||v.length>0)&&v.length<=max;}
 function integer(v,min,max){return typeof v==='number'&&v>=min&&v<=max&&Math.floor(v)===v;}
@@ -459,9 +459,13 @@ function paintTransfers(){
   }
  }
  if(official)writeText(official,officialText());
- var updateArea=document.getElementById('update-area'), section=document.getElementById('update-job');
+ var updateArea=document.getElementById('update-area'), section=document.getElementById('update-job'), checkText=document.getElementById('update-check-status');
+ var checking=Date.now()<manualUntil||nativeState.updateCheck==='checking';
+ var text=checking?'Verificando atualizações…':nativeState.updateCheck==='current'?'A Nova Store já está atualizada.':nativeState.updateCheck==='error'?'Não foi possível verificar. Confira a conexão e tente de novo.':nativeState.updateCheck==='available'&&!(jobs['store-update'])?'Atualização encontrada.':'';
+ checkText.hidden=!manualResult||!text;
+ if(manualResult)writeText(checkText,text);
  // The file can still be ready after a restart or while the update channel is offline.
- updateArea.hidden=!nativeState.update&&!jobs['store-update'];
+ updateArea.hidden=!nativeState.update&&!jobs['store-update']&&checkText.hidden;
  offer.hidden=!nativeState.update||!!(jobs['store-update']&&jobs['store-update'].status!=='failed');
  paintTransfer(section,'store-update');
 }
@@ -479,10 +483,11 @@ function pollNative(){
   var status=JSON.parse(nativeApi.state());if(status&&typeof status==='object')nativeState=status;
   paintTransfers();
   var offer=nativeState.update;
-  if(offer&&offer.version!==shownUpdate&&modal.hidden&&!detailId&&page==='home'&&!(nativeState.jobs||{})['store-update'])updateDialog();
+  if(offer&&modal.hidden&&!(nativeState.jobs||{})['store-update']&&((manualResult&&Date.now()>=manualUntil&&nativeState.updateCheck==='available'&&manualWaiting)||(offer.version!==shownUpdate&&!manualResult&&!detailId&&page==='home'))){manualWaiting=false;updateDialog();}
  }catch(e){}
+ if(manualResult&&Date.now()>=manualUntil&&['current','error','available'].indexOf(nativeState.updateCheck)>=0)manualWaiting=false;
  var jobs=nativeState.jobs||{},active=Object.keys(jobs).some(function(key){return ['waiting','downloading','verifying'].indexOf(jobs[key].status)!==-1;});
- updateTimer=setTimeout(pollNative,active?950:2500);
+ updateTimer=setTimeout(pollNative,active||manualWaiting?450:2500);
 }
 
 /* ---------- navegação ---------- */
@@ -559,6 +564,11 @@ document.addEventListener('click',function(e){
   return;
  }
  if(!b)return;
+ if(b.hasAttribute('data-check-update')){
+  if(!nativeApi||typeof nativeApi.checkUpdates!=='function')return;
+  manualUntil=Date.now()+350;manualResult=manualWaiting=true;
+  callNative('checkUpdates');main.scrollTop=0;return;
+ }
  if(b.hasAttribute('data-update-offer')){updateDialog();return;}
  if(nativeApi&&detailId&&b.hasAttribute('data-primary-apk')){
   var mode=b.getAttribute('data-mode');
@@ -635,5 +645,5 @@ setTimeout(refreshCatalog,50);
 window.addEventListener('online',function(){lastCatalogCheck=0;refreshCatalog();});
 document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshCatalog();});
 window.novaStoreRefresh=function(){refreshCatalog();pollNative();};
-if(nativeApi){pollNative();document.addEventListener('visibilitychange',pollNative);}
+if(nativeApi){if(typeof nativeApi.checkUpdates==='function')document.getElementById('check-update').hidden=false;pollNative();document.addEventListener('visibilitychange',pollNative);}
 }());
