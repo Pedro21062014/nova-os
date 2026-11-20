@@ -256,7 +256,7 @@ public final class NovaActivity extends Activity {
             else if("dismiss".equals(action))store.skipInvitation();
         }
         @JavascriptInterface public void updaterState(){if(updater!=null)updater.send();}
-        @JavascriptInterface public void updaterConfigure(String repo,boolean automatic){if(updater!=null)updater.configure(repo,automatic);}
+        @JavascriptInterface public void updaterAutomatic(boolean enabled){if(updater!=null)updater.automatic(enabled);}
         @JavascriptInterface public void updaterCheck(boolean force){if(updater!=null)updater.check(force);}
         @JavascriptInterface public void updaterAutoDownload(boolean enabled){if(updater!=null)updater.autoDownload(enabled);}
         @JavascriptInterface public void updaterDownload(){if(updater!=null)updater.download();}

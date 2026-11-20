@@ -51,7 +51,7 @@ async function run() {
       delete NodeList.prototype.forEach;
       delete Element.prototype.closest;
       delete window.fetch;
-      const state={repo:'',automatic:true,status:'unconfigured',message:'Configure a fonte.',version:'1.2.1',available:'',progress:0};
+      const state={automatic:true,autoDownload:false,status:'idle',message:'',version:'1.2.7',available:'',progress:0};
       const post=(patch={})=>window.NovaUi.updateState(JSON.stringify(Object.assign(state,patch)));
       window.installerCalled=false;
       window.NovaNative={
@@ -59,8 +59,9 @@ async function run() {
         ready(){post();window.NovaUi.updateApps(JSON.stringify([{id:'com.netflix.ninja/.TV',pkg:'com.netflix.ninja',label:'Netflix'}]));},
         catalog(type){window.NovaUi.catalogReply(type,false,'');},
         updaterState(){post();},
-        updaterConfigure(repo,automatic){post({repo,automatic,status:'idle',message:'Fonte de atualização salva.'});},
-        updaterCheck(){post({status:'available',available:'1.2.0',message:'Nova versão disponível: 1.2.0.'});},
+        updaterAutomatic(automatic){post({automatic});},
+        updaterAutoDownload(autoDownload){post({autoDownload});},
+        updaterCheck(){post({status:'available',available:'1.2.8',message:'Nova versão disponível: 1.2.8.'});},
         updaterDownload(){post({status:'downloading',progress:55,message:'Baixando a atualização…'});setTimeout(()=>post({status:'ready',progress:100,message:'Atualização validada.'}),80);},
         updaterInstall(){window.installerCalled=true;post({status:'installing',message:'Confirme no instalador do Android.'});}
       };
@@ -81,10 +82,14 @@ async function run() {
     await n.getByRole('button',{name:'Configurações',exact:true}).click();
     await n.getByRole('button',{name:/Sistema/}).click();
     await n.getByRole('button',{name:/Atualizações/}).click();
-    await n.getByRole('textbox',{name:'Repositório'}).fill('dono/nova-os');
-    await n.getByRole('button',{name:'Salvar fonte',exact:true}).click();
+    assert.equal(await n.locator('#main input').count(),0);
+    assert.doesNotMatch(await n.locator('#main').innerText(),/GitHub Releases|Repositório|Salvar fonte/i);
+    const auto=n.getByRole('switch',{name:/Verificar automaticamente/});
+    await auto.click();assert.equal(await auto.getAttribute('aria-checked'),'false');
+    const download=n.getByRole('switch',{name:/Baixar automaticamente/});
+    await download.click();assert.equal(await download.getAttribute('aria-checked'),'true');
     await n.getByRole('button',{name:'Verificar agora',exact:true}).click();
-    assert.match(await n.locator('#update-message').textContent(),/1\.2\.0/);
+    assert.match(await n.locator('#update-message').textContent(),/1\.2\.8/);
     await n.getByRole('button',{name:'Baixar atualização',exact:true}).click();
     await n.getByRole('button',{name:'Instalar atualização',exact:true}).click();
     assert(await n.evaluate(()=>window.installerCalled));

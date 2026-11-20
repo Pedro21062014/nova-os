@@ -19,7 +19,7 @@ Requisitos: Android **6.0/API 23 ou superior** e Android System WebView. A ediç
 
 ## Atualizador dentro do app
 
-1. Abra **Configurações → Sistema → Atualizações**. O canal oficial `Pedro21062014/nova-os` já vem definido em instalações novas da 1.2.0; uma fonte previamente salva é preservada. Se desejar, você pode informar outro repositório **público** no formato `dono/repositório` ou `https://github.com/dono/repositório`.
+1. Abra **Configurações → Sistema → Atualizações**. O canal oficial `Pedro21062014/nova-os` é fixo na edição distribuída. A partir da 1.2.7, repositórios personalizados de versões anteriores são descartados; as opções de verificação e download automáticos permanecem.
 2. Com **Verificar automaticamente** ligado, o app consulta a origem ao abrir ou voltar ao primeiro plano, respeitando um intervalo de 12 horas após uma consulta bem-sucedida, ou a cada 12 horas enquanto aberto. Também é possível consultar manualmente. Não há serviço que fique rodando fora do launcher.
 3. Uma versão nova aparece no painel. Use **Baixar atualização** ou ative **Baixar automaticamente**. Em seguida, escolha **Instalar atualização** e confirme no instalador do Android. Em Android 8+, o sistema pode pedir permissão de instalação para o Nova OS. Não há instalação silenciosa.
 

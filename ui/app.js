@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.2.6';
+const VERSION = '1.2.7';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -417,31 +417,29 @@ function titleIndex(){
 }
 function searchResults(){const box=$('results');if(!box)return;const q=slug(searchValue.trim());if(box._query===q&&box._catalog===titleSearch&&box._apps===apps)return;forgetImages(box);box._query=q;box._apps=apps;if(!q){box.innerHTML='<p class="section-label">Digite para começar</p>';return;}ensureAppIndex();const a=appNames.filter(x=>x.name.includes(q)).map(x=>x.app),c=[];for(const x of titleIndex()){if(x.name.includes(q))c.push(x.item);if(c.length===15)break;}box._catalog=titleSearch;box.innerHTML=(!a.length&&!c.length)?'<p class="section-label">Nenhum resultado encontrado</p>':`${a.length?`<h2 class="section-label">Aplicativos</h2><div class="app-grid">${a.map(appTile).join('')}</div>`:''}${c.length?`<h2 class="section-label">Filmes e séries</h2><div class="card-grid">${c.map(card).join('')}</div>`:''}`;watchImages(box);}
 function ambient(){return `<section class="amb-content"><div><span class="eyebrow">MODO AMBIENTE</span><h1 data-wall-title>${escape(wallNow.title)}</h1><p id="ambient-clock"></p><button class="wall-credit" data-do="wallCredit" ${wallNow.author?'':'hidden'}>${wallNow.author?escape(wallNow.author+' · Unsplash'):''}</button></div>${btn('Sair do modo ambiente','page','left','ghost glass','home')}</section>`;}
-let prefsUpdate={repo:'',automatic:true,autoDownload:false,status:'idle',version:VERSION,available:'',message:'',progress:0},repoDraft=null, updateNotice='';
+let prefsUpdate={automatic:true,autoDownload:false,status:'idle',version:VERSION,available:'',message:'',progress:0},updateNotice='';
 function updateStatusActions(){
  const u=prefsUpdate;
  if(['checking','downloading'].includes(u.status))return '';
  if(u.status==='available')return btn('Baixar atualização','updateDownload','down','primary')+btn('Verificar novamente','updateCheck','reload');
  if(['ready','permission','installing'].includes(u.status))return btn(u.status==='permission'?'Abrir permissão':'Instalar atualização','updateInstall','down','primary');
- return u.repo?btn('Verificar agora','updateCheck','reload','primary'):'';
+ return btn('Verificar agora','updateCheck','reload','primary');
 }
 function updates(){
  if(!native)return head('SISTEMA','Atualizações','Atualizador do Nova OS')+empty('Disponível no Android','Abra o APK para verificar, baixar e instalar atualizações.');
- return head('SISTEMA','Atualizações','Consulte novas versões publicadas e instale pelo Android.',btn('Voltar','page','left','ghost glass','settings'))+`<div class="update-grid"><section class="glass update-card"><span class="eyebrow">STATUS</span><h2 id="update-version">Versão instalada ${escape(prefsUpdate.version)}</h2><p id="update-message" role="status">${escape(prefsUpdate.message||'Pronto para consultar a fonte de atualização.')}</p><progress id="update-progress" max="100" value="${Number(prefsUpdate.progress)||0}" ${prefsUpdate.status==='downloading'?'':'hidden'}></progress><div class="actions" id="update-actions">${updateStatusActions()}</div><small>O Nova OS só aceita uma versão mais recente com a mesma assinatura do app instalado.</small></section><section class="glass update-card"><span class="eyebrow">FONTE DE ATUALIZAÇÃO</span><h2>GitHub Releases</h2><p>O canal oficial já vem configurado. Você pode trocar a fonte ou desligar a verificação automática.</p><label for="release-repo">Repositório</label><input class="search-box" id="release-repo" inputmode="url" type="text" maxlength="160" autocapitalize="off" spellcheck="false" placeholder="dono/nova-os" value="${attr(repoDraft===null?prefsUpdate.repo:repoDraft)}"><div class="actions">${btn('Salvar fonte','updateSave','check')}</div>${setting('Verificar automaticamente','Ao abrir o app, no máximo uma vez a cada 12 horas quando há um repositório.','reload','updateAuto','',!!prefsUpdate.automatic)}${setting('Baixar automaticamente','Baixa versões novas nesta fonte. O Android ainda pede confirmação para instalar.','down','updateAutoDownload','',!!prefsUpdate.autoDownload)}</section></div>`;
+ return head('SISTEMA','Atualizações','Consulte novas versões publicadas e instale pelo Android.',btn('Voltar','page','left','ghost glass','settings'))+`<div class="update-grid"><section class="glass update-card"><span class="eyebrow">STATUS</span><h2 id="update-version">Versão instalada ${escape(prefsUpdate.version)}</h2><p id="update-message" role="status" tabindex="-1">${escape(prefsUpdate.message||'Verifique se há uma nova versão do Nova OS.')}</p><progress aria-label="Progresso da atualização" id="update-progress" max="100" value="${Number(prefsUpdate.progress)||0}" ${prefsUpdate.status==='downloading'?'':'hidden'}></progress><div class="actions" id="update-actions">${updateStatusActions()}</div><small>O Nova OS só aceita uma versão mais recente com a mesma assinatura do app instalado.</small></section><section class="glass update-card"><span class="eyebrow">PREFERÊNCIAS</span><h2>Atualizações automáticas</h2><p>Escolha como o Nova OS verifica e baixa novas versões.</p>${setting('Verificar automaticamente','Consulta novas versões ao abrir o Nova OS, até uma vez a cada 12 horas.','reload','updateAuto','',!!prefsUpdate.automatic)}${setting('Baixar automaticamente','Baixa novas versões. Você confirma a instalação no Android.','down','updateAutoDownload','',!!prefsUpdate.autoDownload)}</section></div>`;
 }
 function updateState(json){
  let next;try{next=JSON.parse(json);}catch(_){return;}
  if(!next||typeof next.status!=='string')return;
- const changedStatus=next.status!==prefsUpdate.status||next.repo!==prefsUpdate.repo;
- if(next.repo!==prefsUpdate.repo)repoDraft=null;
+ const changedStatus=next.status!==prefsUpdate.status;
  prefsUpdate=next;if(changedStatus)applyAppearance();
  const message=$('update-message');if(message){
-  message.textContent=next.message||'Pronto para consultar a fonte de atualização.';
+  message.textContent=next.message||'Verifique se há uma nova versão do Nova OS.';
   $('update-version').textContent='Versão instalada '+next.version;
   const progress=$('update-progress');progress.value=Number(next.progress)||0;progress.hidden=next.status!=='downloading';
-  const field=$('release-repo');if(field&&document.activeElement!==field&&repoDraft===null)field.value=next.repo||'';
   for(const [action,key] of [['updateAuto','automatic'],['updateAutoDownload','autoDownload']]){const el=$('main').querySelector('[data-do="'+action+'"]');if(el){const on=!!next[key];el.setAttribute('aria-checked',String(on));el.querySelector('.switch').classList.toggle('on',on);}}
-  const actions=$('update-actions');if(changedStatus){const focusInside=actions.contains(document.activeElement);actions.innerHTML=updateStatusActions();if(focusInside&&!idleMode){const button=actions.querySelector('button')||field;if(button)button.focus();}}
+  const actions=$('update-actions');if(changedStatus){const focusInside=actions.contains(document.activeElement)||document.activeElement===message;actions.innerHTML=updateStatusActions();if(focusInside&&!idleMode){const button=actions.querySelector('button')||message;button.focus();}}
  }
  if(next.status==='available'&&next.available&&updateNotice!==next.available){updateNotice=next.available;if(page!=='updates'&&!idleMode)toast('Nova versão '+next.available+' disponível em Sistema → Atualizações.');}
 }
@@ -461,7 +459,6 @@ function render(reset=false,refocus=true){
  syncHeader();forgetImages(main);main.innerHTML=page==='home'||page==='ambient'?`<div class="page-surface">${pages[page]()}</div>`:`<section class="panel page-surface">${pages[page]()}</section>`;
  if(page==='home'){const grid=$('home-app-grid');if(grid)grid._tiles=paintedTiles;}
  main.scrollTop=reset?0:y;watchImages(main);
- if(page==='updates'){const input=$('release-repo');if(input)input.addEventListener('input',()=>{repoDraft=input.value;});}
  if(page==='search'){const q=$('query');q.addEventListener('input',()=>{searchValue=q.value;searchResults();});searchResults();}
  clock();
  if(refocus&&wasMain&&!dialog&&document.activeElement===document.body) focusMatching(main,anchor);
@@ -613,8 +610,7 @@ function doAction(action,arg){switch(action){
  case 'storeInstall':if(native&&native.storeAction)native.storeAction('install');break;
  case 'storeOpen':if(native&&native.storeAction)native.storeAction('open');break;
  case 'settingsGroup':changeSettingsSection(arg);break;
- case 'updateSave': if(native){const v=$('release-repo');if(v)native.updaterConfigure(v.value,prefsUpdate.automatic);}break;
- case 'updateAuto': if(native)native.updaterConfigure(prefsUpdate.repo,!prefsUpdate.automatic);break;
+ case 'updateAuto': if(native&&native.updaterAutomatic)native.updaterAutomatic(!prefsUpdate.automatic);break;
  case 'updateAutoDownload': if(native)native.updaterAutoDownload(!prefsUpdate.autoDownload);break;
  case 'updateCheck': if(native)native.updaterCheck(true);break;
  case 'updateDownload': if(native)native.updaterDownload();break;

@@ -37,7 +37,7 @@ final class UpdateManager {
     private final SharedPreferences prefs;
     private final ExecutorService jobs = Executors.newSingleThreadExecutor();
     private final String runningVersion;
-    private String repo, status="idle", message="", offeredVersion="";
+    private String status="idle", message="", offeredVersion="";
     private boolean automatic,autoDownload;
     private int progress;
     private long lastAttempt;
@@ -51,38 +51,31 @@ final class UpdateManager {
     UpdateManager(Activity activity,Listener listener) {
         this.activity=activity;this.listener=listener;
         prefs=activity.getSharedPreferences("nova_updater",Activity.MODE_PRIVATE);
-        repo=prefs.getString("repo",DEFAULT_REPO);automatic=prefs.getBoolean("automatic",true);autoDownload=prefs.getBoolean("autoDownload",false);
-        String v="1.2.1";
+        automatic=prefs.getBoolean("automatic",true);autoDownload=prefs.getBoolean("autoDownload",false);
+        if(prefs.contains("repo")){
+            SharedPreferences.Editor edit=prefs.edit().remove("repo");
+            if(!DEFAULT_REPO.equalsIgnoreCase(prefs.getString("repo",""))){
+                edit.remove("lastCheck");UpdateFileProvider.staged(activity).delete();
+            }
+            edit.apply();
+        }
+        String v="1.2.7";
         try {v=installed(0).versionName;} catch(Exception ignored){}
         runningVersion=v;
     }
     private void run(Runnable job){if(!closed)try{jobs.execute(job);}catch(java.util.concurrent.RejectedExecutionException ignored){}}
     void close(){closed=true;jobs.shutdownNow();}
     void send(){run(this::publish);}
-    void configure(String raw,boolean auto) {
-        run(()->{
-            try {
-                String next=normalizeRepo(raw);
-                boolean different=!next.equalsIgnoreCase(repo);
-                if(different) {
-                    repo=next;lastAttempt=0;offer=null;offeredVersion="";progress=0;
-                    UpdateFileProvider.staged(activity).delete();
-                    prefs.edit().remove("lastCheck").apply();
-                }
-                automatic=auto;prefs.edit().putString("repo",repo).putBoolean("automatic",auto).apply();
-                if(different||repo.isEmpty())show(repo.isEmpty()?"unconfigured":"idle",repo.isEmpty()?"Configure um repositório público para ativar o atualizador.":"Fonte de atualização salva.");
-                else publish();
-                if(auto&&!repo.isEmpty())checkInternal(false);
-            } catch(IllegalArgumentException e){show("error","Digite um repositório público no formato dono/repositório.");}
-        });
-    }
+    void automatic(boolean enabled){run(()->{
+        automatic=enabled;prefs.edit().putBoolean("automatic",enabled).apply();publish();
+        if(enabled)checkInternal(false);
+    });}
     void autoDownload(boolean enabled){run(()->{
         autoDownload=enabled;prefs.edit().putBoolean("autoDownload",enabled).apply();publish();
         if(enabled&&"available".equals(status))downloadInternal();
     });}
     void check(boolean force){run(()->checkInternal(force));}
     private void checkInternal(boolean force) {
-        if(repo.isEmpty()){if(force||"idle".equals(status))show("unconfigured","Configure um repositório público para ativar o atualizador.");return;}
         long now=System.currentTimeMillis();
         if(!force&&(!automatic||recentCheck()||now-lastAttempt<5*60*1000))return;
         if("ready".equals(status)||"permission".equals(status)||"installing".equals(status)){if(force)publish();return;}
@@ -93,24 +86,24 @@ final class UpdateManager {
         lastAttempt=now;progress=0;show("checking","Consultando a versão publicada…");
         HttpsURLConnection connection=null;
         try{
-            connection=connect(new URL("https://api.github.com/repos/"+repo+"/releases/latest"),true);
+            connection=connect(new URL("https://api.github.com/repos/"+DEFAULT_REPO+"/releases/latest"),true);
             int code=connection.getResponseCode();
-            if(code==404){offer=null;offeredVersion="";saveCheck();show("no_release","Não encontrei uma release pública nesta fonte.");return;}
-            if(code!=200){show("error",code==403||code==429?"Limite de consultas do GitHub. Tente mais tarde.":"Não foi possível consultar a fonte de atualização.");return;}
+            if(code==404){offer=null;offeredVersion="";saveCheck();show("no_release","Ainda não há uma atualização publicada no canal oficial.");return;}
+            if(code!=200){show("error",code==403||code==429?"Limite de consultas temporário. Tente mais tarde.":"Não foi possível consultar o canal de atualizações.");return;}
             JSONObject release=new JSONObject(new String(readSmall(connection.getInputStream(),512*1024),StandardCharsets.UTF_8));
             String tag=release.optString("tag_name","");
             if(!tag.matches("v?[0-9]{1,7}\\.[0-9]{1,7}\\.[0-9]{1,7}")||release.optBoolean("draft")||release.optBoolean("prerelease")){
-                show("error","A release precisa usar uma versão estável como v1.2.1.");return;
+                show("error","O canal não retornou uma versão estável do Nova OS.");return;
             }
             String current=tag.startsWith("v")?tag.substring(1):tag;
             saveCheck();
             if(compare(current,runningVersion)<=0){offer=null;offeredVersion="";show("current","O Nova OS já está atualizado.");return;}
             Asset next=asset(release.optJSONArray("assets"),current);
-            if(next==null){offer=null;offeredVersion="";show("error","A release não contém um APK compatível com o atualizador Nova OS.");return;}
+            if(next==null){offer=null;offeredVersion="";show("error","A versão publicada não tem um APK compatível com o Nova OS.");return;}
             offer=next;offeredVersion=next.version;
             show("available","Nova versão disponível: "+next.version+".");
             if(autoDownload)downloadInternal();
-        }catch(Exception ignored){show("error","Sem conexão com a fonte de atualização. Tente novamente.");}
+        }catch(Exception ignored){show("error","Não foi possível conectar ao canal de atualizações. Tente novamente.");}
         finally{if(connection!=null)connection.disconnect();}
     }
     private boolean recentCheck(){long last=prefs.getLong("lastCheck",0), age=System.currentTimeMillis()-last;return last>0&&age>=0&&age<CHECK_INTERVAL;}
@@ -203,9 +196,10 @@ final class UpdateManager {
         }
         return debug;
     }
-    private boolean initialAsset(String raw){try{
-        URL u=new URL(raw);String path=u.getPath().toLowerCase(Locale.ROOT);
-        return secure(u)&&"github.com".equalsIgnoreCase(u.getHost())&&path.startsWith("/"+repo.toLowerCase(Locale.ROOT)+"/releases/download/");
+    static boolean initialAsset(String raw){try{
+        URL u=new URL(raw);String path=u.getPath().toLowerCase(Locale.ROOT),prefix="/"+DEFAULT_REPO.toLowerCase(Locale.ROOT)+"/releases/download/";
+        return secure(u)&&"github.com".equalsIgnoreCase(u.getHost())&&u.getQuery()==null&&u.getRef()==null&&path.startsWith(prefix)&&
+            path.substring(prefix.length()).matches("v?[0-9]{1,7}\\.[0-9]{1,7}\\.[0-9]{1,7}/nova-os(?:-[0-9]{1,7}\\.[0-9]{1,7}\\.[0-9]{1,7}(?:-debug)?)?\\.apk");
     }catch(Exception e){return false;}}
     private HttpsURLConnection downloadConnection(String url) throws IOException {
         if(!initialAsset(url))throw new IOException("Unexpected host");URL next=new URL(url);
@@ -221,7 +215,7 @@ final class UpdateManager {
     private static boolean secure(URL u){return "https".equalsIgnoreCase(u.getProtocol())&&(u.getPort()==-1||u.getPort()==443)&&u.getUserInfo()==null;}
     private static HttpsURLConnection connect(URL u,boolean meta) throws IOException {
         if(!secure(u))throw new IOException("HTTPS required");
-        HttpsURLConnection c=(HttpsURLConnection)u.openConnection();c.setUseCaches(false);c.setConnectTimeout(5000);c.setReadTimeout(7000);c.setInstanceFollowRedirects(false);c.setRequestProperty("User-Agent","Nova-OS-Updater/1.2.3");
+        HttpsURLConnection c=(HttpsURLConnection)u.openConnection();c.setUseCaches(false);c.setConnectTimeout(5000);c.setReadTimeout(7000);c.setInstanceFollowRedirects(false);c.setRequestProperty("User-Agent","Nova-OS-Updater/1.2.7");
         if(meta){c.setRequestProperty("Accept","application/vnd.github+json");c.setRequestProperty("X-GitHub-Api-Version","2022-11-28");}
         return c;
     }
@@ -229,12 +223,6 @@ final class UpdateManager {
         try(InputStream stream=in;ByteArrayOutputStream out=new ByteArrayOutputStream()){
             byte[] buf=new byte[8192];int n,total=0;while((n=stream.read(buf))!=-1){total+=n;if(total>max)throw new IOException("Size");out.write(buf,0,n);}return out.toByteArray();
         }
-    }
-    static String normalizeRepo(String raw){
-        String value=raw==null?"":raw.trim();if(value.isEmpty())return "";
-        value=value.replaceFirst("(?i)^https://github\\.com/","").replaceFirst("/$","").replaceFirst("(?i)\\.git$","");
-        if(!value.matches("[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/[A-Za-z0-9_.-]{1,100}")||value.endsWith("/.")||value.endsWith("/.."))throw new IllegalArgumentException();
-        return value;
     }
     static int compare(String a,String b){
         if(a==null||b==null||!a.matches("[0-9]{1,7}\\.[0-9]{1,7}\\.[0-9]{1,7}")||!b.matches("[0-9]{1,7}\\.[0-9]{1,7}\\.[0-9]{1,7}"))throw new IllegalArgumentException("Version format");
@@ -245,7 +233,7 @@ final class UpdateManager {
     private void publish(){
         if(closed)return;
         try {
-            JSONObject json=new JSONObject().put("repo",repo).put("automatic",automatic).put("autoDownload",autoDownload).put("status",status).put("message",message).put("version",runningVersion).put("available",offeredVersion).put("progress",progress);
+            JSONObject json=new JSONObject().put("automatic",automatic).put("autoDownload",autoDownload).put("status",status).put("message",message).put("version",runningVersion).put("available",offeredVersion).put("progress",progress);
             listener.state(json);
         }catch(Exception ignored){}
     }
