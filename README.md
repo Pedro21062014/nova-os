@@ -11,7 +11,7 @@ Para compilar: JDK 11+, Android SDK Platform 35 e Build Tools 35.0.1. Use `ANDRO
 ## Entregáveis
 - `Nova-IPTV-V2.html` (prévia autônoma, no diretório pai).
 - `Nova-IPTV-lista.m3u` (35 endereços: 14 canais HLS, 13 filmes, 8 episódios; importável em VLC ou player M3U compatível).
-- `catalogo.json` (29 canais, sendo 14 HLS, 2 players oficiais incorporados e 13 fontes acessíveis pela plataforma oficial; 13 filmes e 3 séries com 8 episódios; créditos e URLs).
+- `catalogo.json` (27 canais, sendo 14 HLS, 2 players oficiais incorporados e 11 fontes acessíveis pela plataforma oficial; 13 filmes e 3 séries com 8 episódios; créditos e URLs).
 
 `sources/curate.py` extrai itens de um snapshot do iptv-org e de uma release de vídeos do GitHub, com seleção explícita de fontes e licenças. A lista aponta para as fontes; não hospeda, reempacota nem faz proxy dos vídeos. HLS validado por manifesto e acesso de segmento; arquivos VOD validados por assinatura inicial. Teste completo de início de reprodução em Chromium para Sintel, TV Brasil, TV UFOP, Cultura Fast, Record News, TV Gazeta, REDEVIDA, TV Aparecida, SBT Interior (SP), Record MT, TV Aratu, Catve, Caminandes E02 e Pepper & Carrot E04. Não certifica todos os dispositivos nem disponibilidade futura. O documentário *The Internet’s Own Boy* usa CC BY-NC-SA 4.0 (não comercial). Os 29 logotipos reais são embutidos na prévia; a origem de cada imagem consta em `assets/channels/sources.json`.
 
@@ -31,14 +31,9 @@ A revisão do índice iptv-org confirmou, por imagem no navegador e pelo sinal p
 
 ## Expansão do catálogo gratuito (prévia)
 
-A prévia ampliada combina `catalogo.json` (base) e `catalogo-gratis.json` (seleção de fontes oficiais), totalizando 30 filmes, 26 séries e os mesmos 29 canais. As capas são incluídas em WebP, sem embutir vídeos. Os títulos novos abrem o Itaú Cultural Play (cadastro gratuito) ou publicações oficiais no YouTube (podem exibir anúncios). A disponibilidade pode mudar por país ou por prazo. Use **Séries → Infantis** para encontrar Turma da Mônica, Pocoyo, Bluey e outros desenhos; os novos itens desse grupo têm áudio em português. Alguns outros episódios no YouTube têm áudio em inglês; o idioma aparece na ficha. Os novos links externos não são entradas M3U: a lista tem 35 fontes diretas (o curta removido também saiu do M3U).
+A prévia e o feed combinam `catalogo.json` e `catalogo-gratis.json`: 27 filmes, 8 séries e 27 canais. **A Hora do Acerto** é o destaque. A seção de filmes em português inclui quatro títulos com Jackie Chan, oferecidos nas páginas oficiais da NetMovies. Peixonauta encaminha ao TV Brasil Play. Estes itens são links externos, não transmissões M3U. A disponibilidade depende da plataforma; o Itaú Cultural Play pode exigir cadastro gratuito.
 
-Para reconstruir apenas a interface, use a seleção já registrada. `sources/free_catalog.py` refaz a consulta pública de fichas e valida os canais do YouTube via oEmbed; não baixa vídeo nem reutiliza links temporários de player. As páginas novas não foram testadas com login e a versão 1.0.2 já inclui essa seleção como base offline.
-
-```sh
-python build-preview.py /home/user/Nova-IPTV-previa.html
-NODE_PATH=/tmp/nova-test/node_modules node tests/free-catalog.cjs /home/user/Nova-IPTV-previa.html
-```
+O feed não inclui links do YouTube. `sources/free_catalog.py` atualiza as fichas do Itaú Cultural Play sem substituir os registros editoriais das outras plataformas. As 35 entradas diretas da M3U permanecem.
 
 ## Catálogo automático, a partir da 1.0.2
 

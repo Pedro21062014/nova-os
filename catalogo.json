@@ -446,7 +446,7 @@
       "id": "record-news",
       "name": "Record News",
       "genre": "Notícias",
-      "source": "https://www.youtube.com/@recordnews/streams",
+      "source": "https://noticias.r7.com/record-news/ao-vivo/",
       "mark": "RN",
       "tone": "#394658",
       "kind": "hls",
@@ -464,7 +464,6 @@
       "kind": "hls",
       "stream": "https://cdn.live.br1.jmvstream.com/w/LVW-9716/LVW9716_HbtQtezcaw/playlist.m3u8",
       "discovery": "https://raw.githubusercontent.com/iptv-org/iptv/e31bf2d278215d665b3372ab4bcceadc95858323/streams/br.m3u",
-      "alternative": "https://www.youtube.com/tvaparecida/live",
       "authorization": "https://jmvstream.com/en/high-quality-live-video-streaming"
     },
     {
@@ -535,8 +534,7 @@
       "tone": "#384a65",
       "kind": "website",
       "stream": "",
-      "description": "A programação ao vivo na internet depende do horário e das atividades legislativas.",
-      "alternative": "https://www.youtube.com/@tvsenado/live"
+      "description": "A programação ao vivo na internet depende do horário e das atividades legislativas."
     },
     {
       "id": "canal-saude",
@@ -559,8 +557,7 @@
       "tone": "#4a435c",
       "kind": "website",
       "stream": "",
-      "description": "Use a página oficial para assistir quando houver transmissão.",
-      "alternative": "https://www.youtube.com/tvjusticaoficial"
+      "description": "Use a página oficial para assistir quando houver transmissão."
     },
     {
       "id": "rede-minas",
@@ -572,17 +569,6 @@
       "kind": "website",
       "stream": "",
       "description": "A Rede Minas transmite pelo Minasplay. O player externo não iniciou no teste."
-    },
-    {
-      "id": "tv-alerj",
-      "name": "TV Alerj",
-      "genre": "Legislativo",
-      "source": "https://www.youtube.com/@TVALERJCanal/live",
-      "mark": "RJ",
-      "tone": "#3d5059",
-      "kind": "website",
-      "stream": "",
-      "description": "Consulte a transmissão e os horários no canal oficial da TV Alerj."
     },
     {
       "id": "tv-globo",
@@ -675,18 +661,7 @@
       "tone": "#3b4b57",
       "kind": "website",
       "stream": "",
-      "description": "O player oficial da Canção Nova fica na página da emissora. O YouTube pediu verificação no teste externo."
-    },
-    {
-      "id": "tve-bahia",
-      "name": "TVE Bahia",
-      "genre": "Cultura regional",
-      "source": "https://www.youtube.com/@tvebahia/live",
-      "mark": "BA",
-      "tone": "#4d5140",
-      "kind": "website",
-      "stream": "",
-      "description": "A TVE Bahia publica transmissões na página oficial do YouTube conforme a programação."
+      "description": "Programação e transmissão na página oficial da emissora."
     },
     {
       "id": "tv-ceara",

@@ -45,4 +45,5 @@ if __name__=='__main__':
     dest.parent.mkdir(parents=True,exist_ok=True)
     raw=(json.dumps(dict(schema=1,featured=feature,catalog=catalog,media=artwork(catalog),playlist=playlist(catalog)),ensure_ascii=False,separators=(',',':'))+'\n').encode()
     assert len(raw)<4*1024*1024
+    assert not re.search(rb"(?:youtube\.com|youtu\.be|ytimg\.com|googlevideo\.com)",raw,re.I), "O catálogo não deve usar links do YouTube."
     dest.write_bytes(raw); print(dest,len(raw),'bytes')
