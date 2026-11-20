@@ -16,13 +16,13 @@ const wrap=(featured,extra)=>{const data=structuredClone(feed);data.featured={..
   }
   return r.fulfill({status:204,body:''});
  });
- await p.goto(origin+'/index.html');await p.getByRole('heading',{name:'Carandiru',exact:true}).waitFor();await p.locator('#nav [data-go=sources]').click();await p.getByText(/1\.0\.2 · catálogo sincronizado/).waitFor();assert(routes.includes('/catalog-feed.json?cached=1'));
+ await p.goto(origin+'/index.html');await p.getByRole('heading',{name:'Carandiru',exact:true}).waitFor();await p.locator('#nav [data-go=sources]').click();await p.getByText(/1\.0\.3 · catálogo sincronizado/).waitFor();assert(routes.includes('/catalog-feed.json?cached=1'));
  await p.locator('#nav [data-go=home]').click();next=wrap('hora-do-acerto',true);
  // The update arrives while a detail is open; it applies only after going back.
  await p.locator('.hero [data-item=carandiru-3]').click();const online=p.waitForResponse(r=>r.url()===origin+'/catalog-feed.json');await p.evaluate(()=>NovaIptv.refresh());await online;assert(await p.getByRole('dialog',{name:'Carandiru'}).isVisible());await p.keyboard.press('Escape');await p.getByRole('heading',{name:'A Hora do Acerto',exact:true}).waitFor();await p.getByText('Escolha da semana',{exact:true}).waitFor();assert.match(await p.locator('.hero a').getAttribute('href'),/^https:\/\/www\.netmovies\.com\.br\//);assert.equal(await p.locator('a[href*=youtube],a[href*=youtu\\.be]').count(),0);
  for(const [group,name] of [['movies','Filme de teste'],['series','Série de teste'],['live','Canal de teste']]){await p.locator('#nav [data-go='+group+']').click();await p.getByText(name,{exact:true}).waitFor();}
  const playback=p.waitForRequest(r=>r.url()===origin+'/live/record-mt?rev='+next.digest);await p.locator('[data-play=record-mt]').click();await playback;assert(routes.includes('/live/record-mt?rev='+next.digest));await p.evaluate(()=>NovaIptv.resumeFocus());
  await p.locator('#nav [data-go=sources]').click();const exported=p.waitForRequest(r=>r.url()===origin+'/export?rev='+next.digest);await p.getByRole('button',{name:'Baixar M3U'}).click();await exported;
- service=false;await p.goto(origin+'/index.html');await p.getByRole('heading',{name:'A Hora do Acerto',exact:true}).waitFor();await p.locator('#nav [data-go=sources]').click();await p.getByText(/1\.0\.2 · último catálogo salvo/).waitFor();assert.deepEqual(errors,[]);
+ service=false;await p.goto(origin+'/index.html');await p.getByRole('heading',{name:'A Hora do Acerto',exact:true}).waitFor();await p.locator('#nav [data-go=sources]').click();await p.getByText(/1\.0\.3 · último catálogo salvo/).waitFor();assert.deepEqual(errors,[]);
  console.log('Sync: destaques e catálogo atualizados no retorno, sem interromper a ficha; HLS e M3U usam a mesma revisão; reabertura offline usa cache.');
 }finally{await b.close();}})().catch(e=>{console.error(e);process.exit(1);});

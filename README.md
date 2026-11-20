@@ -40,3 +40,5 @@ O feed não inclui links do YouTube. `sources/free_catalog.py` atualiza as ficha
 O APK consulta o JSON `feed/catalogo-v1.json` da branch `nova-iptv-app` deste repositório ao abrir ou voltar ao primeiro plano. Salva a última versão válida; sem ela, usa o catálogo inicial incluído no APK. A sincronização não toca nos favoritos e não troca uma ficha ou reprodução que já esteja aberta. O GitHub fornece apenas dados e imagens; o player e o código da interface permanecem locais. A playlist M3U e a rota nativa HLS usam a revisão exibida.
 
 Para mudar o destaque, altere o ID e os textos em `destaque.json`. Atualize os títulos, canais e capas nas fontes do projeto e execute `python3 sources/feed_data.py`. Publique o JSON gerado na branch `nova-iptv-app`. Nenhuma versão nova do APK é necessária para alterar o catálogo; versões anteriores à 1.0.2 precisam fazer a instalação inicial uma vez. Em **Fontes e licenças** o app mostra a versão instalada e se está usando GitHub, cache ou a base incluída.
+
+Na 1.0.3, as setas verticais percorrem primeiro os botões da área atual, sem saltar para a barra superior enquanto houver controles acima.
