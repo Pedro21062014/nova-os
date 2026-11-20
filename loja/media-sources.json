@@ -1,0 +1,405 @@
+{
+  "vlc": {
+    "logo": "https://images.videolan.org/images/largeVLC.png",
+    "s1": "https://images.videolan.org/vlc/screenshots/android/library-video-landscape-medium.jpg",
+    "s2": "https://images.videolan.org/vlc/screenshots/android/playback-tablet-medium.jpg",
+    "s3": "https://images.videolan.org/vlc/screenshots/android/playback-medium.jpg"
+  },
+  "kodi": {
+    "logo": "https://play-lh.googleusercontent.com/-6H51wRiflGv_2wk-YIDtdzTV6t7ZqD9D4xLy7c3EDeaWWYoezZvPMkYNfCUuGU5Ae8XDOKQNfVkq-4t6tY0UA=w240-h480",
+    "s1": "https://play-lh.googleusercontent.com/wZpEaPDXrNHSlKw4dX7WfZiJIpmRgNXkwZhcmrcwl3Obx2K-5J3_MH_nh5ChKY6bGpG9V1o0Fu1iBR-QV85QJg=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/vKGTEFdnHH8wWySiEx5yNcoXybEHtoppyJy_u2m7u0FQfUSOgQRoM0g7k-P6d2F4taeLGxrcOZPzjlWqmPjXGQ=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/zMHA24HFXdD4-RwtRv-vBXb2UeNsaTelfaAFOmm5M5GR05vSO3pBS-FK4a-po0MxYV_g1hKXSW8YOLilYvUJ=w1052-h592"
+  },
+  "jellyfin": {
+    "logo": "https://raw.githubusercontent.com/jellyfin/jellyfin-androidtv/master/fastlane/metadata/android/en-US/images/icon.png",
+    "s1": "https://raw.githubusercontent.com/jellyfin/jellyfin-androidtv/master/fastlane/metadata/android/en-US/images/tvScreenshots/1.png",
+    "s2": "https://raw.githubusercontent.com/jellyfin/jellyfin-androidtv/master/fastlane/metadata/android/en-US/images/tvScreenshots/2.png",
+    "s3": "https://raw.githubusercontent.com/jellyfin/jellyfin-androidtv/master/fastlane/metadata/android/en-US/images/tvScreenshots/3.png"
+  },
+  "just": {
+    "logo": "https://raw.githubusercontent.com/moneytoo/Player/master/fastlane/metadata/android/en-US/images/icon.png",
+    "s1": "https://raw.githubusercontent.com/moneytoo/Player/master/fastlane/metadata/android/en-US/images/tvScreenshots/1.png",
+    "s2": "https://raw.githubusercontent.com/moneytoo/Player/master/fastlane/metadata/android/en-US/images/tvScreenshots/2.png",
+    "s3": "https://raw.githubusercontent.com/moneytoo/Player/master/fastlane/metadata/android/en-US/images/tvScreenshots/3.png"
+  },
+  "retro": {
+    "logo": "https://raw.githubusercontent.com/libretro/RetroArch/master/fastlane/metadata/android/en-US/images/icon.png",
+    "s1": "https://raw.githubusercontent.com/libretro/RetroArch/master/fastlane/metadata/android/en-US/images/tvScreenshots/1.png",
+    "s2": "https://raw.githubusercontent.com/libretro/RetroArch/master/fastlane/metadata/android/en-US/images/tvScreenshots/2.png",
+    "s3": "https://raw.githubusercontent.com/libretro/RetroArch/master/fastlane/metadata/android/en-US/images/tvScreenshots/3.png"
+  },
+  "moonlight": {
+    "logo": "https://raw.githubusercontent.com/moonlight-stream/moonlight-android/master/fastlane/metadata/android/en-US/images/icon.png",
+    "s1": "https://raw.githubusercontent.com/moonlight-stream/moonlight-android/master/fastlane/metadata/android/en-US/images/tvScreenshots/1-pc.png",
+    "s2": "https://raw.githubusercontent.com/moonlight-stream/moonlight-android/master/fastlane/metadata/android/en-US/images/tvScreenshots/2-settings.png"
+  },
+  "nova": {
+    "logo": "https://raw.githubusercontent.com/nova-video-player/aos-AVP/nova/fastlane/metadata/android/en-US/images/icon.png",
+    "s1": "https://play-lh.googleusercontent.com/cuBwUrT6DMBhVmqLcnbV9eHAXqdAoD3PQhulfSWR5Iih_FQOJ2in1qThkS9qauYNA_MFypxoIzJ_qiCDu8LO8g=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/V3E0hZYdkWpDKe_zCYH9R4Cfod99xchYaodfkDT_Me9qiKBtZLl7apTjv5F7NH2xDbItlVCFZUUO2qgSidBeog=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/HnTW_QgcV4W40m9GuEKKicZwUrFfZNzxIiDiS1X3Rf1E727TXBgMqvL4ZOIsj8glGdmqWOsV7uJx8-IIE1ksVg=w1052-h592"
+  },
+  "aerial": {
+    "logo": "https://raw.githubusercontent.com/theothernt/AerialViews/master/app/src/main/ic_launcher-playstore.png",
+    "s1": "https://play-lh.googleusercontent.com/YahGLOmn6ag5zcziPalO8b0Yvbj-eEsCBSnRMo8psB_5GsqxSAYUTqAC7tZfYwKw5tDU2i1cqQIVkxiq-dFcv1I=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/Y62NqvJrLDugLvGPXfet10RCs-38l-aSOcNaST4iwATdSWZzLyWxQO1qxtEQYvm_yUmW9z2b9nT98OFttj-aky8=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/IgGBBpBBcATTvGxr8TcGQBh-9pRo6fsbEfz6yAQssJ7j44-RnifDkr-Xc9OZjqE8eXihvsK-MZCsZ7sxNA_xeQ=w1052-h592"
+  },
+  "tvbro": {
+    "logo": "https://raw.githubusercontent.com/truefedex/tv-bro/master/metadata/en-US/images/icon.png",
+    "s1": "https://raw.githubusercontent.com/truefedex/tv-bro/master/metadata/en-US/images/tvScreenshots/1.png",
+    "s2": "https://raw.githubusercontent.com/truefedex/tv-bro/master/metadata/en-US/images/tvScreenshots/2.png"
+  },
+  "wholphin": {
+    "logo": "https://raw.githubusercontent.com/damontecres/Wholphin/main/app/src/main/ic_launcher-playstore.png",
+    "s1": "https://github.com/user-attachments/assets/9a4f04b7-9604-4ea7-b352-50f2b15dc2f1",
+    "s2": "https://github.com/user-attachments/assets/fad0424b-0631-4438-a8bc-d4fbb95a5bf3",
+    "s3": "https://github.com/user-attachments/assets/849aad34-49d5-4864-8de7-005bbcb68ac6"
+  },
+  "arc": {
+    "logo": "https://raw.githubusercontent.com/meddouribadis/arclauncher/main/fastlane/metadata/android/en-US/images/icon.png",
+    "s1": "https://raw.githubusercontent.com/meddouribadis/arclauncher/main/docs/images/home.webp",
+    "s2": "https://raw.githubusercontent.com/meddouribadis/arclauncher/main/docs/images/home2.png",
+    "s3": "https://raw.githubusercontent.com/meddouribadis/arclauncher/main/docs/images/watch_next.png"
+  },
+  "lounge": {
+    "logo": "https://raw.githubusercontent.com/Gingerbreadfork/lounge/main/docs/logo.png",
+    "s1": "https://raw.githubusercontent.com/Gingerbreadfork/lounge/main/docs/screenshots/home.png",
+    "s2": "https://raw.githubusercontent.com/Gingerbreadfork/lounge/main/docs/screenshots/rows.png",
+    "s3": "https://raw.githubusercontent.com/Gingerbreadfork/lounge/main/docs/screenshots/settings.png"
+  },
+  "aperture": {
+    "s1": "https://raw.githubusercontent.com/XDanfr/Aperture/master/screenshots/expressive/home.webp",
+    "s2": "https://raw.githubusercontent.com/XDanfr/Aperture/master/screenshots/expressive/home-sidebar.webp",
+    "s3": "https://raw.githubusercontent.com/XDanfr/Aperture/master/screenshots/expressive/movies.webp",
+    "logo": "https://raw.githubusercontent.com/XDanfr/Aperture/master/Aperture.png"
+  },
+  "fluffy": {
+    "s1": "https://raw.githubusercontent.com/mlm-games/Fluffy/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png",
+    "s2": "https://raw.githubusercontent.com/mlm-games/Fluffy/main/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png",
+    "s3": "https://raw.githubusercontent.com/mlm-games/Fluffy/main/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png",
+    "logo": "https://raw.githubusercontent.com/mlm-games/Fluffy/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp"
+  },
+  "voyager": {
+    "s1": "https://raw.githubusercontent.com/AlanHuang99/Voyager/master/docs/screenshots/home.png",
+    "s2": "https://raw.githubusercontent.com/AlanHuang99/Voyager/master/docs/screenshots/browser.png",
+    "logo": "https://raw.githubusercontent.com/AlanHuang99/Voyager/master/fastlane/metadata/android/en-US/images/icon.png"
+  },
+  "immich": {
+    "s1": "https://raw.githubusercontent.com/giejay/Immich-Android-TV/main/screenshots/homescreen-1.png",
+    "s2": "https://raw.githubusercontent.com/giejay/Immich-Android-TV/main/screenshots/photos.png",
+    "s3": "https://raw.githubusercontent.com/giejay/Immich-Android-TV/main/screenshots/sorting-options.png",
+    "logo": "https://github.com/giejay/Immich-Android-TV/releases/download/v7.0.0/ImmichTV-7.0.0.apk#res/9T.png"
+  },
+  "openvista": {
+    "s1": "https://raw.githubusercontent.com/murilaiooo/openvista/main/assets/screenshots/home.webp",
+    "s2": "https://raw.githubusercontent.com/murilaiooo/openvista/main/assets/screenshots/live-camera.webp",
+    "s3": "https://raw.githubusercontent.com/murilaiooo/openvista/main/assets/screenshots/settings.webp",
+    "logo": "https://raw.githubusercontent.com/murilaiooo/openvista/main/player/src/main/res/drawable/ov_icon.xml"
+  },
+  "simkeyboard": {
+    "s1": "https://raw.githubusercontent.com/deferino/SimpleKeyboardTV/master/images/keyboard.png",
+    "s2": "https://raw.githubusercontent.com/deferino/SimpleKeyboardTV/master/images/settings.png",
+    "logo": "https://raw.githubusercontent.com/deferino/SimpleKeyboardTV/master/icons/icon.svg"
+  },
+  "lean": {
+    "s1": "https://raw.githubusercontent.com/yuliskov/LeanKeyboard/master/img/leankeykeyboard_screenshot_01.png",
+    "s2": "https://raw.githubusercontent.com/yuliskov/LeanKeyboard/master/img/leankeykeyboard_screenshot_02.png",
+    "logo": "https://raw.githubusercontent.com/yuliskov/LeanKeyboard/master/img/leankeykeyboard_logo_small.png"
+  },
+  "homekey": {
+    "s1": "https://raw.githubusercontent.com/leonida92/HomeKeyTV/main/docs/screenshots/dock_overlay.png",
+    "s2": "https://raw.githubusercontent.com/leonida92/HomeKeyTV/main/docs/screenshots/settings_button_remap.png",
+    "s3": "https://raw.githubusercontent.com/leonida92/HomeKeyTV/main/docs/screenshots/settings_layout.png",
+    "logo": "https://raw.githubusercontent.com/leonida92/HomeKeyTV/main/app/src/main/res/drawable/ic_launcher.xml"
+  },
+  "matvt": {
+    "s1": "https://raw.githubusercontent.com/virresh/matvt/master/meta/basic.gif",
+    "s2": "https://raw.githubusercontent.com/virresh/matvt/master/meta/border_warp.gif",
+    "s3": "https://raw.githubusercontent.com/virresh/matvt/master/meta/mouse_sizes.gif",
+    "logo": "https://raw.githubusercontent.com/virresh/matvt/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+  },
+  "mrowser": {
+    "s1": "https://raw.githubusercontent.com/m-salehi-v/mrowser/main/docs/screenshots/home.png",
+    "s2": "https://raw.githubusercontent.com/m-salehi-v/mrowser/main/docs/screenshots/player-sub-sync.png",
+    "logo": "https://raw.githubusercontent.com/m-salehi-v/mrowser/main/fastlane/metadata/android/en-US/images/icon.png"
+  },
+  "aperturealt": {
+    "s1": "https://raw.githubusercontent.com/glidiandev/home-deck/main/docs/home.png",
+    "s2": "https://raw.githubusercontent.com/glidiandev/home-deck/main/docs/apps.png",
+    "s3": "https://raw.githubusercontent.com/glidiandev/home-deck/main/docs/jump-to.png",
+    "logo": "https://github.com/glidiandev/home-deck/releases/download/v0.2.1/homedeck.apk#res/OA.png"
+  },
+  "hushtile": {
+    "s1": "https://raw.githubusercontent.com/konoft/Hushtile/main/docs/screenshots/cinematic.jpg",
+    "s2": "https://raw.githubusercontent.com/konoft/Hushtile/main/docs/screenshots/home.jpg",
+    "logo": "https://github.com/konoft/Hushtile/releases/download/v1.8/hushtile-1.8.apk#res/4k.jpg"
+  },
+  "kido": {
+    "s1": "https://raw.githubusercontent.com/glidiandev/kido/main/docs/kido-main.jpg",
+    "s2": "https://raw.githubusercontent.com/glidiandev/kido/main/docs/kido-standby.png",
+    "s3": "https://raw.githubusercontent.com/glidiandev/kido/main/docs/kido-now-playing.jpg",
+    "logo": "https://github.com/glidiandev/kido/releases/download/v0.2/kido.apk#res/RJ.png"
+  },
+  "koolest": {
+    "s1": "https://raw.githubusercontent.com/KoolestTVLauncher/Koolest-TV-Launcher/main/docs/home.jpg",
+    "s2": "https://raw.githubusercontent.com/KoolestTVLauncher/Koolest-TV-Launcher/main/docs/all-apps.jpg",
+    "s3": "https://raw.githubusercontent.com/KoolestTVLauncher/Koolest-TV-Launcher/main/docs/settings.jpg",
+    "logo": "https://raw.githubusercontent.com/KoolestTVLauncher/Koolest-TV-Launcher/main/docs/logo.svg"
+  },
+  "luncher": {
+    "s1": "https://raw.githubusercontent.com/CVasilakis/luncher/main/fastlane/metadata/android/en-US/images/tvScreenshots/1.png",
+    "s2": "https://raw.githubusercontent.com/CVasilakis/luncher/main/fastlane/metadata/android/en-US/images/tvScreenshots/2.png",
+    "s3": "https://raw.githubusercontent.com/CVasilakis/luncher/main/fastlane/metadata/android/en-US/images/tvScreenshots/3.png",
+    "logo": "https://raw.githubusercontent.com/CVasilakis/luncher/main/fastlane/metadata/android/en-US/images/icon.png"
+  },
+  "ltv": {
+    "s1": "https://raw.githubusercontent.com/leanbitlab-org/LtvLauncher/master/docs/images/screenshot_1.png",
+    "s2": "https://raw.githubusercontent.com/leanbitlab-org/LtvLauncher/master/docs/images/screenshot_2.png",
+    "s3": "https://raw.githubusercontent.com/leanbitlab-org/LtvLauncher/master/docs/images/screenshot_3.png",
+    "logo": "https://raw.githubusercontent.com/leanbitlab-org/LtvLauncher/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+  },
+  "flauncher": {
+    "s1": "https://raw.githubusercontent.com/osrosal/flauncher/master/screenshots/Screenshot_1624378896.png",
+    "s2": "https://raw.githubusercontent.com/osrosal/flauncher/master/screenshots/Screenshot_1624378921.png",
+    "s3": "https://raw.githubusercontent.com/osrosal/flauncher/master/screenshots/Screenshot_1624378938.png",
+    "logo": "https://github.com/osrosal/flauncher/releases/download/v2025.07.001/flauncher-universal-release.apk#res/9w.png"
+  },
+  "material": {
+    "s1": "https://raw.githubusercontent.com/zhanghai/MaterialFiles/master/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png",
+    "s2": "https://raw.githubusercontent.com/zhanghai/MaterialFiles/master/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png",
+    "s3": "https://raw.githubusercontent.com/zhanghai/MaterialFiles/master/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png",
+    "logo": "https://raw.githubusercontent.com/zhanghai/MaterialFiles/master/app/src/main/res/mipmap-xxxhdpi/launcher_icon.png"
+  },
+  "zlmusic": {
+    "s1": "https://raw.githubusercontent.com/kaosZL/ZL_Musicos/master/docs/screenshots/首页.png",
+    "s2": "https://raw.githubusercontent.com/kaosZL/ZL_Musicos/master/docs/screenshots/播放页.png",
+    "s3": "https://raw.githubusercontent.com/kaosZL/ZL_Musicos/master/docs/screenshots/播放列表.png",
+    "logo": "https://raw.githubusercontent.com/kaosZL/ZL_Musicos/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+  },
+  "ultimate": {
+    "s1": "https://raw.githubusercontent.com/Kilowatch/ultimate-file-manager-pro/main/docs/screenshots/tv-browser.jpeg",
+    "logo": "https://raw.githubusercontent.com/Kilowatch/ultimate-file-manager-pro/main/app/src/tv/res/mipmap-xxxhdpi/ic_launcher.png",
+    "s2": "https://raw.githubusercontent.com/Kilowatch/ultimate-file-manager-pro/main/docs/screenshots/mobile-cloud.jpeg"
+  },
+  "mpvnova": {
+    "s1": "https://raw.githubusercontent.com/Laskco/mpvNova/main/docs/screenshots/home-screen.png",
+    "s2": "https://raw.githubusercontent.com/Laskco/mpvNova/main/docs/screenshots/media-library.png",
+    "s3": "https://raw.githubusercontent.com/Laskco/mpvNova/main/docs/screenshots/player-ui-customization.png",
+    "logo": "https://raw.githubusercontent.com/Laskco/mpvNova/main/fastlane/metadata/android/en-US/images/icon.png"
+  },
+  "mpv": {
+    "s1": "https://raw.githubusercontent.com/mpv-android/mpv-android/master/fastlane/metadata/android/en-US/images/tenInchScreenshots/1.jpg",
+    "s2": "https://raw.githubusercontent.com/mpv-android/mpv-android/master/fastlane/metadata/android/en-US/images/tenInchScreenshots/2.png",
+    "s3": "https://raw.githubusercontent.com/mpv-android/mpv-android/master/fastlane/metadata/android/en-US/images/tenInchScreenshots/3.png",
+    "logo": "https://raw.githubusercontent.com/mpv-android/mpv-android/master/fastlane/metadata/android/en-US/images/icon.png"
+  },
+  "artemis": {
+    "s1": "https://raw.githubusercontent.com/ClassicOldSong/moonlight-android/moonlight-noir/fastlane/metadata/android/en-US/images/tvScreenshots/1-pc.png",
+    "s2": "https://raw.githubusercontent.com/ClassicOldSong/moonlight-android/moonlight-noir/fastlane/metadata/android/en-US/images/tvScreenshots/2-settings.png",
+    "logo": "https://raw.githubusercontent.com/ClassicOldSong/moonlight-android/moonlight-noir/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+  },
+  "ghosten": {
+    "s1": "https://github.com/GhostenEditor/Ghosten-Player#readme",
+    "s2": "https://github.com/GhostenEditor/Ghosten-Player#readme",
+    "s3": "https://github.com/GhostenEditor/Ghosten-Player#readme",
+    "logo": "https://raw.githubusercontent.com/GhostenEditor/Ghosten-Player/dev/assets/common/images/logo.png"
+  },
+  "nimbus": {
+    "s1": "https://raw.githubusercontent.com/lucasclgibson/nimbus/main/docs/screenshots/home.png",
+    "s2": "https://raw.githubusercontent.com/lucasclgibson/nimbus/main/docs/screenshots/guide.png",
+    "s3": "https://raw.githubusercontent.com/lucasclgibson/nimbus/main/docs/screenshots/live.png",
+    "logo": "https://raw.githubusercontent.com/lucasclgibson/nimbus/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+  },
+  "owntv": {
+    "s1": "https://raw.githubusercontent.com/ahXN00/OwnTV/main/extras/screenshots/Home.png",
+    "s2": "https://raw.githubusercontent.com/ahXN00/OwnTV/main/extras/screenshots/LiveTV_with_PreviewON.png",
+    "s3": "https://raw.githubusercontent.com/ahXN00/OwnTV/main/extras/screenshots/EPG_loaded.png",
+    "logo": "https://raw.githubusercontent.com/ahXN00/OwnTV/main/extras/brand/legacy/icon.png"
+  },
+  "tiviate": {
+    "s1": "https://raw.githubusercontent.com/Amitk2108/tiviate/main/docs/screenshots/02-tv-guide.png",
+    "s2": "https://raw.githubusercontent.com/Amitk2108/tiviate/main/docs/screenshots/06-player-options.png",
+    "s3": "https://raw.githubusercontent.com/Amitk2108/tiviate/main/docs/screenshots/07-channel-list.png",
+    "logo": "https://raw.githubusercontent.com/Amitk2108/tiviate/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+  },
+  "lumora": {
+    "s1": "https://raw.githubusercontent.com/disclosurez/Lumora/main/docs/screenshots/discover.png",
+    "s2": "https://raw.githubusercontent.com/disclosurez/Lumora/main/docs/screenshots/live-tv.png",
+    "s3": "https://raw.githubusercontent.com/disclosurez/Lumora/main/docs/screenshots/settings-providers.png",
+    "logo": "https://raw.githubusercontent.com/disclosurez/Lumora/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+  },
+  "flicky": {
+    "s1": "https://raw.githubusercontent.com/mlm-games/flicky/kotlin/fastlane/metadata/android/en-US/images/tvScreenshots/Screenshot_20250816_134815.png",
+    "s2": "https://raw.githubusercontent.com/mlm-games/flicky/kotlin/fastlane/metadata/android/en-US/images/tvScreenshots/Screenshot_20250816_134943.png",
+    "s3": "https://raw.githubusercontent.com/mlm-games/flicky/kotlin/fastlane/metadata/android/en-US/images/tvScreenshots/Screenshot_20250816_135001.png",
+    "logo": "https://raw.githubusercontent.com/mlm-games/flicky/kotlin/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp"
+  },
+  "windscribe": {
+    "s1": "https://play-lh.googleusercontent.com/BW9VlP_2rGe4RnS9yKixOukn25dg8PpKwBAk7LSR-nVWqEhzILb2K8I1ldIoZ4g04mMQG5RHveXY6lFd4YQ6ww=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/3ngu-u3nLqbFNZTNqkHeK5Uss4BH9t58cbzBQlGwC2P6I9MnYUzd2q-SXRAazxlth7aJG8dMAIoR-gl2uYAtkf8=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/msoV4rP18tmUBosm_UosIUMp43a-nd66t7r80-LYlke_UqPgHfpuGTGQ11-1DXe88JcViZiLI9CHxyIdDgeH-g=w1052-h592",
+    "logo": "https://raw.githubusercontent.com/Windscribe/Android-App/main/openvpn/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+  },
+  "tailscale": {
+    "s1": "https://raw.githubusercontent.com/tailscale/tailscale-android/main/metadata/en-US/images/tvScreenshots/1.png",
+    "s2": "https://raw.githubusercontent.com/tailscale/tailscale-android/main/metadata/en-US/images/tvScreenshots/2.png",
+    "s3": "https://raw.githubusercontent.com/tailscale/tailscale-android/main/metadata/en-US/images/tvScreenshots/3.png",
+    "logo": "https://raw.githubusercontent.com/tailscale/tailscale-android/main/android/src/main/res/mipmap-xxxhdpi/ic_launcher.webp"
+  },
+  "lightning": {
+    "s1": "https://github.com/threethan/LightningLauncher#readme",
+    "s2": "https://github.com/threethan/LightningLauncher#readme",
+    "s3": "https://github.com/threethan/LightningLauncher#readme",
+    "logo": "https://raw.githubusercontent.com/threethan/LightningLauncher/main/Launcher/App/src/main/res/mipmap-hdpi/app_icon.png"
+  },
+  "clean": {
+    "s1": "https://raw.githubusercontent.com/d4rken-org/sdmaid-se/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1_dashboard.png",
+    "s2": "https://raw.githubusercontent.com/d4rken-org/sdmaid-se/main/fastlane/metadata/android/en-US/images/phoneScreenshots/2_appcleaner.png",
+    "s3": "https://raw.githubusercontent.com/d4rken-org/sdmaid-se/main/fastlane/metadata/android/en-US/images/phoneScreenshots/4_systemcleaner.png",
+    "logo": "https://raw.githubusercontent.com/d4rken-org/sdmaid-se/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+  },
+  "stremio": {
+    "s1": "https://play-lh.googleusercontent.com/bbkGN2pVvDRYZUsWaKWR-h73HcgPKDvchiHzbToRpmc6G_Gzlug6fT0ram6b_lvcvaYYcI2QugIWYPDvGHf4lg=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/R05h1PSVK5cFV80K-OJqDjF-nkkJFKsz1Qz3kvEUXk6_thF08DJApSOMdaPqsyC6pIPaaJbs0ZKH5cVxClephWo=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/85UaGytvpt5Q3KEZ7tGnqXpmUImpdwofq7_RvxmHNnxwB0mLKXTXRfEV_w_UJVdUXP6XOJ2US3JyNLOsKRKA=w1052-h592",
+    "logo": "https://www.stremio.com/assets/stremio-logo-small-DmKKoSIJ.png"
+  },
+  "fcast": {
+    "s1": "https://fcast.org/images/receiver_connected.avif",
+    "s2": "https://fcast.org/images/tv.avif",
+    "logo": "https://fcast.org/images/logo.svg"
+  },
+  "emby": {
+    "s1": "https://emby.media/resources/android-tv-home-2026.webp",
+    "s2": "https://emby.media/resources/android-tv-browse-2.webp",
+    "s3": "https://emby.media/resources/android-tv-browse-3.webp",
+    "logo": "https://raw.githubusercontent.com/MediaBrowser/Emby.Releases/a1d47ef99621c06d0e90e70785610e2fa267369d/androidtv/app-google-release.apk#res/yM.png"
+  },
+  "ppsspp": {
+    "s1": "https://play-lh.googleusercontent.com/nFvKmau5AaIVMpBINMyfXRqLGB0weH66nvHrB6aydAVyk1VD9S3cVht-QIpTV6KUNSah8e2rtAS5ZEvUXIEX7sA=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/SpOEoPlpYbQF0L3NYsbTqpOuz_KzS_flbEUOsDIo--rAcLJMMiJw4cRrXPaAJpJzl-LshfyepSeHPA1EVF6Uog=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/RoCvogs1opcfKgFYCzrkXN0FJ9QcDstdz-UBq9xv3crGgG1XOD40gnx4MvFivXKIUWEmHeahr2G7W3h_ABnWcQ=w1052-h592",
+    "logo": "https://www.ppsspp.org/static/img/platform/ppsspp-icon.png"
+  },
+  "steamlink": {
+    "s1": "https://play-lh.googleusercontent.com/MjDn1K-B4a_HeXY1CaSO8MHYH-HvvA5vecg_-skhHQWEc08577Vzq0pXP0VKHxUVSk4nhzvrNlKgm4R4qaKiKQ=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/lIWoeH41NjfUwEK6u5sFeBUgixkTLYbebCy-AziPk-d9JjoBlRNzBV7udh23Tz92lT36H_V5F0tYCEOQh2Sfow=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/knRCzJ4pv3P5_1qZaUZ1Vemc5dQHOKu_2Q7Zqr2Gvldu3Sy4abHyeFk1Vo5whNj5KFb5ZNjUJ6aej1HbjszyKIc=w1052-h592",
+    "logo": "https://play-lh.googleusercontent.com/6TU14znIBQ6oierlwk8twhgqDLMhA3y-a-daQq8jF5d_OZpk9HpEo9rlMQ_KhxSUQ-mpohuQLVmH-jy6zoVCaTU=w320-h320"
+  },
+  "protonvpn": {
+    "s1": "https://vpncdn.protonweb.com/image-transformation/?s=a&image=Zn2_Yfh5_Le_NN_Twmtz_android_tv_easy_connect_f8c038c27e.png&width=1651&height=840",
+    "s2": "https://vpncdn.protonweb.com/image-transformation/?s=a&image=Zn2_Yf_R5_Le_NN_Twmty_android_tv_stream_movies_and_shows_b8ebee843b.png&width=1651&height=840",
+    "s3": "https://vpncdn.protonweb.com/image-transformation/?s=a&image=Zn2_Yf_B5_Le_NN_Twmtx_android_tv_save_your_favorite_countries_583574d96a.png&width=1651&height=840",
+    "logo": "https://vpncdn.protonweb.com/image-transformation/?s=c&image=image/upload/v1776940263/static/logos/vpn/vpn-icon.svg"
+  },
+  "smarttube": {
+    "s1": "https://raw.githubusercontent.com/yuliskov/SmartTube/master/images/browse_home.png",
+    "s2": "https://raw.githubusercontent.com/yuliskov/SmartTube/master/images/new/V3GHGvWprmdE1w.jpg",
+    "logo": "https://github.com/yuliskov/SmartTube/releases/download/32.80s/SmartTube_stable_32.80_arm64-v8a.apk#res/3a.png"
+  },
+  "dolphin": {
+    "s1": "https://play-lh.googleusercontent.com/ishvQTMNsW9_3Ed9f1mYwlOkTkOz9B-WTuSrqXrsl5lnP7tK5-GBRbNzK9f2UoPYJIZk8VzbbuM9hl-RaI6BIg=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/UPs0Idp07Oym4nHaDT-keOTmrj2UxjAm4kLz3tmnXMNA7SJYhui2_GArViLTc2a_by1L5HVq596b_YUaHPrE5w=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/QD-89HrWbCBbQ7naeyNJko7XzCFmcLLevygu9LpwkpbtFKZd-CgFMgq_-qeUqnu-yh8HwhrGl6-KudBcIr4PkOw=w1052-h592",
+    "logo": "https://play-lh.googleusercontent.com/z1tkk5yLphcv9bv83m72lCxCS3KycPmVNNgPbSdgh7969QjS5pFuW9UBXDO6oVnsyB_Uxx2AqKKC7VR5dM322w=w320-h320"
+  },
+  "lemuroid": {
+    "s1": "https://play-lh.googleusercontent.com/31OdFHNMine6niyb336u7z6B3wxYRAhYdkFtqfW5Ciy0C76P5oPncMpE-Lr2A6m5X5W_AzVZc4NIkuOVRNYy=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/UDPDi2eXALyELMb8FUaRFnkCYuMlNvQUXznHa2C8NocWyQe5pftGan_VPiwChxxO6d1qbtMW-y5kMkXwH8Lq1g=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/iTgtvT5oX4F6yTKyJ8Dba7e6Bx1zeMXSzKXquj5ctcRf2MSoxgHZzuQkquJXFYvM_IvHxYzariCXyenOoQoS_Q=w1052-h592",
+    "logo": "https://play-lh.googleusercontent.com/hWs9NKnx1bqRK3x8l-e2KlvBbgOBWikkdYsIvSVtkOHNNwLxpxv6OI6V2v2IaDpEantdC97JnEQdIYAEhA4fRw=w320-h320"
+  },
+  "azahar": {
+    "s1": "https://play-lh.googleusercontent.com/d0mYtRrLbBH3TaUlJFt3e_yG0OVXAs78ar2Uy9LL-y5b9J92nnuDfu507cQRA4rk1i8sI1iick2ULyxlmjy8aQ=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/HqYILrmx08NQr6eZmp7qWE5tN4FjgmvouTQJ_Jid2o0ETjgQS-amWV0dhp6rdRcntQQqeRt2k1-P7GCdGLn0ip0=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/gWSziowpJUZUO3nlL7hy7h4L2pcnMceAPBJgqp3BIHlt683QZgiuNuWpXv9r_fjfrcaXhtBVQerEceC8AASlr6Y=w1052-h592",
+    "logo": "https://azahar-emu.org/resources/images/logo/azahar-name-and-logo.svg"
+  },
+  "scummvm": {
+    "s1": "https://play-lh.googleusercontent.com/oMeyKWb9BflZQKLbLnF6D5jU2U1Hdw4QX22CLXhIQi5vhPb5TYZtElnem4FYYO6zkPJRhtStd9mx_y4cfEM7=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/25tER2_9Uk84_0d33g8zcywzN6VUUXZDfoHP6nCC4EE2etCKuOdS8cGhFIt_fBlKnvIUgbGA8bOJwd6HS4_B_w=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/Y1ktSkTY_JnZu7G8zTkoJ_2p8cx2UqoHMs02EaEDmQeb7p8SEOnZ5ugoj9rSHaIdn3oxPa_W4xEMuMY3SaaANSw=w1052-h592",
+    "logo": "https://play-lh.googleusercontent.com/Ao6V55Sq2ANECxJA64ZjeDqf5JkY0AXN97nMeNURLV1RTMrB3X0Y0t9O8GwTRKB-MuF6Dx0jPbkHCARa-h7e=w320-h320"
+  },
+  "xplore": {
+    "s1": "https://play-lh.googleusercontent.com/FcUWhFM2HyeYSd7eupWyJ5R2AZegJygq1LkMlhZNg_eBhP5xWZcKbpgryxk8kvnhVaFmDOTZnAhlLM12fV0D=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/mWxYbjJoRWK4-SuVQ0VWVl4R_1q4y-9lTYVuGR8E15SEN_McLY7If2yTFW9L2NQa4FAXZmlI-vD1eCMMXKgLH5o=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/Vq5FwUjnFKGaUfXFDkvF2FDnDxoowQ5DyueSJ0-MqnIBKmzP2j7ny9dA15dgHDlLub6nRpT2w9aNmVVvm16WKvE=w1052-h592",
+    "logo": "https://play-lh.googleusercontent.com/ANtuOsdWIW2Z58FWqGfpt9u6Tau7HUox1gVDbtfX2-1pu1MpAyuGszSUq5KqY0iZqQi2GxOcAVdoD0ltW2bSow=w320-h320"
+  },
+  "nordvpn": {
+    "s1": "https://support.nordvpn.com/hc/article_attachments/36788806233873",
+    "s2": "https://support.nordvpn.com/hc/article_attachments/36788806242065",
+    "s3": "https://support.nordvpn.com/hc/article_attachments/36788806253073",
+    "logo": "https://play-lh.googleusercontent.com/8yhQejdntBkaku4Vt-HD9f8Ujcl1EJeE1WX2ypEMEzPxY-8AG9-rLjm8OVKmIpmmBC2uWhlqCzKI8be3XkFlIDQ=w320-h320"
+  },
+  "mullvad": {
+    "s1": "https://mullvad.net/media/uploads/2026/android-connection-screen-disconnected.png",
+    "s2": "https://mullvad.net/media/uploads/2026/android-connection-screen-connected.png",
+    "s3": "https://mullvad.net/media/uploads/2026/using_mullvad_vpn_on_android/SelectLocation.png",
+    "logo": "https://play-lh.googleusercontent.com/vNOKwHRjDGUzQk_OaC7pMP2vfI6bg-TkurBdcC3JdFT2Dyx-ROMHPcHlkk8Ql3wOEYUWxqw-1Nc5YKUk-DUL21A=w320-h320"
+  },
+  "surfshark": {
+    "s1": "https://play-lh.googleusercontent.com/TssGrhscg6npGb8YpCgnwsRtNBivEfHkGL_KjgmBhVXbCKKutecSzpEufz5gipmtu5K2th511RqNkxEOaBke4tg=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/vzm8ZfVpKuLEx_KGWySBsTu_WLAKTVtCvrQvcvQUjdt9k9tf2Vgy0Q_GBHKW1q6wq0ZVaDtuJz_lBgZLbv1AtA=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/2MVW8uQprBTErAxUgm4eIw7nmApIOVqPSGSlakZGBEpUQ-yiWBAgTfa-4ds2W9dWaDrA8gCfwHzmk6cstteh=w1052-h592",
+    "logo": "https://play-lh.googleusercontent.com/z1NtERzo1BXeZvZheqYKtSEv-3X_p0e_Ho1Bq74j4Vt5Pl_FmboPyuFHmRRmpu9qKWMnWqLXFuUYu2mCm2RZGcY=w320-h320"
+  },
+  "wireguard": {
+    "s1": "https://play-lh.googleusercontent.com/JzqYOXBP0OepXsDdLNH-kv7tUOwfqCVwDSEw4SoNB-9zuBCrN-6gMhNEB72vsl2ZWOvlFvwdiRHuPU1krTO9Yg=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/WPyLvQt9cq9TelxZo-rhMxrGGz9jkHnUagKiXkW1n61m_Qc5s9wMmcmqXzSffjrxW5_a0OV8KN758PWehipknA=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/jt2oEz8fd5cGjIMCYx2J4z8wtS7N-BiR-uDF-Q7Mm4Viu6ZIw1sVuaBf9bqh0-WFtjNCoNFgnxMeEQ14xjEgeA=w1052-h592",
+    "logo": "https://play-lh.googleusercontent.com/ggElzO1YS8fsVg5Y-lcsIV0slvKhKYiwHazffdKoAX-mLngJpiqoLXJ44gG2W05AypfyM6opCLcZQs4TU1Fd=w320-h320"
+  },
+  "tivimate": {
+    "logo": "https://files.tivimate.com/tivimate.apk#res/FS.png",
+    "s1": "https://play-lh.googleusercontent.com/ld_8jZU2NIAlZ3m4HzJZH3l0bgwyWge1aUNmpbS6z9N2DgjDq_DbeSlO_4shxpA1D8Q1aoFRrBxf1z9Tme1a=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/YipNHwjnRpR5bH-oYRHCc8uTHVrf0YX6_gAsrypnNFFfnLimrveHrpccpL1HpGlvbQl4zvS3kF7NYR9JDTO1=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/ZZFWbNM-vR8h9xSDv8-Uy-47I4s93VBfh8N0JbQXy8RIAg7jniW8ZdKcPkIJIkeQ4FAT74HZgHWxzTo30ECqYg=w1052-h592",
+    "s4": "https://play-lh.googleusercontent.com/ImyAoXBGTRLGssPMG2xircyjH0mejsFONU0r22fMAnLBxyhjMlLZLBx6EbvBHohJUGe0RPmX7QTfzkOVpmPz=w1052-h592",
+    "s5": "https://play-lh.googleusercontent.com/SJoKSbumGxCpAXV8AXXt8EWGWJObu6DwOxuGjmqUnqDAXAgtPeVmysbSFgn-JdWe5x-jQWFMmLeRAxqe1TyAjg=w1052-h592"
+  },
+  "localsend": {
+    "logo": "https://play-lh.googleusercontent.com/M33xh7ahqjZnunTUOX1-p13D8z3ZX9R8Y41ooCm5SENNxtN_1htUR0t2M7RKjTL4UxuJ9GAsfBQVleL3g5mLMg=w320-h320",
+    "s1": "https://localsend.org/img/screenshot-pc.webp",
+    "s2": "https://localsend.org/img/screenshot-iphone.webp"
+  },
+  "synphotos": {
+    "logo": "https://global.synologydownload.com/download/Mobile/AndroidTV-SynologyPhotos/1.1.4-10073/AndroidTV-SynologyPhotos.1.1.4-10073.ww.apk#res/yn.png",
+    "s1": "https://play-lh.googleusercontent.com/FJCjxF6-DBUUVW_MT63tQacSpBFjIncjV-GH3cJ2VzNSe3uCj-jGL9PuSG1ituBb1G3nHP0S6jwB5w5InG98Ew=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/Sh8rMSgSL50rocm06CrGS7pWLILhAOqP8SOuVHsp2IYdUnD37Kb2oTtd-JU5zrgXt0iL-9q403w6Lgg6BdEWXfw=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/Ns9JsN-C_VZtNN-ZHXSnWoXxP6OJ1tvsx1yFwCXsO91g0__SC2NeI4bQE_jtnNc_nmQ14_k--LuA1burpSB5kQ=w1052-h592",
+    "s4": "https://play-lh.googleusercontent.com/1HVkrl8T67aY0Lo1zV0ZGcSCgM5cD98O4cfErEy1eIgkAFYDGJHwhkFWTHaHmaECXC-8Bc7kpPT_nMD6unDx=w1052-h592",
+    "s5": "https://play-lh.googleusercontent.com/FIwSKOrBjH8rSxfPK9yHFMUO6yiwEV_HYhpAzmJwmqPXo-eaxT5X4djvP19K6_3M57sK5O2usDFknFdbqPUhYkE=w1052-h592"
+  },
+  "hdhomerun": {
+    "logo": "https://play-lh.googleusercontent.com/P55MBwWNUuShnUN0lz1qqI-NMVVtXy7DKpzOgyQ3DHxeLS-jm2OWu56v4YJ2rl02EsAfo9vpJAa4kY-XwkNEv4M=w320-h320",
+    "s1": "https://play-lh.googleusercontent.com/E4DtOOyX5_g9TOvfpmF7hE0XcjPmt7sKU4o07oDr28MnSUdcEP5Ks4gel_drlpxWXLhlgGyb0gB7EsVBTHRY=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/g7aIRajtSCQAW0JZRkafwn7VN3Th3PVO4c_zCA_vT2kt0MZ_dsF35G-_ytqN1XKecs3QgHaQv8iPukNuot2vqxQ=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/7Fa4FUyjeIXW21liqe3PI9q67uDXRnpRbt13dFRjUBT4q4vFpu2VYaYPNl8W0UmLmFhX_O3c5QqDpMWNNZjAXg=w1052-h592"
+  },
+  "pxplay": {
+    "logo": "https://play-lh.googleusercontent.com/V60jjoeUXp_bT_5zjpmtlyPaCP57VmaghhFKc1hnBP6i6i3LpoqwH4S_0Iju8DJ-eOliHe1SCh7TkYKcq8bk0A=w320-h320",
+    "s1": "https://play-lh.googleusercontent.com/Cp570VYmcvnoGKm2jMMNyZBT8A8WItMVyfjqyoeAXnA3Albyo312IRV2mfhWtPkxYtv1soiRetpvWc-rdkANgis=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/H6emlJKA9t1YUYAjxTyZQ7US_KLtzVcZO8G80n9Fo-Nv3qYmqxxnR2bleTNNIbJAsoG_KP47cxsV2-oP-7PqXg=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/ix4gN-44pkEFby5SRgwuM7KGmkbx6eYwaTEaalcnhkgaSY0ihnkCGQhnQK3sYDMH4HsjTQ7p3ezLiM9ReHyWbsA=w1052-h592",
+    "s4": "https://play-lh.googleusercontent.com/b6Hj1iwTWxZn-VE-RlJxUJOClNoy6x0zAEy5juzOhyel7Y7xDqWGPaDIlrlC1OsKOxQMKR5YVa7uc1mgYwXMuw=w1052-h592"
+  },
+  "xbxplay": {
+    "logo": "https://play-lh.googleusercontent.com/NsfOtuoDiZzwo0qZ04whRBCMENMlHDhqHiXmi80UX4Qw__IQTiUMNRhj9vFWDzdNn5bvtgY16HjnE78MNyxu=w320-h320",
+    "s1": "https://play-lh.googleusercontent.com/_gwVpT5fMLqIMdGv8EXydTjj7ZSJtKsf_ND6Wct7K_v7poQDYgmRpKnZd6HsEJxrzAKINsv6n4uSiZiJfrhF=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/YA1VKAUVQMseZiY4b-8cG9ZEQpY6GS0rykgTzRJTjufVdjUrAGn4xlK9aR7Kobw3wPViVbrh-o7uJd3AuWp2=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/hEB2lZdPVu_ycCDPYF2NIDXABrYlLdDEkQuRE2Pn_UaiS9Ug8eDG-ilxxBLHoMdXbsURsXP9FtEFYETjLkWK-Q0=w1052-h592",
+    "s4": "https://play-lh.googleusercontent.com/3-mm4-3R5XkuXQ3FyeLPPPSkEJWIsu7LXMFymI8DXqsDV1SOinkJHZb2TD2qQi6Td663-g-wRf2Q_zLy5-r9Mw=w1052-h592"
+  },
+  "stk": {
+    "logo": "https://play-lh.googleusercontent.com/dlvztE6L9biI7XHHmncMU4bFhXzjJcuBzx598x4UKbUoeO8apk89hMTT0zFSIJioicLAxeI55qv2W4I6BiOWsw=w320-h320",
+    "s1": "https://play-lh.googleusercontent.com/c5sk26ZH1FI4gjmM2BTcZLnIukc2a8KJRe9uS0yyKSZMSMX3zwk-40b2i9Npb98RcpIFEoZCIJlXS8UQQsHYpdc=w1052-h592",
+    "s2": "https://play-lh.googleusercontent.com/KdXoi8UXPYB7oqzq-L1GBinCDt10GUhfOR0YUTNsitjKhWR3uYK_wiZJmcbr7BoYA2bkWfOXnRYRPT4_P44uyw=w1052-h592",
+    "s3": "https://play-lh.googleusercontent.com/QlPZKUNU2xLqhZILOXobWXukzgTdD5V56KVC5U940pZ9tj16WL-GuXb3zTq-AKCmRhLXDk_bk2TCxgclCSEUxA=w1052-h592",
+    "s4": "https://play-lh.googleusercontent.com/oytwf5hxYahY32m8PB1RqXxjcF1HcIcXUgt-tkRpgyU8XF5_wXouaHx0iTwuz-hKKxu5tue4pp6EqjnYSwL8IQ=w1052-h592"
+  }
+}

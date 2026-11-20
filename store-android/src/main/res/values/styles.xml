@@ -1,0 +1,5 @@
+<resources><style name="StoreTheme" parent="android:style/Theme.Material.NoActionBar">
+  <item name="android:windowBackground">#0b0812</item>
+  <item name="android:windowFullscreen">true</item>
+  <item name="android:colorAccent">#c5a4ff</item>
+</style></resources>

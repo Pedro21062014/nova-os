@@ -1,0 +1,1506 @@
+[
+  {
+    "app": "jellyfin",
+    "version": "0.20.0",
+    "abi": "universal",
+    "url": "https://github.com/jellyfin/jellyfin-androidtv/releases/download/v0.20.0/jellyfin-androidtv-v0.20.0-release.apk",
+    "source": "https://github.com/jellyfin/jellyfin-androidtv/releases/tag/v0.20.0",
+    "package": "org.jellyfin.androidtv",
+    "minSdk": 23,
+    "sha256": "dfcc665195bed4ea087dca63df6f77497acc1185c4b15776b336d80eeaeb7fa6",
+    "bytes": 29945596,
+    "cert": "d881796ed2a67ff6ef9f676828723c6b1fa18e09388962cba4abc4a594a69131",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "aerial",
+    "version": "1.8.5",
+    "abi": "universal",
+    "url": "https://github.com/theothernt/AerialViews/releases/download/1.8.5/aerial-views-1.8.5.apk",
+    "source": "https://github.com/theothernt/AerialViews/releases/tag/1.8.5",
+    "package": "com.neilturner.aerialviews",
+    "minSdk": 23,
+    "sha256": "a20b4bc748da5ce890d96536494952aa4f50a6b589c50dee176415c021407070",
+    "bytes": 9147039,
+    "cert": "383b3b2df6d2b17cec60542c576408b0deae502f37749eb5ac7fef2f206fa51b",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "just",
+    "version": "0.217",
+    "abi": "universal",
+    "url": "https://github.com/moneytoo/Player/releases/download/v0.217/Just.Player.v0.217.apk",
+    "source": "https://github.com/moneytoo/Player/releases/tag/v0.217",
+    "package": "com.brouken.player",
+    "minSdk": 23,
+    "sha256": "f85156d4748c6263a6af0b13682fb54fbe1dd12a1ed1e8fa3710def548259b74",
+    "bytes": 51778873,
+    "cert": "3cb97dba57d3d0bc190bae5f1f3a841643bcd9399bc31028ce25775d93d0109d",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "nova",
+    "version": "6.6.5",
+    "abi": "arm64-v8a",
+    "url": "https://github.com/nova-video-player/aos-AVP/releases/download/v6.6.5/org.courville.nova-2674922-6.6.5-20261111.1224-arm64-v8a-release.apk",
+    "source": "https://github.com/nova-video-player/aos-AVP/releases/tag/v6.6.5",
+    "package": "org.courville.nova",
+    "minSdk": 23,
+    "sha256": "e0ffda4c5f3795d75e89b3c7a8c6da792839ebd21dcb46b50cf3248c3d9157b9",
+    "bytes": 35685723,
+    "cert": "05af6804bcad9e7e6d22d2ffc39fca1857a4aeb4385097cad91b11e5bac1f615",
+    "abis": [
+      "arm64-v8a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "nova",
+    "version": "6.6.5",
+    "abi": "armeabi-v7a",
+    "url": "https://github.com/nova-video-player/aos-AVP/releases/download/v6.6.5/org.courville.nova-2674922-6.6.5-20261111.1224-armeabi-v7a-release.apk",
+    "source": "https://github.com/nova-video-player/aos-AVP/releases/tag/v6.6.5",
+    "package": "org.courville.nova",
+    "minSdk": 23,
+    "sha256": "9fb146566d8fb70ec5ed03ea180aa10abf294eea7a52a4eafc17634eb20e7143",
+    "bytes": 32683439,
+    "cert": "05af6804bcad9e7e6d22d2ffc39fca1857a4aeb4385097cad91b11e5bac1f615",
+    "abis": [
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "nova",
+    "version": "6.6.5",
+    "abi": "universal",
+    "url": "https://github.com/nova-video-player/aos-AVP/releases/download/v6.6.5/org.courville.nova-2674922-6.6.5-20261111.1224-universal-release.apk",
+    "source": "https://github.com/nova-video-player/aos-AVP/releases/tag/v6.6.5",
+    "package": "org.courville.nova",
+    "minSdk": 23,
+    "sha256": "86ee5f3bfeed0978438068c62edb7319cfd6a46aa11171a9b461be1cd85e7e91",
+    "bytes": 96038787,
+    "cert": "05af6804bcad9e7e6d22d2ffc39fca1857a4aeb4385097cad91b11e5bac1f615",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "tvbro",
+    "version": "3.0.6",
+    "abi": "universal",
+    "url": "https://github.com/truefedex/tv-bro/releases/download/v3.0.6/tvbro-3.0.6-generic-geckoExcluded.apk",
+    "source": "https://github.com/truefedex/tv-bro/releases/tag/v3.0.6",
+    "package": "com.phlox.tvwebbrowser",
+    "minSdk": 24,
+    "sha256": "452687521071acd0b0d9e046abffff7a9fbac33066b399af9688234f4e45b0f0",
+    "bytes": 3800928,
+    "cert": "1e5124be7e7fcb7a6462b47a42a8567863c6fccc6fe7708cd278be4f43047c75",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "vlc",
+    "version": "3.7.2",
+    "abi": "arm64-v8a",
+    "url": "https://download.videolan.org/pub/videolan/vlc-android/3.7.2/VLC-Android-3.7.2-arm64-v8a.apk",
+    "source": "https://www.videolan.org/vlc/download-android.html",
+    "package": "org.videolan.vlc",
+    "minSdk": 17,
+    "sha256": "832fc963317253b21da974286236c9a60a6e055962619993a09de91daed65535",
+    "bytes": 49645764,
+    "cert": "c8768d2cea0c4b622e419b4b4715981946821e4ebc035fb41776cad395a7f68e",
+    "abis": [
+      "arm64-v8a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "vlc",
+    "version": "3.7.2",
+    "abi": "armeabi-v7a",
+    "url": "https://download.videolan.org/pub/videolan/vlc-android/3.7.2/VLC-Android-3.7.2-armeabi-v7a.apk",
+    "source": "https://www.videolan.org/vlc/download-android.html",
+    "package": "org.videolan.vlc",
+    "minSdk": 17,
+    "sha256": "ae0650e7d736f28c24295afd9260c0c37c1ab451aff98ec8962f7436fc625e41",
+    "bytes": 48048332,
+    "cert": "c8768d2cea0c4b622e419b4b4715981946821e4ebc035fb41776cad395a7f68e",
+    "abis": [
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "vlc",
+    "version": "3.7.2",
+    "abi": "x86_64",
+    "url": "https://download.videolan.org/pub/videolan/vlc-android/3.7.2/VLC-Android-3.7.2-x86_64.apk",
+    "source": "https://www.videolan.org/vlc/download-android.html",
+    "package": "org.videolan.vlc",
+    "minSdk": 17,
+    "sha256": "7164a458c07daf4c0f4f0ca7d9367fdff329c47c5a30e34e7c077f8d43570a26",
+    "bytes": 51460280,
+    "cert": "c8768d2cea0c4b622e419b4b4715981946821e4ebc035fb41776cad395a7f68e",
+    "abis": [
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "vlc",
+    "version": "3.7.2",
+    "abi": "x86",
+    "url": "https://download.videolan.org/pub/videolan/vlc-android/3.7.2/VLC-Android-3.7.2-x86.apk",
+    "source": "https://www.videolan.org/vlc/download-android.html",
+    "package": "org.videolan.vlc",
+    "minSdk": 17,
+    "sha256": "629ac7e9fac7adea110ba192278100bcd1b16266b300845525fe8218e4ca94cd",
+    "bytes": 49596588,
+    "cert": "c8768d2cea0c4b622e419b4b4715981946821e4ebc035fb41776cad395a7f68e",
+    "abis": [
+      "x86"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "kodi",
+    "version": "21.3",
+    "abi": "arm64-v8a",
+    "url": "https://mirrors.kodi.tv/releases/android/arm64-v8a/kodi-21.3-Omega-arm64-v8a.apk",
+    "source": "https://kodi.tv/download/android/",
+    "package": "org.xbmc.kodi",
+    "minSdk": 21,
+    "sha256": "34e7526705a038fa12f70161d0c1cc38f10deb0fee305b46fbd46ff015d05b44",
+    "bytes": 68167494,
+    "cert": "f517b44b5db5e62a6c1ec55ba47526db7de0d61f6ba26a7987520e293499b8d5",
+    "abis": [
+      "arm64-v8a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "kodi",
+    "version": "21.3",
+    "abi": "armeabi-v7a",
+    "url": "https://mirrors.kodi.tv/releases/android/arm/kodi-21.3-Omega-armeabi-v7a.apk",
+    "source": "https://kodi.tv/download/android/",
+    "package": "org.xbmc.kodi",
+    "minSdk": 21,
+    "sha256": "12d75e895649f68f217e42c2d881a94fd3177d7b9a7937825852aed545520cc8",
+    "bytes": 67832726,
+    "cert": "f517b44b5db5e62a6c1ec55ba47526db7de0d61f6ba26a7987520e293499b8d5",
+    "abis": [
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "retro",
+    "version": "1.22.2",
+    "abi": "arm64-v8a",
+    "url": "https://buildbot.libretro.com/stable/1.22.2/android/RetroArch_aarch64.apk",
+    "source": "https://www.retroarch.com/?page=platforms",
+    "package": "com.retroarch.aarch64",
+    "minSdk": 16,
+    "sha256": "7bd5d208dfe93cc8e2ea6c04608948ce1a045980f160a58ca2d0993aa20ad213",
+    "bytes": 183956821,
+    "cert": "d7a5eab30902c9b2775af6fb4eac2d294a64634fb47dd1382bc3ac5bf669982e",
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "retro",
+    "version": "1.22.2",
+    "abi": "armeabi-v7a",
+    "url": "https://buildbot.libretro.com/stable/1.22.2/android/RetroArch_ra32.apk",
+    "source": "https://www.retroarch.com/?page=platforms",
+    "package": "com.retroarch.ra32",
+    "minSdk": 16,
+    "sha256": "9e964f53089a302401a6d5b1451d7ce5539f39b85eb0a305d8d77e6edcbf803f",
+    "bytes": 183797621,
+    "cert": "d7a5eab30902c9b2775af6fb4eac2d294a64634fb47dd1382bc3ac5bf669982e",
+    "abis": [
+      "armeabi-v7a",
+      "x86"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "moonlight",
+    "version": "12.2",
+    "abi": "universal",
+    "url": "https://github.com/moonlight-stream/moonlight-android/releases/download/v12.2/app-nonRoot-release.apk",
+    "source": "https://github.com/moonlight-stream/moonlight-android/releases/tag/v12.2",
+    "package": "com.limelight",
+    "minSdk": 21,
+    "sha256": "a871f6190365386ef3ac5722a016d4da015ee1555631ec257f6e5dc3f4a45fe0",
+    "bytes": 11137885,
+    "cert": "d6ce3a4df15060fe488fe52441a549dee4ba199b36e2cb1ed9085cca8bfa1aca",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "wholphin",
+    "version": "1.1.1",
+    "abi": "arm64-v8a",
+    "url": "https://github.com/damontecres/Wholphin/releases/download/v1.1.1/Wholphin-arm64-v8a.apk",
+    "source": "https://github.com/damontecres/Wholphin/releases/tag/v1.1.1",
+    "package": "com.github.damontecres.wholphin",
+    "minSdk": 23,
+    "sha256": "2d43021dea92537cd79a44dfcd3243910ada22dcea32febef1789f6b78ec72f7",
+    "bytes": 46709688,
+    "cert": "e54fda99b452214b3522deb5de14e2dddc06da8de5db1fa7591dce2d80af96a8",
+    "abis": [
+      "arm64-v8a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "wholphin",
+    "version": "1.1.1",
+    "abi": "armeabi-v7a",
+    "url": "https://github.com/damontecres/Wholphin/releases/download/v1.1.1/Wholphin-armeabi-v7a.apk",
+    "source": "https://github.com/damontecres/Wholphin/releases/tag/v1.1.1",
+    "package": "com.github.damontecres.wholphin",
+    "minSdk": 23,
+    "sha256": "ed625579095917190872e8f95b3165969a3b5f0dd98721b0994270a377fcdfb8",
+    "bytes": 42309053,
+    "cert": "e54fda99b452214b3522deb5de14e2dddc06da8de5db1fa7591dce2d80af96a8",
+    "abis": [
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "wholphin",
+    "version": "1.1.1",
+    "abi": "x86_64",
+    "url": "https://github.com/damontecres/Wholphin/releases/download/v1.1.1/Wholphin-x86_64.apk",
+    "source": "https://github.com/damontecres/Wholphin/releases/tag/v1.1.1",
+    "package": "com.github.damontecres.wholphin",
+    "minSdk": 23,
+    "sha256": "2fbe15fffdfacdc338deece73e92e5e626734ba95ac67e099eb9cf9436ae6299",
+    "bytes": 53836565,
+    "cert": "e54fda99b452214b3522deb5de14e2dddc06da8de5db1fa7591dce2d80af96a8",
+    "abis": [
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "arc",
+    "version": "1.2.2",
+    "abi": "arm64-v8a",
+    "url": "https://github.com/meddouribadis/arclauncher/releases/download/1.2.2/arclauncher-1.2.2-arm64-v8a.apk",
+    "source": "https://github.com/meddouribadis/arclauncher/releases/tag/1.2.2",
+    "package": "com.omeda.arc",
+    "minSdk": 24,
+    "sha256": "c578d6b624a45f14ccc121dc5561083b3c80f478c1e01db7771db49251da0722",
+    "bytes": 22819819,
+    "cert": "93cd0cff69f6df008d0d6c10a20890c6702067e7f2cd0afa61cd01a4cb3d0ae7",
+    "abis": [
+      "arm64-v8a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "arc",
+    "version": "1.2.2",
+    "abi": "armeabi-v7a",
+    "url": "https://github.com/meddouribadis/arclauncher/releases/download/1.2.2/arclauncher-1.2.2-armeabi-v7a.apk",
+    "source": "https://github.com/meddouribadis/arclauncher/releases/tag/1.2.2",
+    "package": "com.omeda.arc",
+    "minSdk": 24,
+    "sha256": "ccf9aee59779054c9ea115ee989ad08f32690a15b424b3ef2a09d2ed549edb6e",
+    "bytes": 20653983,
+    "cert": "93cd0cff69f6df008d0d6c10a20890c6702067e7f2cd0afa61cd01a4cb3d0ae7",
+    "abis": [
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "arc",
+    "version": "1.2.2",
+    "abi": "universal",
+    "url": "https://github.com/meddouribadis/arclauncher/releases/download/1.2.2/arclauncher-1.2.2.apk",
+    "source": "https://github.com/meddouribadis/arclauncher/releases/tag/1.2.2",
+    "package": "com.omeda.arc",
+    "minSdk": 24,
+    "sha256": "87578719a75de20f76bd611279b699bba75a720f7376d19e15db382eb221aed5",
+    "bytes": 63161385,
+    "cert": "93cd0cff69f6df008d0d6c10a20890c6702067e7f2cd0afa61cd01a4cb3d0ae7",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "lounge",
+    "version": "0.9.0",
+    "abi": "universal",
+    "url": "https://github.com/Gingerbreadfork/lounge/releases/download/v0.9.0/Lounge-0.9.0.apk",
+    "source": "https://github.com/Gingerbreadfork/lounge/releases/tag/v0.9.0",
+    "package": "tv.lounge.launcher",
+    "minSdk": 28,
+    "sha256": "a6e2c67739725ad6e5235a0602b176e3d1bd66e8ad80fc04c75a6d3a532fee1d",
+    "bytes": 24641066,
+    "cert": "b01ac39f1e4f6ef3c1ea1ba7dc4b5f2fefafe0b1a142ea307e3db9d2fb0c70a0",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "aperture",
+    "version": "0.4.2-alpha",
+    "abi": "universal",
+    "url": "https://github.com/XDanfr/Aperture/releases/download/v0.4.2-alpha/Aperture-v0.4.2-alpha.apk",
+    "source": "https://github.com/XDanfr/Aperture/releases/tag/v0.4.2-alpha",
+    "package": "me.xdan.aperture",
+    "minSdk": 27,
+    "sha256": "f6027fcc3c6d84cf29b7e4bda445d782e46daa19ed0a2a02462e0aa2cfd7031f",
+    "bytes": 28664391,
+    "cert": "d4f8f44a9b53726eb0eba3ebd6ab51ac86745e02d35910d827e1d8fa050e973b",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "fluffy",
+    "version": "4.5.1",
+    "abi": "universal",
+    "url": "https://github.com/mlm-games/Fluffy/releases/download/4.5.1/fluffy-4.5.1-universal.apk",
+    "source": "https://github.com/mlm-games/Fluffy/releases/tag/4.5.1",
+    "package": "app.fluffy",
+    "minSdk": 24,
+    "sha256": "07092b04fe8f662f6116c7f51b45c7915d9a0d4625ea4a7ad92654fdb927d8a4",
+    "bytes": 7734485,
+    "cert": "4aed2f691df64a7b0fea25a6b8c80183c6dc520e049dac0178defa1d6472228f",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "voyager",
+    "version": "1.16.0",
+    "abi": "universal",
+    "url": "https://github.com/AlanHuang99/Voyager/releases/download/v1.16.0/voyager-v1.16.0-universal.apk",
+    "source": "https://github.com/AlanHuang99/Voyager/releases/tag/v1.16.0",
+    "package": "com.voyagerfiles",
+    "minSdk": 26,
+    "sha256": "8304acf99f861691e4419d11228045871d061108a54fae530a14633dd53c1d43",
+    "bytes": 16096825,
+    "cert": "db496277d456751abe8ca6405026337c81a561a134e38d49c8e21fb8f036badf",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "immich",
+    "version": "7.0.0",
+    "abi": "universal",
+    "url": "https://github.com/giejay/Immich-Android-TV/releases/download/v7.0.0/ImmichTV-7.0.0.apk",
+    "source": "https://github.com/giejay/Immich-Android-TV/releases/tag/v7.0.0",
+    "package": "nl.giejay.android.tv.immich",
+    "minSdk": 24,
+    "sha256": "477f910f7fa20afd5e0f6150f93d99bdeb02fcea504369b188f5acfe3185e23c",
+    "bytes": 30134601,
+    "cert": "7a93fe91a13acf08b6a03ac30dba58eebf0b6d6641fabd945afb0e8554d39866",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "openvista",
+    "version": "0.3.0-preview.1",
+    "abi": "universal",
+    "url": "https://github.com/murilaiooo/openvista/releases/download/v0.3.0-preview.1/openvista-v0.3.0-preview.1.apk",
+    "source": "https://github.com/murilaiooo/openvista/releases/tag/v0.3.0-preview.1",
+    "package": "com.openvista.prototype",
+    "minSdk": 28,
+    "sha256": "b0f7100688460aa6e7621f7ce092490ba995866d6afa6ad88f11a1c307735752",
+    "bytes": 14830829,
+    "cert": "1906244b25468e8f4cad6dcb27b5937fc4e32f5d28ae56ee2c4c38c43e44914b",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "simkeyboard",
+    "version": "1.0.9",
+    "abi": "universal",
+    "url": "https://github.com/deferino/SimpleKeyboardTV/releases/download/v1.0.9/app-release.apk",
+    "source": "https://github.com/deferino/SimpleKeyboardTV/releases/tag/v1.0.9",
+    "package": "com.simplekeyboardtv.ime",
+    "minSdk": 24,
+    "sha256": "3e4c8cfb7dfab39ff5bfaa0ff9b417cf93d04df02eec2af9b301ceea29adfd19",
+    "bytes": 675246,
+    "cert": "2a84891a612b61f17b4f46bba29b948b0d3c253121d40ce658c9ab7b7295382a",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "lean",
+    "version": "6.1.31",
+    "abi": "universal",
+    "url": "https://github.com/yuliskov/LeanKeyboard/releases/download/6.1.31/LeanKeyboard_v6.1.31_playstore_r.apk",
+    "source": "https://github.com/yuliskov/LeanKeyKeyboard/releases/tag/6.1.31",
+    "package": "org.liskovsoft.androidtv.rukeyboard",
+    "minSdk": 14,
+    "sha256": "5a90529fcae55c664128fb36e752f90e84d158266eced85084594c1d336a1468",
+    "bytes": 2753808,
+    "cert": "955ef7b51f8fb9e4036678471a9edea0bbb3bb9b02753f796d9d6bf19dc2002d",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "homekey",
+    "version": "1.10.0",
+    "abi": "universal",
+    "url": "https://github.com/leonida92/HomeKeyTV/releases/download/v1.10.0/HomeKeyTV-v1.10.0.apk",
+    "source": "https://github.com/leonida92/HomeKeyTV/releases/tag/v1.10.0",
+    "package": "com.homekey.tv",
+    "minSdk": 26,
+    "sha256": "253bb130f222ac4b2b2a56d05f78b914d929282da30c3167c0502175865e2363",
+    "bytes": 12982405,
+    "cert": "98938ee10f0605d9a1dd28342af026bd9963a56d597739be46567c99accef328",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "matvt",
+    "version": "1.0.6",
+    "abi": "universal",
+    "url": "https://github.com/virresh/matvt/releases/download/v1.0.6/matvt-app-release-v1.0.6.apk",
+    "source": "https://github.com/virresh/matvt/releases/tag/v1.0.6",
+    "package": "io.github.virresh.matvt",
+    "minSdk": 24,
+    "sha256": "97bbd5fca20206c27721f0bcf97e93bcbf1e0d2556d2418ff93e1bdfaba56c15",
+    "bytes": 2175957,
+    "cert": "3c89a9e9c6b9ae61b16a5710e54ae3521e4df8fc9a0251cb79356ddf52461c6c",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "mrowser",
+    "version": "1.5.0",
+    "abi": "universal",
+    "url": "https://github.com/m-salehi-v/mrowser/releases/download/v1.5.0/app-release.apk",
+    "source": "https://github.com/m-salehi-v/mrowser/releases/tag/v1.5.0",
+    "package": "net.mrowser",
+    "minSdk": 23,
+    "sha256": "e9f4625e93ddd417deafe3808a0a8633d0c0e07b2929448020faf3ca151c3386",
+    "bytes": 5051132,
+    "cert": "8376ebbb4b9c3595a23a70783ee6892de099b6e152d027a028c4482fbe6d3383",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "aperturealt",
+    "version": "0.2.1",
+    "abi": "universal",
+    "url": "https://github.com/glidiandev/home-deck/releases/download/v0.2.1/homedeck.apk",
+    "source": "https://github.com/glidiandev/home-deck/releases/tag/v0.2.1",
+    "package": "dev.glidian.homedeck",
+    "minSdk": 26,
+    "sha256": "da9fd7f182864904da92adf752ecf69c721913ebfc7b52b74be4bcb8743f49d9",
+    "bytes": 2456203,
+    "cert": "893fa5e467932330a6df2189d20891555f50c23089922aea3193263ad22adbaa",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "hushtile",
+    "version": "1.8",
+    "abi": "universal",
+    "url": "https://github.com/konoft/Hushtile/releases/download/v1.8/hushtile-1.8.apk",
+    "source": "https://github.com/konoft/Hushtile/releases/tag/v1.8",
+    "package": "com.hushtile.home",
+    "minSdk": 26,
+    "sha256": "c02270cbc233f6ded69ad28503ad181172a2d48df92cb1ffa7eee4b6c62dc49b",
+    "bytes": 553853,
+    "cert": "86ddbb0deac5982cffac239b005708f21d14c320de9efc7271ce5791d797111d",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "kido",
+    "version": "0.2",
+    "abi": "universal",
+    "url": "https://github.com/glidiandev/kido/releases/download/v0.2/kido.apk",
+    "source": "https://github.com/glidiandev/kido/releases/tag/v0.2",
+    "package": "dev.glidian.kido",
+    "minSdk": 26,
+    "sha256": "344a11eade4276acaa36e37363f59863248cc73d4c1c5301eb2030bf708b9de8",
+    "bytes": 403979,
+    "cert": "9dda26764dbabbc28926cbbb213087fa8881cc630c482b552d5c79b17d75066c",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "koolest",
+    "version": "2.7.0",
+    "abi": "universal",
+    "url": "https://github.com/KoolestTVLauncher/Koolest-TV-Launcher/releases/download/v2.7.0/Koolest.apk",
+    "source": "https://github.com/KoolestTVLauncher/Koolest-TV-Launcher/releases/tag/v2.7.0",
+    "package": "dev.koolest",
+    "minSdk": 26,
+    "sha256": "4713dd7d26e593959e49b14274421a2a1e12f16b7bf8328def36594fb0ff5190",
+    "bytes": 826466,
+    "cert": "7afde19a6d6a695695243d6c2986aafd84f6d63a7aa9db277f59f28560a759ec",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "luncher",
+    "version": "1.0.0",
+    "abi": "universal",
+    "url": "https://github.com/CVasilakis/luncher/releases/download/v1.0.0/luncher-v1.0.0.apk",
+    "source": "https://github.com/CVasilakis/luncher/releases/tag/v1.0.0",
+    "package": "com.luncher.launcher",
+    "minSdk": 22,
+    "sha256": "0a91c6e091af9f52aff015ac631d4a9bd2388406d5fb5b83e3abacd841b08ee9",
+    "bytes": 319733,
+    "cert": "8dd0b90af754acab4a86f7b8bf3dc6808820dfbef0c06bfba3b8b00deb21fc42",
+    "abis": [],
+    "leanback": true
+  },
+  {
+    "app": "ltv",
+    "version": "2026.11.19",
+    "abi": "universal",
+    "url": "https://github.com/leanbitlab-org/LtvLauncher/releases/download/v2026.11.19/LTvLauncher-universal-release.apk",
+    "source": "https://github.com/LeanBitLab/LtvLauncher/releases/tag/v2026.11.19",
+    "package": "com.leanbitlab.ltvL",
+    "minSdk": 21,
+    "sha256": "34cbcfc4ccc012093b51cd35872c7516ca4bc88450e7e8c65f35f718d71f5c30",
+    "bytes": 18604398,
+    "cert": "df819e5940a514f3d2d5d19d852c18e4cbe2d1d636cb92011b8c101dac72aa9a",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "flauncher",
+    "version": "2025.07.001",
+    "abi": "universal",
+    "url": "https://github.com/osrosal/flauncher/releases/download/v2025.07.001/flauncher-universal-release.apk",
+    "source": "https://github.com/osrosal/flauncher/releases/tag/v2025.07.001",
+    "package": "me.efesser.flauncher",
+    "minSdk": 21,
+    "sha256": "8410b07003c3cd25a864f06a0bd5c3b34a0be71af57db5748ba6657d05be66be",
+    "bytes": 27374591,
+    "cert": "3ef9f30df1f52f48b4b0c524a6e1861faedd2cccfa96d03e90076a1e30dec101",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "material",
+    "version": "1.7.5",
+    "abi": "universal",
+    "url": "https://github.com/zhanghai/MaterialFiles/releases/download/v1.7.5/app-release-universal.apk",
+    "source": "https://github.com/zhanghai/MaterialFiles/releases/tag/v1.7.5",
+    "package": "me.zhanghai.android.files",
+    "minSdk": 23,
+    "sha256": "f2e7f028fbddf51d7ee90ace27a1ae4b247511e12514d1def6c9e52435feac40",
+    "bytes": 13747821,
+    "cert": "873b9b60c77cf7f3cd5fae66d0fe112c4a86973e118ee8a29c346c4c673c97f0",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "zlmusic",
+    "version": "1.9.25",
+    "abi": "universal",
+    "url": "https://github.com/kaosZL/ZL_Musicos/releases/download/v1.9.25/ZL-Musicos-v1.9.25-universal.apk",
+    "source": "https://github.com/kaosZL/ZL_Musicos/releases/tag/v1.9.25",
+    "package": "cn.toside.music.mobile",
+    "minSdk": 21,
+    "sha256": "b481f6f235bfef69983c6f719914ae1e66f32e457a8a86b3ac25f9d630f5d095",
+    "bytes": 29291703,
+    "cert": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "ultimate",
+    "version": "2.2.7",
+    "abi": "universal",
+    "url": "https://github.com/Kilowatch/ultimate-file-manager-pro/releases/download/v2.2.7/tv-foss-release.apk",
+    "source": "https://github.com/Kilowatch/ultimate-file-manager-pro/releases/tag/v2.2.7",
+    "package": "za.kilowatch.ultimatefilemanager.foss",
+    "minSdk": 26,
+    "sha256": "7a4e51ea1a00d07e2315b12079300002e0379057cb531ad648b52afdb9098c66",
+    "bytes": 317471750,
+    "cert": "5d3b2554cafe814592f39196dd36e7e36313e6fa0f54019c89ac401665f4e53f",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "mpvnova",
+    "version": "2026-11-16",
+    "abi": "universal",
+    "url": "https://github.com/Laskco/mpvNova/releases/download/2026-11-16/app-default-universal-release.apk",
+    "source": "https://github.com/Laskco/mpvNova/releases/tag/2026-11-16",
+    "package": "app.mpvnova.player",
+    "minSdk": 23,
+    "sha256": "efbc11c134aae30a6fff121795dec4c06ac0a2e10cab5ad4394d8137fb3d1e48",
+    "bytes": 176709862,
+    "cert": "cbea6185b33252ae753634d5a0635d5d90e4fc0589d3d197efa7d13366f77b4b",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "mpv",
+    "version": "2026-09-17",
+    "abi": "universal",
+    "url": "https://github.com/mpv-android/mpv-android/releases/download/2026-09-17/app-default-universal-release.apk",
+    "source": "https://github.com/mpv-android/mpv-android/releases/tag/2026-09-17",
+    "package": "is.xyz.mpv",
+    "minSdk": 23,
+    "sha256": "c3b505e45b919b767b9867e7f0d16fd823d77bc7c9a6e6b181b80ea60c018a70",
+    "bytes": 135357179,
+    "cert": "fae7f9d02385cc24d96e88436603e23ea6aec7649ad1250abbb4837daab82fff",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "artemis",
+    "version": "20.2.6",
+    "abi": "universal",
+    "url": "https://github.com/ClassicOldSong/moonlight-android/releases/download/v20.2.6/artemis-nonRoot_game-release.apk",
+    "source": "https://github.com/ClassicOldSong/moonlight-android/releases/tag/v20.2.6",
+    "package": "com.limelight.noir",
+    "minSdk": 21,
+    "sha256": "6735b5fdd790410ea726754235f49757fa594ef01da1e5acadf72690c9423f6c",
+    "bytes": 12082799,
+    "cert": "d06f9a5fadeddef3910b1506e7a24d1c628ce42e72ba3660340dbb9f5dea81d6",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "ghosten",
+    "version": "2.4.7",
+    "abi": "arm64-v8a",
+    "url": "https://github.com/GhostenEditor/Ghosten-Player/releases/download/v2.4.7/app-arm64-v8a-tv-release.apk",
+    "source": "https://github.com/GhostenEditor/Ghosten-Player/releases/tag/v2.4.7",
+    "package": "com.ghosten.player",
+    "minSdk": 21,
+    "sha256": "71b45c284509c84578076c85cfa25148de6ab4f82d241f0fb31b56f104659c7e",
+    "bytes": 18065225,
+    "cert": "936b3d7d5eec7d463454a240f18c9091cd96b0c3e37134ef7e6194e85e23386c",
+    "abis": [
+      "arm64-v8a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "nimbus",
+    "version": "0.3.2",
+    "abi": "universal",
+    "url": "https://github.com/lucasclgibson/nimbus/releases/download/v0.3.2/Nimbus-0.3.2.apk",
+    "source": "https://github.com/lucasclgibson/nimbus/releases/tag/v0.3.2",
+    "package": "io.github.lucasclgibson.nimbus",
+    "minSdk": 25,
+    "sha256": "b5cb84e046964984fadd3580433c6bec1b5940abe208832fc6fa838f81e5c31c",
+    "bytes": 7191552,
+    "cert": "4acc89dbfbfe2ba207c66a9b3689bb6c6f5cc4ed06936e138069f9b43959ac25",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "owntv",
+    "version": "5.2.2",
+    "abi": "universal",
+    "url": "https://github.com/ahXN00/OwnTV/releases/download/v5.2.2/OwnTV-v5.2.2.apk",
+    "source": "https://github.com/ahXN00/OwnTV/releases/tag/v5.2.2",
+    "package": "tv.own.owntv",
+    "minSdk": 26,
+    "sha256": "9b57f77798eaf9248f61a268cde627b6ccfc4a46ad4c226a9545a56b57cadd60",
+    "bytes": 59475133,
+    "cert": "e8fbd2f2f7d0823fa78752cf24ce67f44656d6a6d5174e317acab5ac25652ce7",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "tiviate",
+    "version": "0.3.2",
+    "abi": "universal",
+    "url": "https://github.com/Amitk2108/tiviate/releases/download/v0.3.2/Tiviate-0.3.2.apk",
+    "source": "https://github.com/Amitk2108/tiviate/releases/tag/v0.3.2",
+    "package": "app.tiviate",
+    "minSdk": 24,
+    "sha256": "a51afaaca456122f86febb11dd98f03726a13500306b7febc2cd1d2f9f8fddbc",
+    "bytes": 9818987,
+    "cert": "0c0f39738c65050d36775ac3fb49b41bd9e01c30a1b30a81c18789280d79c542",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "lumora",
+    "version": "7.7",
+    "abi": "universal",
+    "url": "https://github.com/disclosurez/Lumora/releases/download/v7.7/Lumora.apk",
+    "source": "https://github.com/disclosurez/Lumora/releases/tag/v7.7",
+    "package": "com.lumora",
+    "minSdk": 25,
+    "sha256": "dfbd91313867bd0baa9889b8fd2ed385f871476f4f53cc2b94464775c262baa1",
+    "bytes": 33253686,
+    "cert": "f6268c204a1c55891dd0670d96e1d9618299baa9402b173cc8062267a994f0d4",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "flicky",
+    "version": "4.6.1",
+    "abi": "universal",
+    "url": "https://github.com/mlm-games/flicky/releases/download/4.6.1/flicky-4.6.1-universal.apk",
+    "source": "https://github.com/mlm-games/flicky/releases/tag/4.6.1",
+    "package": "app.flicky",
+    "minSdk": 23,
+    "sha256": "adb4c192814bdd26970ee542c00a74f90083b2147a5c8a60333b8945ae08c940",
+    "bytes": 4479817,
+    "cert": "4aed2f691df64a7b0fea25a6b8c80183c6dc520e049dac0178defa1d6472228f",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "windscribe",
+    "version": "4.4",
+    "abi": "universal",
+    "url": "https://github.com/Windscribe/Android-App/releases/download/v4.4/tv-v4.4.apk",
+    "source": "https://github.com/Windscribe/Android-App/releases/tag/v4.4",
+    "package": "com.windscribe.vpn",
+    "minSdk": 24,
+    "sha256": "044a62baba8c1e1ab165cce6baca18d2fcc37230dd6036fa350ceaead40e4f02",
+    "bytes": 90564219,
+    "cert": "9fb357ca2d7f0acc7b3121985534490d0aa70f5dc61ca8ec593f3da1e9cd339b",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "tailscale",
+    "version": "1.104.7-tfb3b9b296-g226f029a3",
+    "abi": "universal",
+    "url": "https://github.com/tailscale/tailscale-android/releases/download/1.104.7-tfb3b9b296-g226f029a3/tailscale-android-universal-1.104.7.apk",
+    "source": "https://github.com/tailscale/tailscale-android/releases/tag/1.104.7-tfb3b9b296-g226f029a3",
+    "package": "com.tailscale.ipn",
+    "minSdk": 26,
+    "sha256": "5a620e118c36a203bdde43ddd93ef4122ce2d8ab2f7ad59ec30b6bbf391e01d9",
+    "bytes": 105727207,
+    "cert": "5cdb295551bfe1a087fed6acda07141c6c929fa7c29bd273a7092813acc434bf",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "lightning",
+    "version": "10.0.1",
+    "abi": "universal",
+    "url": "https://github.com/threethan/LightningLauncher/releases/download/10.0.1/LightningLauncher.apk",
+    "source": "https://github.com/threethan/LightningLauncher/releases/tag/10.0.1",
+    "package": "com.threethan.launcher",
+    "minSdk": 24,
+    "sha256": "0435357049f1e1a4f6e72203718a1d42456f8b411537327e6d510a68cf41cb56",
+    "bytes": 2814577,
+    "cert": "07e74724ec6e8baab50068ae1ca19582de0e2ef70473490c4f278d9d4afd25cb",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "clean",
+    "version": "2.2.3-rc0",
+    "abi": "universal",
+    "url": "https://github.com/d4rken-org/sdmaid-se/releases/download/v2.2.3-rc0/eu.darken.sdmse-v2.2.3-rc0-20203000-FOSS-RELEASE.apk",
+    "source": "https://github.com/d4rken-org/sdmaid-se/releases/tag/v2.2.3-rc0",
+    "package": "eu.darken.sdmse",
+    "minSdk": 26,
+    "sha256": "29a98e6160cab1e0fe137e7b19210651122c6ea43791cddc66924ca12e103ac2",
+    "bytes": 18190619,
+    "cert": "f490032be5383f55900495fa7fc207ece2e786a5c2c6cc52027b99548a9ce938",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "ghosten",
+    "version": "2.4.7",
+    "abi": "armeabi-v7a",
+    "url": "https://github.com/GhostenEditor/Ghosten-Player/releases/download/v2.4.7/app-armeabi-v7a-tv-release.apk",
+    "source": "https://github.com/GhostenEditor/Ghosten-Player/releases/tag/v2.4.7",
+    "package": "com.ghosten.player",
+    "minSdk": 21,
+    "sha256": "1bf1551ed46c8bef88d108240c9f9b5d263708a1f689aaae537e666f7acdd1ec",
+    "bytes": 16483383,
+    "cert": "936b3d7d5eec7d463454a240f18c9091cd96b0c3e37134ef7e6194e85e23386c",
+    "abis": [
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "stremio",
+    "version": "1.10.4",
+    "abi": "arm64-v8a",
+    "url": "https://dl.strem.io/android/v1.10.4-androidTV/com.stremio.one-1.10.4-33145732-arm64-v8a.apk",
+    "source": "https://www.stremio.com/downloads",
+    "package": "com.stremio.one",
+    "minSdk": 24,
+    "sha256": "caaf4faba423a47c3174eda08b94057956ce32af616c6377b3485f4f5dec993c",
+    "bytes": 95701510,
+    "cert": "7e6a979c968f771e3fbcf2c2e8718ce61e708d87caf91fc13e2d4c19a8022c6b",
+    "abis": [
+      "arm64-v8a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "stremio",
+    "version": "1.10.4",
+    "abi": "armeabi-v7a",
+    "url": "https://dl.strem.io/android/v1.10.4-androidTV/com.stremio.one-1.10.4-31048580-armeabi-v7a.apk",
+    "source": "https://www.stremio.com/downloads",
+    "package": "com.stremio.one",
+    "minSdk": 24,
+    "sha256": "e18a5405bb53e12a903ff477457318b8f8d3c8e1995e0a4c3ff5d8893d1ccf0b",
+    "bytes": 91635880,
+    "cert": "7e6a979c968f771e3fbcf2c2e8718ce61e708d87caf91fc13e2d4c19a8022c6b",
+    "abis": [
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "stremio",
+    "version": "1.10.4",
+    "abi": "x86_64",
+    "url": "https://dl.strem.io/android/v1.10.4-androidTV/com.stremio.one-1.10.4-34194308-x86_64.apk",
+    "source": "https://www.stremio.com/downloads",
+    "package": "com.stremio.one",
+    "minSdk": 24,
+    "sha256": "3a9f86646ba18f4f11073dfbb01e10b1d4019e78d89ba58ec3de79f36f6cfc8c",
+    "bytes": 100055175,
+    "cert": "7e6a979c968f771e3fbcf2c2e8718ce61e708d87caf91fc13e2d4c19a8022c6b",
+    "abis": [
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "stremio",
+    "version": "1.10.4",
+    "abi": "x86",
+    "url": "https://dl.strem.io/android/v1.10.4-androidTV/com.stremio.one-1.10.4-32097156-x86.apk",
+    "source": "https://www.stremio.com/downloads",
+    "package": "com.stremio.one",
+    "minSdk": 24,
+    "sha256": "e4ed5d855ceb1c4b8874e0cab84537a9d1cc8bd588e37fadfd4cd9f537d59f15",
+    "bytes": 97050832,
+    "cert": "7e6a979c968f771e3fbcf2c2e8718ce61e708d87caf91fc13e2d4c19a8022c6b",
+    "abis": [
+      "x86"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "fcast",
+    "version": "2.1.5",
+    "abi": "universal",
+    "url": "https://dl.fcast.org/android/fcast-release.apk",
+    "source": "https://fcast.org/download/",
+    "package": "com.futo.fcast.receiver",
+    "minSdk": 24,
+    "sha256": "d049aa34931f320c656acadd9237818b9219bd8bdf04fce5aa47e598aff514fd",
+    "bytes": 55617383,
+    "cert": "ef81eda98f617f7f1707d80509f28dae4e50f56e41e077eb3024d9c9072d074e",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "emby",
+    "version": "2.5.03g",
+    "abi": "universal",
+    "url": "https://raw.githubusercontent.com/MediaBrowser/Emby.Releases/a1d47ef99621c06d0e90e70785610e2fa267369d/androidtv/app-google-release.apk",
+    "source": "https://emby.media/emby-for-android-tv.html",
+    "package": "tv.emby.embyatv",
+    "minSdk": 24,
+    "sha256": "0246821852b9a7b6e1448f751601c0040c1f3a9de80c4ea778fb2ba67a16d147",
+    "bytes": 57044508,
+    "cert": "7aa70c91a0852372a4f2cde427fa3ca5b7adc3dae42f21d6575cc378018130c9",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "ppsspp",
+    "version": "v1.20.4",
+    "abi": "universal",
+    "url": "https://www.ppsspp.org/files/1_20_4/ppsspp.apk",
+    "source": "https://www.ppsspp.org/download/",
+    "package": "org.ppsspp.ppsspp",
+    "minSdk": 21,
+    "sha256": "dd702a31270ecd68db37afee311d6efe08b1d4da9601d2750ce1a73bbd316c3f",
+    "bytes": 45448397,
+    "cert": "c5342629df16762391907b3297aad122b4c1a8a9e608dfb94217a08e3bbf13a2",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "steamlink",
+    "version": "1.4.7",
+    "abi": "universal",
+    "url": "https://media.steampowered.com/steamlink/android/latest/steamlink-android.apk",
+    "source": "https://store.steampowered.com/remoteplay",
+    "package": "com.valvesoftware.steamlink",
+    "minSdk": 21,
+    "sha256": "74cf1bda72c898ff69b216348641a37526aef74a89c59109c504587277250a1b",
+    "bytes": 131974501,
+    "cert": "5dff6b05761447a5bdf919ea88fc6fdf20d301e30b2315415c4d368ec0fbda45",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "protonvpn",
+    "version": "5.21.57.0",
+    "abi": "universal",
+    "url": "https://github.com/ProtonVPN/android-app/releases/download/5.21.57.0/ProtonVPN-5.21.57.0.605215700.-production-vanilla-direct-release.apk",
+    "source": "https://github.com/ProtonVPN/android-app/releases/tag/5.21.57.0",
+    "package": "ch.protonvpn.android",
+    "minSdk": 26,
+    "sha256": "d06b2c5017e14376b4a87a718ae4c4c4d21f6e0e0d6148b78ccef236f590345c",
+    "bytes": 61141753,
+    "cert": "dcc9439ec1a6c6a8d0203f3423ee42bcc8b970628e53cb73a0393f398dd5b853",
+    "abis": [
+      "arm64-v8a",
+      "armeabi",
+      "armeabi-v7a",
+      "mips",
+      "mips64",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "smarttube",
+    "version": "32.80",
+    "abi": "arm64-v8a",
+    "url": "https://github.com/yuliskov/SmartTube/releases/download/32.80s/SmartTube_stable_32.80_arm64-v8a.apk",
+    "source": "https://github.com/yuliskov/SmartTube/releases/tag/32.80s",
+    "package": "org.smarttube.stable",
+    "minSdk": 17,
+    "sha256": "c1e1dfdf51aeadf7dc90a27ee2e28bd885dad6a4991d4b8084045a4e3a8f7ad4",
+    "bytes": 26782777,
+    "cert": "109735aa24fe85e2e1623ebb3b1ecc4bf4263f4c6374e4411d646bfa2eda482a",
+    "abis": [
+      "arm64-v8a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "smarttube",
+    "version": "32.80",
+    "abi": "armeabi-v7a",
+    "url": "https://github.com/yuliskov/SmartTube/releases/download/32.80s/SmartTube_stable_32.80_armeabi-v7a.apk",
+    "source": "https://github.com/yuliskov/SmartTube/releases/tag/32.80s",
+    "package": "org.smarttube.stable",
+    "minSdk": 17,
+    "sha256": "f90eea37b474f848ba37e8bfc37df5ab31517aa41e12d0d38e185e62378488b8",
+    "bytes": 25569109,
+    "cert": "109735aa24fe85e2e1623ebb3b1ecc4bf4263f4c6374e4411d646bfa2eda482a",
+    "abis": [
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "dolphin",
+    "version": "2609b",
+    "abi": "universal",
+    "url": "https://dl.dolphin-emu.org/releases/2609b/dolphin-2609b.apk",
+    "source": "https://dolphin-emu.org/update/latest/beta",
+    "package": "org.dolphinemu.dolphinemu",
+    "minSdk": 24,
+    "sha256": "9171e6d39a8d691e5a1fe1e518c56f909768fa837ee21437a06241f87f4b5130",
+    "bytes": 21998829,
+    "cert": "8e7556d64ce8f7f15e36c4b3380aab0e326431146f9b26d2adee35326951fcab",
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "lemuroid",
+    "version": "1.17.0",
+    "abi": "universal",
+    "url": "https://github.com/Swordfish90/Lemuroid/releases/download/1.17.0/lemuroid-app-free-dynamic-release.apk",
+    "source": "https://github.com/Swordfish90/Lemuroid/releases/tag/1.17.0",
+    "package": "com.swordfish.lemuroid",
+    "minSdk": 23,
+    "sha256": "d44cfa0cdc3e43fd91df97f625938366ccef9793b06a80b9e6fad97a6cd88e51",
+    "bytes": 11985230,
+    "cert": "4fa1cb59ea4d8ca8555315eba215205f667975ba8985bbe736904f21bfebbeaf",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "azahar",
+    "version": "2126.2-vanilla",
+    "abi": "universal",
+    "url": "https://github.com/azahar-emu/azahar/releases/download/2126.2/azahar-android-vanilla-2126.2.apk",
+    "source": "https://github.com/azahar-emu/azahar/releases/tag/2126.2",
+    "package": "org.azahar_emu.azahar",
+    "minSdk": 29,
+    "sha256": "b511d1d38012c5ab0dfdb4479335059bb89ef17acfbf0ba45e79107ed4185ba3",
+    "bytes": 50187175,
+    "cert": "5ba2563e0d13fae2aba067d1c230cd1c863a93005c10d648ce5b331792aa0af1",
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "scummvm",
+    "version": "2026.3.0",
+    "abi": "arm64-v8a",
+    "url": "https://downloads.scummvm.org/frs/scummvm/2026.3.0/scummvm-2026.3.0-android-arm64-v8a.apk",
+    "source": "https://www.scummvm.org/downloads/",
+    "package": "org.scummvm.scummvm",
+    "minSdk": 16,
+    "sha256": "26e25a59496eb94a4dc76f282bb3234d6d36f7f393c3e699e0a62e1a5c3e412b",
+    "bytes": 129838851,
+    "cert": "c59c0677e9835b720812c08ccec8d4c65c4b4718ffc9109a8d9d058d7223f995",
+    "abis": [
+      "arm64-v8a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "scummvm",
+    "version": "2026.3.0",
+    "abi": "armeabi-v7a",
+    "url": "https://downloads.scummvm.org/frs/scummvm/2026.3.0/scummvm-2026.3.0-android-armeabi-v7a.apk",
+    "source": "https://www.scummvm.org/downloads/",
+    "package": "org.scummvm.scummvm",
+    "minSdk": 16,
+    "sha256": "d559ae70ea1383b823eda140f3b7562da355c4747cda77345391e63f5882430f",
+    "bytes": 128900869,
+    "cert": "c59c0677e9835b720812c08ccec8d4c65c4b4718ffc9109a8d9d058d7223f995",
+    "abis": [
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "xplore",
+    "version": "4.53.08",
+    "abi": "universal",
+    "url": "https://www.lonelycatgames.com/download/4-53-08?wpdmdl=3649",
+    "source": "https://www.lonelycatgames.com/apps/xplore",
+    "package": "com.lonelycatgames.Xplore",
+    "minSdk": 26,
+    "sha256": "3af0e0e1888f8d6f389ddd4bbded02daebccca358d84f8ae6879fcb6b8d9cac8",
+    "bytes": 14776640,
+    "cert": "d46cd5fa44ae52141346da0e2c21d0cea7c6e0587b1ee5ad121d909031efec57",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "nordvpn",
+    "version": "9.17.1+sideload-tv",
+    "abi": "universal",
+    "url": "https://downloads.nordcdn.com/apps/android/generic/nordvpn-sideload/latest/v2/NordVPN_TV.apk",
+    "source": "https://support.nordvpn.com/hc/en-us/articles/19928244437777-Installing-and-using-NordVPN-on-Android-TV-or-Nvidia-Shield",
+    "package": "com.nordvpn.android",
+    "minSdk": 28,
+    "sha256": "0f330f6a7cc5c0a687922335048aef34c45b29a1ff70b470bed6699cdadf132b",
+    "bytes": 101765668,
+    "cert": "bc64ae0725af656b3b10b684cd1df4c9d6b7f81bc5dc32df3a3b2ce94ce61466",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "mullvad",
+    "version": "2026.12",
+    "abi": "universal",
+    "url": "https://github.com/mullvad/mullvadvpn-app/releases/download/android/2026.12/MullvadVPN-2026.12.apk",
+    "source": "https://mullvad.net/en/download/vpn/android",
+    "package": "net.mullvad.mullvadvpn",
+    "minSdk": 28,
+    "sha256": "0ad70b89b2b48bb0b1ae29115eee57d75277ffeccf95a0d3db98945d740a6d9e",
+    "bytes": 39008494,
+    "cert": "7be21930c3b4d73906b08930450a1d3afbd22c98d9d8e987df8c1fbc2d0c90bb",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "surfshark",
+    "version": "3.39.0",
+    "abi": "universal",
+    "url": "https://downloads.surfshark.com/android/Surfshark.apk",
+    "source": "https://surfshark.com/download/android",
+    "package": "com.surfshark.vpnclient.android",
+    "minSdk": 23,
+    "sha256": "0ec38e9ec50f67edc085ac5a8ad7f0c1f3ec78a4747a7638bcc0c51d517646df",
+    "bytes": 159567425,
+    "cert": "4a0dc39f29beeeed408f8c33acbb3b18c14eac24a76208aa566e5cab8f3e3726",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "wireguard",
+    "version": "1.0.20260315",
+    "abi": "universal",
+    "url": "https://download.wireguard.com/android-client/com.wireguard.android-1.0.20260315.apk",
+    "source": "https://download.wireguard.com/android-client/",
+    "package": "com.wireguard.android",
+    "minSdk": 24,
+    "sha256": "f92971bc804f4c448e8845ae97e426095eab06ec09a2473a3fa2cfe7288e3298",
+    "bytes": 16943472,
+    "cert": "84a13fa2c4e0064b0c11654b8a86574b7a9b9352a3834cee32455b061c3d4127",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "tivimate",
+    "version": "5.3.3",
+    "abi": "universal",
+    "url": "https://files.tivimate.com/tivimate.apk",
+    "source": "https://tivimate.com/",
+    "package": "ar.tvplayer.tv",
+    "minSdk": 23,
+    "sha256": "beaebb25bf818450bf496d4cefb16885b190f156815dea280c31eaae0909ee6c",
+    "bytes": 21122308,
+    "cert": "cafa2c5e0affcc243b4df23d1a69720a78a92412afc210a051b88ca68fca2c5b",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "localsend",
+    "version": "1.18.2",
+    "abi": "arm64-v8a",
+    "url": "https://github.com/localsend/localsend/releases/download/v1.18.2/LocalSend-1.18.2-android-arm64v8.apk",
+    "source": "https://github.com/localsend/localsend/releases/tag/v1.18.2",
+    "package": "org.localsend.localsend_app",
+    "minSdk": 24,
+    "sha256": "82ec3568fba2aa5295b9aae8b76f701d7a4703d86b9f8bad749472038fbaeab3",
+    "bytes": 46558706,
+    "cert": "3220c353a73cfbd0c2f3052471c445324cf452bcba26de1c473a52fe5c44e1d6",
+    "abis": [
+      "arm64-v8a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "localsend",
+    "version": "1.18.2",
+    "abi": "armeabi-v7a",
+    "url": "https://github.com/localsend/localsend/releases/download/v1.18.2/LocalSend-1.18.2-android-arm32v7.apk",
+    "source": "https://github.com/localsend/localsend/releases/tag/v1.18.2",
+    "package": "org.localsend.localsend_app",
+    "minSdk": 24,
+    "sha256": "222b02d2813578a574cd3fbcfa7b8ff317d4887edb9ca0fb7b292816d222dc63",
+    "bytes": 39333444,
+    "cert": "3220c353a73cfbd0c2f3052471c445324cf452bcba26de1c473a52fe5c44e1d6",
+    "abis": [
+      "armeabi-v7a"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "localsend",
+    "version": "1.18.2",
+    "abi": "x86_64",
+    "url": "https://github.com/localsend/localsend/releases/download/v1.18.2/LocalSend-1.18.2-android-x64.apk",
+    "source": "https://github.com/localsend/localsend/releases/tag/v1.18.2",
+    "package": "org.localsend.localsend_app",
+    "minSdk": 24,
+    "sha256": "93e30ddbf84121ad2048c5a61763f2b37738f593699a9f0cf39a8404177aa05b",
+    "bytes": 48939435,
+    "cert": "3220c353a73cfbd0c2f3052471c445324cf452bcba26de1c473a52fe5c44e1d6",
+    "abis": [
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "synphotos",
+    "version": "1.1.4",
+    "abi": "universal",
+    "url": "https://global.synologydownload.com/download/Mobile/AndroidTV-SynologyPhotos/1.1.4-10073/AndroidTV-SynologyPhotos.1.1.4-10073.ww.apk",
+    "source": "https://archive.synology.com/download/Mobile/AndroidTV-SynologyPhotos/1.1.4-10073",
+    "package": "com.synology.projectkailash",
+    "minSdk": 26,
+    "sha256": "b10bf75747c71f6e9818340b032611ac81660f4409c4b643737cf9723dfdac2b",
+    "bytes": 52462548,
+    "cert": "f245db5cf9fb6c4ef69f1c248c0e8d78aa240ca5789919f81b26e2ea46928622",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "hdhomerun",
+    "version": "20260826",
+    "abi": "universal",
+    "url": "https://download.silicondust.com/hdhomerun/hdhomerun_view_android.apk",
+    "source": "https://info.hdhomerun.com/info/downloads",
+    "package": "com.silicondust.view",
+    "minSdk": 21,
+    "sha256": "7454a5b8a2040d8522604a0f13cba4088510ec78d4207d4560eee56bf40743dd",
+    "bytes": 25874338,
+    "cert": "fcfed21347785d6cbaab640448d696db11acd98509f45e48e50b561b13a409eb",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "pxplay",
+    "version": "8.1.1",
+    "abi": "universal",
+    "url": "https://github.com/streamingdv/PSPlay-Application-Hosting/releases/download/v2.0.0_v8.1.1/PXPlay_Android_v8.1.1.apk",
+    "source": "https://streamingdv.com/shop-list-ns",
+    "package": "psplay.grill.com",
+    "minSdk": 23,
+    "sha256": "ec6c3210e206f1c4c9768270df3d349802eccd8e3114bb4442b8288ebe8716ba",
+    "bytes": 78269573,
+    "cert": "927e5863052c5fef3cf7c41ba04813b446d7aec5dfd5c1afd35f40b009bc6043",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "xbxplay",
+    "version": "2.1.0",
+    "abi": "universal",
+    "url": "https://github.com/streamingdv/XBXPlay-Application-Hosting/releases/download/v2.1.0/XBXPlay_Android_2.1.0.apk",
+    "source": "https://streamingdv.com/shop-list-xbxplay-ns.html",
+    "package": "com.grill.xbxplay",
+    "minSdk": 23,
+    "sha256": "18f0248f0030b40bfa8b0fc23c581b981126b263cd0b94161070a82803e25c5f",
+    "bytes": 93023561,
+    "cert": "d68aeb659cd443ddbfd7626a023c8db173f599e22c0e0b2447eeac35f19e7f0c",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  },
+  {
+    "app": "stk",
+    "version": "1.5",
+    "abi": "universal",
+    "url": "https://github.com/supertuxkart/stk-code/releases/download/1.5/SuperTuxKart-1.5.apk",
+    "source": "https://github.com/supertuxkart/stk-code/releases/tag/1.5",
+    "package": "org.supertuxkart.stk",
+    "minSdk": 21,
+    "sha256": "e1f2f49152abfb8f3ed0ced47981e84096758bff9758563aa3b917111a2a3cbd",
+    "bytes": 183727403,
+    "cert": "326b6dc20bfee3eda6bf25624e164a2a266e3f7a094d6fded99dda29da92f8bb",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "leanback": true
+  }
+]
