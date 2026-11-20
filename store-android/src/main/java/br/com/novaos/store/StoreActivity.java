@@ -21,6 +21,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public final class StoreActivity extends Activity {
+    static final String IPTV_URL="https://github.com/Pedro21062014/nova-os/releases/download/nova-iptv-v1.0.0/Nova-IPTV-1.0.0.apk";
+    static final String IPTV_ASSET="nova-iptv.apk";
+    private static final String OPEN_APP="br.com.novaos.store.APP";
+    private boolean iptvRequested;
     private static final String HOME = "https://store.nova.invalid/index.html";
     private static final String ORIGIN="https://store.nova.invalid";
     private static final String YOUTUBE="com.google.android.youtube.tv";
@@ -33,6 +37,7 @@ public final class StoreActivity extends Activity {
     private final JSONArray deviceAbis=new JSONArray(java.util.Arrays.asList(Build.SUPPORTED_ABIS));
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
+        iptvRequested=getIntent()!=null&&"nova-iptv".equals(getIntent().getStringExtra(OPEN_APP));
         feed=new CatalogFeed(this);
         transfers=new StoreTransfers(this);updates=new StoreUpdates(this);
         try (java.io.InputStream stream = getAssets().open("links.json")) {
@@ -58,6 +63,7 @@ public final class StoreActivity extends Activity {
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         WebView.setWebContentsDebuggingEnabled(false);
         web.setWebViewClient(new WebViewClient(){
+            @Override public void onPageFinished(WebView v,String url){if(HOME.equals(url))openPendingIptv();}
             @Override public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){return r.isForMainFrame()?navigate(r.getUrl()):true;}
             @Override public boolean shouldOverrideUrlLoading(WebView v,String u){return navigate(Uri.parse(u));}
             @Override public WebResourceResponse shouldInterceptRequest(WebView v,WebResourceRequest r){return local(r.getUrl());}
@@ -67,7 +73,9 @@ public final class StoreActivity extends Activity {
         web.setDownloadListener((url,ua,disposition,mime,length)->{if(downloadFile(url)!=null)navigate(Uri.parse(url));});
         setContentView(web);web.setFocusableInTouchMode(true);web.requestFocus();web.loadUrl(HOME);
     }
-    private CatalogFeed.Apk downloadFile(String url){CatalogFeed.Apk fromFeed=feed.download(url);return fromFeed==null?downloads.get(url):fromFeed;}
+    @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);if(intent!=null&&"nova-iptv".equals(intent.getStringExtra(OPEN_APP))){iptvRequested=true;openPendingIptv();}}
+    private void openPendingIptv(){if(!iptvRequested||web==null)return;web.evaluateJavascript("!!(window.novaStoreOpenIptv && window.novaStoreOpenIptv())",v->{if("true".equals(v))iptvRequested=false;});}
+    private CatalogFeed.Apk downloadFile(String url){if(IPTV_URL.equals(url))return downloads.get(url);CatalogFeed.Apk fromFeed=feed.download(url);return fromFeed==null?downloads.get(url):fromFeed;}
     private WebResourceResponse local(Uri uri){
         if(("https://store.nova.invalid"+CatalogFeed.PATH).equals(uri.toString())){
             CatalogFeed.Snapshot snapshot=feed.get();

@@ -10,6 +10,9 @@ var MAX_CATALOG=12*1024*1024;
 var allCategories=[['video','Vídeo e mídia','video'],['live','TV e listas','tv'],['music','Música','music'],['files','Arquivos','folder'],['photo','Fotos e ambiente','image'],['net','Navegadores','globe'],['game','Jogos','game'],['personal','Personalização','palette'],['tool','Utilitários','tool']];
 var categories=[],apps=[],additions=[],artwork=Object.create(null),packages=[],byApp=Object.create(null),latestWave=0;
 var lookup=Object.create(null),searchIndex=Object.create(null),categoryCounts=Object.create(null);
+var inAndroidStore=location.hostname==='store.nova.invalid';
+var builtInIptv=inAndroidStore&&fallbackCatalog?fallbackCatalog.apps.filter(function(a){return a.id==='nova-iptv';})[0]:null;
+var builtInIptvFeature=builtInIptv&&fallbackCatalog.featured.filter(function(f){return f.id==='nova-iptv';})[0];
 var nativeApi=window.NovaStore, nativeState={jobs:{}}, shownUpdate="", updateTimer=null, manualUntil=0, manualResult=false, manualWaiting=false;
 var featured=[],wellKnownIds=[],essentials=[],pendingCatalog=null,lastCatalogDigest=catalogDigest,catalogRequest=null,lastCatalogCheck=0;
 function text(v,max,empty){return typeof v==='string'&&(empty||v.length>0)&&v.length<=max;}
@@ -35,6 +38,10 @@ function validCatalog(d){
  return [d.wellKnown,d.essentials].every(function(rows){return rows.every(function(i){return typeof i==='string'&&ids[i];});})&&d.featured.every(function(f){return f&&typeof f.id==='string'&&ids[f.id]&&text(f.label,80)&&text(f.line,300)&&integer(f.shot,0,11)&&list(f.meta,0,6)&&f.meta.every(function(x){return text(x,100);});});
 }
 function indexCatalog(d){
+ if(builtInIptv&&!d.apps.some(function(row){return row.id==='nova-iptv';})){
+  var top=d.featured.slice(0,11);if(builtInIptvFeature)top.unshift(builtInIptvFeature);
+  d={apps:[builtInIptv].concat(d.apps),officialApps:d.officialApps,featured:top,wellKnown:[builtInIptv.id].concat(d.wellKnown),essentials:d.essentials};
+ }
  var activeFeature=featured[heroIndex], oldSelection=activeFeature&&activeFeature.id;
  apps=d.apps.concat(d.officialApps||(d.apps.some(function(a){return a.id==='youtube';})?[]:builtInOfficial));lookup=Object.create(null);searchIndex=Object.create(null);categoryCounts=Object.create(null);
  apps.forEach(function(a){lookup[a.id]=a;searchIndex[a.id]=normalize(a.name+" "+(allCategories.filter(function(c){return c[0]===a.cat;})[0]||[])[1]+" "+a.desc);categoryCounts[a.cat]=(categoryCounts[a.cat]||0)+1;});
@@ -303,8 +310,8 @@ function searchResults(){
 }
 
 /* ---------- detalhe ---------- */
-function variant(p){
- return '<a class="variant" href="'+esc(p.url)+'" aria-label="Baixar '+esc(platform(p))+'"><span class="variant-ico">'+icon('download',17)+'</span><span class="variant-copy"><strong>'+esc(platform(p))+'</strong><small>Android '+(androidName[p.minSdk]||('API '+p.minSdk))+'+ · '+size(p.bytes)+'</small></span><span class="variant-arrow">'+icon('chev',18)+'</span></a>';
+function variant(p,bundled){
+ return '<a class="variant" href="'+esc(p.url)+'" aria-label="'+(bundled?'Preparar ':'Baixar ')+esc(platform(p))+'"><span class="variant-ico">'+icon('download',17)+'</span><span class="variant-copy"><strong>'+esc(platform(p))+'</strong><small>Android '+(androidName[p.minSdk]||('API '+p.minSdk))+'+ · '+size(p.bytes)+'</small></span><span class="variant-arrow">'+icon('chev',18)+'</span></a>';
 }
 function specs(a,files){
  var abis=[];files.forEach(function(f){if(f.abi==='universal'&&!f.abis.length){abis.push('Universal');}else{f.abis.forEach(function(x){if(abis.indexOf(abiLabel[x]||x)<0)abis.push(abiLabel[x]||x);});}});
@@ -341,19 +348,19 @@ function officialAlternative(){
 }
 function renderDetail(){
  var a=appById(detailId);if(!a)return;
- var files=byApp[a.id],media=artwork[a.id],official=!files.length;shotIndex=0;
+ var files=byApp[a.id],media=artwork[a.id],official=!files.length, bundled=!!(nativeApi&&builtInIptv&&!official&&files[0].url===builtInIptv.apks[0].url);shotIndex=0;
  forgetPictures(content);content.innerHTML='<div class="top detail-top"><button class="text-button" id="detail-back" type="button" data-back><span style="transform:rotate(180deg)">'+icon('arrow',17)+'</span> Voltar ao catálogo</button><div class="crumb">Detalhes'+icon('chev',12)+'<strong>'+esc(a.name)+'</strong></div></div>'
  +'<article class="product" style="--tone:'+a.tone+'">'
  +'<header class="detail-hero"><span class="detail-art" aria-hidden="true"><img class="detail-bg" data-art="'+a.id+':0" alt=""></span><div class="product-head"><div class="app-real-logo">'+imgLogo(a.id)+'</div>'
  +'<div class="product-title"><span class="kicker">'+esc(category(a.cat))+' · ANDROID TV</span><h1>'+esc(a.name)+'</h1><div class="detail-tags"><span class="tag verified">'+icon('shield',12)+(official?' App oficial</span>':' APK da fonte oficial</span><span class="tag">'+(a.rolling?'Versão verificada: ':'v')+esc(files[0].version.replace(/^v(?=\d)/i,''))+'</span>')+'<span class="tag">'+esc(a.price||'Grátis')+'</span>'+(a.stage?'<span class="tag stage-tag">'+esc(a.stage)+'</span>':'')+'</div></div>'
- +'<div class="product-actions">'+(official?(nativeApi?'<button class="primary" data-official id="official-action">'+officialText()+'</button>':'<a class="primary" href="https://play.google.com/store/apps/details?id=com.google.android.youtube.tv" target="_blank" rel="noopener noreferrer">Ver no Google Play</a>'):'<a class="primary" data-primary-apk href="'+esc(files[0].url)+'">'+icon('download',16)+' Baixar APK</a>')+'<button type="button" class="secondary" data-save>'+saveButton(a)+'</button></div></div></header>'
+ +'<div class="product-actions">'+(official?(nativeApi?'<button class="primary" data-official id="official-action">'+officialText()+'</button>':'<a class="primary" href="https://play.google.com/store/apps/details?id=com.google.android.youtube.tv" target="_blank" rel="noopener noreferrer">Ver no Google Play</a>'):'<a class="primary" data-primary-apk href="'+esc(files[0].url)+'">'+icon('download',16)+(bundled?' Preparar instalação':' Baixar APK')+'</a>')+'<button type="button" class="secondary" data-save>'+saveButton(a)+'</button></div></div></header>'
  +'<div class="product-columns"><div class="overview">'+gallery(a,media)
  +'<section class="about-section"><h2>Sobre o app</h2><p>'+esc(a.desc)+'</p>'+(official?'':specs(a,files))+'</section>'
  +related(a)+'</div>'
- +(official?'<aside class="download-panel"><div class="download-head"><div><span class="eyebrow">GOOGLE LLC</span><h2>Instalação oficial</h2></div></div><p class="note">Se o YouTube já estiver instalado, você pode abri-lo daqui. Senão, instale pelo Google Play. A Nova Store não oferece APK avulso do YouTube.</p><a class="text-button source-link" href="'+esc(a.source)+'" target="_blank" rel="noopener noreferrer">Ajuda oficial '+icon('external',14)+'</a>'+officialAlternative()+'</aside>':'<aside class="download-panel" aria-label="Download direto"><div class="download-head"><div><span class="eyebrow">DOWNLOAD DIRETO</span><h2>Baixar APK</h2></div><span class="panel-icon">'+icon('download',21)+'</span></div>'
- +'<div id="transfer-slot"></div><div class="variants">'+files.map(variant).join('')+'</div>'
- +'<p class="note">'+(a.rolling?'O link é mantido pelo desenvolvedor e pode oferecer uma versão mais recente. ':'')+(files.length>1?'Escolha a arquitetura do Android da sua TV box. ':'')+(nativeApi?'Acompanhe o progresso aqui e toque em Instalar quando terminar.':'Abra o APK baixado para confirmar a instalação.')+'</p>'
- +'<a class="text-button source-link" href="'+esc(files[0].source)+'" target="_blank" rel="noopener noreferrer">Fonte da versão '+icon('external',14)+'</a>'
+ +(official?'<aside class="download-panel"><div class="download-head"><div><span class="eyebrow">GOOGLE LLC</span><h2>Instalação oficial</h2></div></div><p class="note">Se o YouTube já estiver instalado, você pode abri-lo daqui. Senão, instale pelo Google Play. A Nova Store não oferece APK avulso do YouTube.</p><a class="text-button source-link" href="'+esc(a.source)+'" target="_blank" rel="noopener noreferrer">Ajuda oficial '+icon('external',14)+'</a>'+officialAlternative()+'</aside>':'<aside class="download-panel" aria-label="Download direto"><div class="download-head"><div><span class="eyebrow">'+(bundled?'INCLUÍDO NA LOJA':'DOWNLOAD DIRETO')+'</span><h2>'+(bundled?'Instalação do app':'Baixar APK')+'</h2></div><span class="panel-icon">'+icon('download',21)+'</span></div>'
+ +'<div id="transfer-slot"></div><div class="variants">'+files.map(function(p){return variant(p,bundled);}).join('')+'</div>'
+ +'<p class="note">'+(a.rolling?'O link é mantido pelo desenvolvedor e pode oferecer uma versão mais recente. ':'')+(files.length>1?'Escolha a arquitetura do Android da sua TV box. ':'')+(bundled?'A loja inclui o APK. Prepare a instalação e confirme no Android. É preciso internet para assistir.':nativeApi?'Acompanhe o progresso aqui e toque em Instalar quando terminar.':'Abra o APK baixado para confirmar a instalação.')+'</p>'
+ +(bundled?'':'<a class="text-button source-link" href="'+esc(files[0].source)+'" target="_blank" rel="noopener noreferrer">Fonte da versão '+icon('external',14)+'</a>')
  +'</aside>')+'</div></article>';
  paintTransfers();
  hydrate(content);
@@ -454,7 +461,7 @@ function paintTransfers(){
    var mode=status==='ready'?'install':status==='waiting'||status==='downloading'||status==='verifying'?'progress':status==='failed'?'retry':'download';
    if(mainAction.getAttribute('data-mode')!==mode){
     mainAction.setAttribute('data-mode',mode);
-    mainAction.innerHTML=icon(mode==='install'?'check':'download',16)+(mode==='install'?' Instalar':mode==='progress'?' Ver progresso':mode==='retry'?' Baixar novamente':' Baixar APK');
+    mainAction.innerHTML=icon(mode==='install'?'check':'download',16)+(mode==='install'?' Instalar':mode==='progress'?' Ver progresso':builtInIptv&&primary.url===builtInIptv.apks[0].url?' Preparar instalação':mode==='retry'?' Baixar novamente':' Baixar APK');
    }
   }
  }
@@ -637,6 +644,7 @@ document.addEventListener('keydown',function(e){
  if(e.key.indexOf('Arrow')===0&&!(input&&(e.key==='ArrowLeft'||e.key==='ArrowRight'))){e.preventDefault();spatial(e.key);return;}
  if(e.key==='Tab'&&!modal.hidden){var buttons=controls(),index=buttons.indexOf(document.activeElement);if((index===buttons.length-1&&!e.shiftKey)||(index===0&&e.shiftKey)){e.preventDefault();buttons[e.shiftKey?buttons.length-1:0].focus();}}
 });
+window.novaStoreOpenIptv=function(){var app=appById('nova-iptv');if(!app)return false;if(currentHash()!=='nova-iptv')openDetails(app);return true;};
 window.novaStoreBack=function(){if(modal.hidden&&!detailId&&page==='home')return false;back();return true;};
 if(!(window.CSS&&CSS.supports&&CSS.supports('display','grid')&&CSS.supports('width','clamp(1px,2px,3px)')))document.body.classList.add('store-legacy');
 if(currentHash())syncDetail();else render(false);

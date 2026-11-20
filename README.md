@@ -4,14 +4,18 @@ Aplicativo independente (`br.com.novaos.store`), com o catálogo web profissiona
 
 A loja tem ícone e banner de Android TV. Use as setas, OK e Voltar. Não exige o Nova OS para funcionar. A atividade não permite navegar em páginas remotas dentro do WebView; o botão de fonte abre o navegador externo.
 
+A versão 1.0.5 inclui a Nova IPTV em destaque. A ficha permite preparar o APK incluído, mesmo offline, e então abrir a confirmação de instalação do Android. Para assistir, é preciso internet.
+
 ## Build
 
 Com Java 11, Android Platform 35 e Build Tools 35.0.1:
 
 ```bash
 export ANDROID_SDK_ROOT=/caminho/do/sdk
-NOVA_OUT="$PWD/Nova-Store-1.0.4.apk" ./store-android/scripts/build-apk.sh
+NOVA_OUT="$PWD/Nova-Store-1.0.5.apk" ./store-android/scripts/build-apk.sh
 ```
+
+No build padrão, o script obtém o APK publicado da Nova IPTV e confere o SHA-256; em builds offline, forneça o mesmo APK via `NOVA_IPTV_APK` (caminho absoluto).
 
 O APK local é assinado com a chave de teste por padrão. Para publicar usando sua chave, forneça `NOVA_KEYSTORE`, `NOVA_KEY_ALIAS`, `NOVA_KEYSTORE_PASS` e, se diferente, `NOVA_KEY_PASS` via ambiente privado. Use a mesma chave nas atualizações. Não exponha o keystore.
 

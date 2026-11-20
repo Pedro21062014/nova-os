@@ -12,7 +12,7 @@ const RAW=JSON.parse(fs.readFileSync(join(repo,'catalogo.json')));
  try{
   const mobile=await b.newPage({viewport:{width:390,height:844},offline:true}), errors=[];mobile.on('pageerror',e=>errors.push(e.message));
   await mobile.goto(view);await mobile.getByRole('heading',{name:'Apps populares'}).waitFor();
-  assert.match(await mobile.locator('#foot-stats').textContent(),/69 APPS.*87 APKS/);
+  assert.match(await mobile.locator('#foot-stats').textContent(),/70 APPS.*88 APKS/);
   await mobile.getByRole('button',{name:'YouTube',exact:true}).first().click();
   await mobile.getByRole('heading',{name:'YouTube',exact:true}).waitFor();
   assert.equal(await mobile.getByRole('link',{name:'Ver no Google Play'}).getAttribute('href'),'https://play.google.com/store/apps/details?id=com.google.android.youtube.tv');
@@ -29,7 +29,7 @@ const RAW=JSON.parse(fs.readFileSync(join(repo,'catalogo.json')));
   assert.deepEqual(errors,[]);await mobile.close();
   const c=await b.newContext({viewport:{width:1440,height:900}});const p=await c.newPage();p.setDefaultTimeout(4500);p.on('pageerror',e=>errors.push(e.message));
   const fixture=structuredClone(RAW);delete fixture.officialApps;
-  fixture.apps[0].name='VLC (sincronizado)';let requests=[];
+  fixture.apps=fixture.apps.filter(a=>a.id!=='nova-iptv');fixture.wellKnown=fixture.wellKnown.filter(id=>id!=='nova-iptv');fixture.featured=fixture.featured.filter(f=>f.id!=='nova-iptv');fixture.apps.find(a=>a.id==='vlc').name='VLC (sincronizado)';let requests=[];
   await p.route(host+'/**',async r=>{const x=new URL(r.request().url()), path=x.pathname;
     if(path==='/catalogo.json')return r.fulfill({status:200,headers:{'X-Nova-Catalog-Digest':'fixture'},contentType:'application/json',body:JSON.stringify(fixture)});
     if(path.startsWith('/local-media/'))requests.push(path);
@@ -38,7 +38,7 @@ const RAW=JSON.parse(fs.readFileSync(join(repo,'catalogo.json')));
   });
   await p.addInitScript(()=>{
     window.fixture={jobs:{},youtube:false,abis:['armeabi-v7a'],sdk:25,update:{version:'1.0.4',bytes:5000000}};window.calls=[];
-    window.NovaStore={state:()=>JSON.stringify(fixture),checkUpdates(){calls.push(['check']);fixture.updateCheck='checking';},download(url){calls.push(['download',url]);fixture.jobs.vlc={status:'downloading',message:'Baixando…',progress:28,bytes:13929000,total:49645764}},
+    window.NovaStore={state:()=>JSON.stringify(fixture),checkUpdates(){calls.push(['check']);fixture.updateCheck='checking';},download(url){calls.push(['download',url]);if(url.includes('/nova-iptv-v1.0.0/')){fixture.jobs['nova-iptv']={status:'ready',message:'APK incluído na Nova Store',progress:100};return;}fixture.jobs.vlc={status:'downloading',message:'Baixando…',progress:28,bytes:13929000,total:49645764}},
       install(key){calls.push(['install',key]);},cancel(key){delete fixture.jobs[key];},update(){calls.push(['update']);fixture.jobs['store-update']={status:'waiting',message:'Aguardando conexão…',progress:-1}},openOfficial(){calls.push(['youtube']);}};
   });
   await p.goto(host+'/index.html');
@@ -105,8 +105,17 @@ const RAW=JSON.parse(fs.readFileSync(join(repo,'catalogo.json')));
   await p.getByRole('heading',{name:'Atualizar a Nova Store?'}).waitFor();
   await p.getByText(/A versão 1\.0\.5 já está disponível/).waitFor();
   assert.equal((await p.evaluate(()=>calls.filter(x=>x[0]==='check').length)),3);
+  await p.getByRole('button',{name:'Agora não'}).click();
+  assert.equal(await p.evaluate(()=>novaStoreOpenIptv()),true); // same hook as the Android launcher intent
+  await p.getByRole('heading',{name:'Nova IPTV',exact:true}).waitFor();
+  await p.locator('#screen-image').evaluate(i=>i.decode());
+  await p.getByRole('link',{name:'Preparar instalação',exact:true}).click();
+  await p.getByText('APK incluído na Nova Store').waitFor();
+  await p.locator('.product-actions [data-primary-apk]').click();
+  assert.deepEqual((await p.evaluate(()=>calls)).at(-1),['install','nova-iptv']);
+
   assert.deepEqual(errors,[]);
-  console.log('TV e celular: fallback, busca/navegação e galeria, coleção, RAW antigo, YouTube oficial, progresso determinado/indeterminado, erro, instalação e aviso de atualização (ponte Android simulada).');
+  console.log('TV e celular: fallback, busca/navegação e galeria, coleção, RAW antigo, Nova IPTV incluída, YouTube oficial, progresso determinado/indeterminado, erro, instalação e aviso de atualização (ponte Android simulada).');
   await c.close();
  }finally{await b.close();fs.rmSync(assetDir,{recursive:true,force:true});}
 })().catch(e=>{console.error(e);process.exit(1);});

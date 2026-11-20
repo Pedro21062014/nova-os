@@ -1,3 +1,5 @@
 /loja/index.html
 /store-android/artifacts/
 /*.apk
+
+/integration/*.apk

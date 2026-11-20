@@ -23,7 +23,20 @@ if [[ ! -x "$BT/aapt2" || ! -r "$PLATFORM" ]];then
 fi
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 mkdir -p "$TMP/assets"
+IPTV_APK="${NOVA_IPTV_APK:-../integration/Nova-IPTV-1.0.0.apk}"
+if [[ -n "${NOVA_IPTV_APK:-}" || -f "$IPTV_APK" ]]; then
+  cp "$IPTV_APK" "$TMP/assets/nova-iptv.apk"
+else
+  curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --retry 2 --max-time 40 \
+    'https://github.com/Pedro21062014/nova-os/releases/download/nova-iptv-v1.0.0/Nova-IPTV-1.0.0.apk' --output "$TMP/assets/nova-iptv.apk"
+  printf '%s  %s\n' '1728bb2971ad3e341cabe9b5b553a5f7857d13a90967f162d19da31631e1e809' "$TMP/assets/nova-iptv.apk" | sha256sum -c -
+fi
 python3 ../loja/build-preview.py --android "$TMP/assets"
+python3 - "$TMP/assets/nova-iptv.apk" ../catalogo.json <<'PY_CHECK'
+import hashlib,json,sys,pathlib
+apk=pathlib.Path(sys.argv[1]); d=json.load(open(sys.argv[2])); row=next(a for a in d['apps'] if a['id']=='nova-iptv')['apks'][0]
+assert row['sha256']==hashlib.sha256(apk.read_bytes()).hexdigest() and row['bytes']==apk.stat().st_size, 'Atualize a entrada da Nova IPTV antes de gerar a Store.'
+PY_CHECK
 mkdir -p "$TMP/classes" "$TMP/dex" "$(dirname "$OUT")" "$(dirname "$KEY")"
 if [[ ! -f "$KEY" ]];then
   (umask 077; keytool -genkeypair -noprompt -storetype JKS -keystore "$KEY" -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname 'CN=Android Debug,O=Android,C=US' >/dev/null 2>&1)

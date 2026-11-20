@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.provider.Settings;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -27,6 +28,7 @@ import org.json.JSONArray;
 
 final class StoreTransfers {
     static final String UPDATE="store-update";
+    private static final long INCLUDED=-2;
     private final StoreActivity host;
     private final DownloadManager manager;
     private final SharedPreferences prefs;
@@ -59,6 +61,7 @@ final class StoreTransfers {
         if(old!=null){String s=state(old).optString("status");if("waiting".equals(s)||"downloading".equals(s)||"verifying".equals(s))return;remove(old);}
         if(jobs.size()>=12){host.notice("Finalize ou cancele outro download primeiro.");return;}
         String token=UUID.randomUUID().toString().replace("-","");Job j=new Job(file.app,token,file.pkg,file.hash,file.size,file.code,-1,file.cert,file.abi);jobs.put(file.app,j);
+        if(StoreActivity.IPTV_URL.equals(url)&&"nova-iptv".equals(file.app)&&"br.com.novaos.iptv".equals(file.pkg)&&file.size>0&&!file.hash.isEmpty()&&!file.cert.isEmpty()){j.id=INCLUDED;save();return;}
         try{
             DownloadManager.Request req=new DownloadManager.Request(Uri.parse(url)).setTitle("Nova Store · "+file.app)
                 .setMimeType(StoreApkProvider.MIME).setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
@@ -72,6 +75,7 @@ final class StoreTransfers {
     private JSONObject state(Job j){
         String s="failed",msg=j.error;long done=0,total=0;
         if(j.checking){s="verifying";msg="Conferindo o APK…";}
+        else if(msg.isEmpty()&&j.id==INCLUDED){s="ready";msg="APK incluído na Nova Store";done=total=j.size;}
         else if(msg.isEmpty()&&j.id>0&&manager!=null)try(Cursor c=manager.query(new DownloadManager.Query().setFilterById(j.id))){
             if(c!=null&&c.moveToFirst()){
                 done=c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
@@ -103,12 +107,12 @@ final class StoreTransfers {
     private void validateAndOpen(Job j){
         File output=StoreApkProvider.file(host,j.token);
         try{
-            File dir=host.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-            if(dir==null)throw new IOException("Unavailable");File input=new File(dir,j.token+".apk");
+            File input=null;
+            if(j.id!=INCLUDED){File dir=host.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);if(dir==null)throw new IOException("Unavailable");input=new File(dir,j.token+".apk");}
             long limit=j.size>0?j.size:3_000_000_000L;
-            if(!input.isFile()||input.length()>limit||(j.size>0&&input.length()!=j.size))throw new IOException("Size");
+            if(input!=null&&(!input.isFile()||input.length()>limit||(j.size>0&&input.length()!=j.size)))throw new IOException("Size");
             MessageDigest sha=MessageDigest.getInstance("SHA-256");
-            try(FileInputStream in=new FileInputStream(input);FileOutputStream out=new FileOutputStream(output)){
+            try(InputStream in=input==null?host.getAssets().open(StoreActivity.IPTV_ASSET):new FileInputStream(input);FileOutputStream out=new FileOutputStream(output)){
                 byte[] b=new byte[32768];int n;long count=0;
                 while((n=in.read(b))!=-1){count+=n;if(count>limit||Thread.currentThread().isInterrupted())throw new IOException("Cancelled");out.write(b,0,n);sha.update(b,0,n);}
                 if(j.size>0&&count!=j.size)throw new IOException("Size");
@@ -117,6 +121,7 @@ final class StoreTransfers {
             PackageManager pm=host.getPackageManager();PackageInfo apk=pm.getPackageArchiveInfo(output.getAbsolutePath(),PackageManager.GET_SIGNATURES);
             if(apk==null||!j.pkg.equals(apk.packageName)||apk.signatures==null||apk.signatures.length==0)throw new SecurityException("APK");
             if(!j.cert.isEmpty()&&(apk.signatures.length!=1||!j.cert.equals(hex(sha.digest(apk.signatures[0].toByteArray())))))throw new SecurityException("Signer");
+            if(j.id==INCLUDED&&apk.versionCode!=1)throw new SecurityException("Version");
             if(j.code>0){PackageInfo installed=pm.getPackageInfo(host.getPackageName(),PackageManager.GET_SIGNATURES);
                 if(apk.versionCode!=j.code||apk.versionCode<=installed.versionCode||!Arrays.equals(apk.signatures,installed.signatures))throw new SecurityException("Update");}
             host.runOnUiThread(()->{
