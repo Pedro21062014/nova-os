@@ -19,6 +19,8 @@ No build padrão, o script obtém o APK publicado da Nova IPTV e confere o SHA-2
 
 O APK local é assinado com a chave de teste por padrão. Para publicar usando sua chave, forneça `NOVA_KEYSTORE`, `NOVA_KEY_ALIAS`, `NOVA_KEYSTORE_PASS` e, se diferente, `NOVA_KEY_PASS` via ambiente privado. Use a mesma chave nas atualizações. Não exponha o keystore.
 
+A **Nova IPTV** tem seu próprio APK. A Store 1.0.5 continua funcionando e apresenta as versões novas da IPTV pelo `catalogo.json` online. A cópia offline continua sendo a 1.0.0; ela não substitui uma instalação mais recente.
+
 ## Publicar e ativar o aviso de atualização
 
 1. Faça commit do código na branch independente `nova-store-app` e preserve todos os APKs já publicados. Use `nova-store-vX.Y.Z` com o asset `Nova-Store-X.Y.Z.apk`, assinado com a **mesma chave** das versões instaladas. Não marque a release da Store como `Latest`: esse canal pertence ao Nova OS.

@@ -32,10 +32,10 @@ else
   printf '%s  %s\n' '1728bb2971ad3e341cabe9b5b553a5f7857d13a90967f162d19da31631e1e809' "$TMP/assets/nova-iptv.apk" | sha256sum -c -
 fi
 python3 ../loja/build-preview.py --android "$TMP/assets"
-python3 - "$TMP/assets/nova-iptv.apk" ../catalogo.json <<'PY_CHECK'
+python3 - "$TMP/assets/nova-iptv.apk" ../integration/iptv-fallback-1.0.0.json <<'PY_CHECK'
 import hashlib,json,sys,pathlib
-apk=pathlib.Path(sys.argv[1]); d=json.load(open(sys.argv[2])); row=next(a for a in d['apps'] if a['id']=='nova-iptv')['apks'][0]
-assert row['sha256']==hashlib.sha256(apk.read_bytes()).hexdigest() and row['bytes']==apk.stat().st_size, 'Atualize a entrada da Nova IPTV antes de gerar a Store.'
+apk=pathlib.Path(sys.argv[1]); d=json.load(open(sys.argv[2])); row=d['apks'][0]
+assert row['sha256']==hashlib.sha256(apk.read_bytes()).hexdigest() and row['bytes']==apk.stat().st_size, 'O APK incluído não corresponde à versão offline desta Store.'
 PY_CHECK
 mkdir -p "$TMP/classes" "$TMP/dex" "$(dirname "$OUT")" "$(dirname "$KEY")"
 if [[ ! -f "$KEY" ]];then

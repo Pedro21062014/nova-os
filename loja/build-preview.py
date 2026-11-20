@@ -20,6 +20,13 @@ def literal(obj):
 args=sys.argv[1:]
 if args and args[0] == '--android':
     dest=Path(args[1]);dest.mkdir(parents=True,exist_ok=True)
+    # Keep the APK shipped in Store 1.0.5 matched with its own metadata. The online
+    # feed may advertise newer releases, which must be downloaded instead.
+    bundled = json.loads((root.parent/'integration'/'iptv-fallback-1.0.0.json').read_text())
+    catalog['apps'] = [bundled if row['id']=='nova-iptv' else row for row in catalog['apps']]
+    for feature in catalog['featured']:
+        if feature['id']=='nova-iptv':
+            feature.update(label='PARA ANDROID TV',line='TV ao vivo, filmes e séries. Consulte o catálogo online para receber a versão mais recente.',shot=1)
     links=[]
     for a in catalog['apps']+catalog.get('officialApps',[]):
         path=dest/'local-media'/a['id'];path.mkdir(parents=True,exist_ok=True)
@@ -36,7 +43,7 @@ if args and args[0] == '--android':
 else:
     out=Path(args[0]) if args else root/'index.html'
 css = (root / 'store.css').read_text().replace('__HERO__', asset('hero.webp', 'image/webp')).replace('__FONT__', asset('manrope.woff2', 'font/woff2'))
-js = (root / 'store.js').read_text().replace('/*FALLBACK_CATALOG*/null', literal(catalog)).replace('/*CATALOG_URL*/null', literal(url)).replace('/*CATALOG_DIGEST*/null', literal(sha256(raw).hexdigest()))
+js = (root / 'store.js').read_text().replace('/*FALLBACK_CATALOG*/null', literal(catalog)).replace('/*CATALOG_URL*/null', literal(url)).replace('/*CATALOG_DIGEST*/null', literal('bundled:'+sha256(raw).hexdigest() if args and args[0]=='--android' else sha256(raw).hexdigest()))
 html = (root / 'page.html').read_text().replace('/*STYLE*/', css).replace('/*SCRIPT*/', js)
 out.write_text(html, encoding='utf-8')
 print(out)
