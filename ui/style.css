@@ -234,3 +234,6 @@ body.dpad .more-category:focus,body.dpad .more-quick:focus,.more-category:focus-
 .legacy-layout .movie-filter>span{margin-left:8px}
 .legacy-layout .movie .provider-prime{font-family:Nova Manrope,Arial,sans-serif}
 .movie-more-row{display:flex;justify-content:center;margin:27px 0 10px}
+
+/* Persistent IPTV offer; the Android app has its own internal branding. */
+#iptv-slot{margin:8px 1px 24px}.iptv-promo{display:flex;align-items:center;gap:14px;width:100%;min-height:84px;padding:12px 19px;text-align:left;border:1px solid rgba(179,230,140,.28);border-radius:20px;background:linear-gradient(104deg,rgba(22,43,33,.98),rgba(22,33,43,.94) 77%);color:#f3f8f5}.iptv-promo img{display:block;flex:none;object-fit:contain;border-radius:12px;background:#101211}.iptv-copy{display:block;flex:1;min-width:0}.iptv-copy small,.iptv-copy strong,.iptv-copy>span{display:block}.iptv-copy small{color:#d3f1ae;font-size:10px;font-weight:800;letter-spacing:.14em}.iptv-copy strong{margin:2px 0;font-size:20px;line-height:1.15}.iptv-copy>span{color:#c2d3cf;font-size:12px}.iptv-cta{display:flex;align-items:center;gap:5px;padding:8px 12px;border-radius:16px;background:rgba(210,243,179,.13);color:#e0f6cc;font-size:13px;font-weight:750;white-space:nowrap}.iptv-promo:focus,.iptv-promo:hover{outline:none;border-color:#d7f4b9;box-shadow:0 0 0 2px rgba(208,245,174,.35)}

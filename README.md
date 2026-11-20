@@ -1,4 +1,4 @@
-# Nova OS 1.2.3
+# Nova OS 1.2.8
 
 Launcher em português para Android TV e TV boxes. É um aplicativo de tela inicial, não uma ROM. O pacote Android gerencia aplicativos instalados, controle remoto, rede e o atualizador; a interface é local, renderizada pelo Android System WebView.
 
@@ -13,7 +13,7 @@ Requisitos: Android **6.0/API 23 ou superior** e Android System WebView. A ediç
 ## Interface e conteúdo
 
 - Tela 16:9 com tema claro nos controles selecionados, efeito de vidro opcional, rodízio de fotografias do Unsplash ao abrir e a cada 15 minutos, e modo descanso após 4 minutos sem interação. Uma tecla ou toque restaura a interface sem executar a ação do botão. As quatro paisagens já vêm no APK e giram mesmo offline.
-- Filmes e séries em cartazes verticais 2:3, banners 16:9 no Início, favoritos reordenáveis, busca, lista de títulos e atalhos de transmissão. A aba **Ao vivo** indexa apps instalados compatíveis por nome; não é uma lista IPTV.
+- Filmes e séries em cartazes verticais 2:3, banners 16:9 no Início, favoritos reordenáveis, busca, lista de títulos e atalhos de transmissão. A aba **Ao vivo** indexa apps instalados compatíveis por nome. A partir da 1.2.8, o Início e **Ao vivo** anunciam a Nova IPTV, app separado. O atalho instala o APK incluído com confirmação do Android ou abre o app já instalado; com a Nova Store 1.0.5, pode abrir diretamente a ficha da loja.
 - Filmes: seleção editorial com 16 filmes do Prime Video Brasil que abrem o título no streaming, além do feed regional da iTunes Store Brasil; séries: TVmaze (CC BY-SA). Não são necessárias chaves de API. Em Filmes, filtre por origem e use **Mostrar mais filmes** para ver os próximos cartazes sem carregar tudo de uma vez. A disponibilidade do streaming depende da sua conta e região. Consulte [o catálogo Prime](docs/PRIME-CATALOG.md) para a origem dos links e artes. Os links de detalhe abrem fora do launcher. Não há reprodução integrada nem acesso ao histórico de serviços de streaming.
 - Consulte [docs/ASSETS.md](docs/ASSETS.md) para fontes e licenças. As fotos do Unsplash constam em `app/src/main/assets/wallpapers/list.json`, com créditos no modo ambiente. A tipografia Manrope usa [SIL OFL](licenses/Manrope-OFL.txt).
 
@@ -33,8 +33,10 @@ Com JDK 11+ (o CI usa 17), Android SDK Platform 35, Build Tools 35.0.1 e `zip` d
 sdkmanager 'platforms;android-35' 'build-tools;35.0.1'
 export ANDROID_SDK_ROOT=/caminho/do/android-sdk
 ./scripts/build-apk.sh
-adb install -r artifacts/Nova-OS-1.2.1-debug.apk
+adb install -r artifacts/Nova-OS-1.2.8-debug.apk
 ```
+
+O build baixa e verifica o SHA-256 do APK público da Nova IPTV quando não há cópia local. Para compilar offline, use `NOVA_IPTV_APK` com o caminho absoluto de um APK da IPTV. A instalação pelo launcher exige que a Nova IPTV e o launcher tenham o mesmo certificado.
 
 A chave de teste fica em `~/.android/debug.keystore` por padrão. Para compilar com uma chave própria, defina `NOVA_KEYSTORE`, `NOVA_KEY_ALIAS` e `NOVA_KEYSTORE_PASS`; se a senha da chave for diferente, defina `NOVA_KEY_PASS`. Mantenha esses valores fora do Git. O script alinha, assina e verifica a saída. O APK utiliza os assets gerados já incluídos no repositório; após editar `ui/app.js` ou `ui/style.css`, regenere-os com `npm ci && npm run build:ui` (Node 20+).
 

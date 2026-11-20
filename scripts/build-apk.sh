@@ -26,8 +26,19 @@ mkdir -p "$TMP/classes" "$TMP/dex" "$(dirname "$OUT")" "$(dirname "$KEY")"
 if [[ ! -f "$KEY" ]];then
   (umask 077; keytool -genkeypair -noprompt -storetype JKS -keystore "$KEY" -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname 'CN=Android Debug,O=Android,C=US' >/dev/null 2>&1)
 fi
+mkdir "$TMP/assets"
+cp -a "$APP/assets/." "$TMP/assets/"
+IPTV_APK="${NOVA_IPTV_APK:-integration/Nova-IPTV-1.0.0.apk}"
+if [[ -n "${NOVA_IPTV_APK:-}" || -f "$IPTV_APK" ]]; then
+  cp "$IPTV_APK" "$TMP/assets/nova-iptv.apk"
+else
+  curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --retry 2 --max-time 40 \
+    'https://github.com/Pedro21062014/nova-os/releases/download/nova-iptv-v1.0.0/Nova-IPTV-1.0.0.apk' --output "$TMP/assets/nova-iptv.apk"
+  printf '%s  %s\n' '1728bb2971ad3e341cabe9b5b553a5f7857d13a90967f162d19da31631e1e809' "$TMP/assets/nova-iptv.apk" | sha256sum -c -
+fi
+python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); (p.parent/"nova-iptv.sha256").write_text(hashlib.sha256(p.read_bytes()).hexdigest(),encoding="ascii")' "$TMP/assets/nova-iptv.apk"
 "$BT/aapt2" compile --dir "$APP/res" -o "$TMP/res.zip"
-"$BT/aapt2" link -I "$PLATFORM" --manifest "$APP/AndroidManifest.xml" -A "$APP/assets" -o "$TMP/unsigned.apk" "$TMP/res.zip"
+"$BT/aapt2" link -I "$PLATFORM" --manifest "$APP/AndroidManifest.xml" -A "$TMP/assets" -o "$TMP/unsigned.apk" "$TMP/res.zip"
 mapfile -t JAVA < <(find "$APP/java" -name '*.java' -print | LC_ALL=C sort)
 javac -encoding UTF-8 -source 8 -target 8 -bootclasspath "$PLATFORM:$BT/core-lambda-stubs.jar" -d "$TMP/classes" "${JAVA[@]}"
 jar cf "$TMP/classes.jar" -C "$TMP/classes" .

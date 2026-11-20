@@ -245,6 +245,9 @@ public final class NovaActivity extends Activity {
         @JavascriptInterface public void ready(){runOnUiThread(()->{if(web!=owner||ready)return;cancelBootDeadline();ready=true;lastApps="";refreshApps(true);if(updater!=null){updater.send();updater.onResume();}if(store!=null){store.send();js("storeInvite()");}});}
         @JavascriptInterface public boolean claimStoreInvitation(){return web==owner&&store!=null&&store.claimInvitation();}
         @JavascriptInterface public boolean claimStoreUpdateNotice(){return web==owner&&store!=null&&store.claimUpdateNotice();}
+        @JavascriptInterface public boolean iptvInstalled(){return web==owner&&IptvOffer.available(NovaActivity.this,IptvOffer.PACKAGE);}
+        @JavascriptInterface public boolean iptvStoreAvailable(){return web==owner&&IptvOffer.hasStore(NovaActivity.this);}
+        @JavascriptInterface public void iptvAction(String action){if(web==owner)runOnUiThread(()->{if(web==owner&&!isFinishing())IptvOffer.action(NovaActivity.this,action);});}
         @JavascriptInterface public boolean openStoreIfInstalled(){return web==owner&&store!=null&&store.openIfInstalled();}
         @JavascriptInterface public void storeStatus(){if(web==owner&&store!=null)store.send();}
         @JavascriptInterface public void storeAction(String action){

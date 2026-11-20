@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.2.7';
+const VERSION = '1.2.8';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -319,6 +319,7 @@ function extraHome(){
 }
 const homeAppTiles=()=>[...tiles(),{id:'__more',label:'Todos os apps'}].map(appTile).join('');
 function refreshHomeApps(){
+ refreshIptv();
  const grid=$('home-app-grid');if(!grid)return;
  const html=homeAppTiles();if(grid._tiles===html)return;grid._tiles=html;
  const anchor=grid.contains(document.activeElement)?describe(document.activeElement):'';
@@ -327,12 +328,15 @@ function refreshHomeApps(){
  if(!useDpad){const first=grid.querySelector('.tile');if(first)first.classList.add('preset-focus');}
 }
 let paintedTiles='';
+const iptvInstalled=()=>!!(native&&native.iptvInstalled&&native.iptvInstalled());
+function iptvPromo(){const installed=iptvInstalled();return `<button type="button" class="iptv-promo glass" data-do="novaIptv"><img src="img/brand/nova-iptv.webp" alt="" width="54" height="54"><span class="iptv-copy"><small>${installed?'SEU ATALHO':'NOVO PARA A SUA TV'}</small><strong>Nova IPTV</strong><span>Canais ao vivo, filmes e séries</span></span><span class="iptv-cta">${installed?'Abrir app':'Como baixar'} ${ico('chev',16)}</span></button>`;}
+function refreshIptv(){const el=$('iptv-slot');if(!el)return;const next=iptvPromo();if(el._iptv===next)return;const focused=el.contains(document.activeElement);el.innerHTML=next;el._iptv=next;if(focused&&!dialog)el.querySelector('button').focus();}
 function home(){
  paintedTiles=homeAppTiles();
  const appsMarkup=`<section class="shelf" aria-label="Seus apps">${section('Seus apps','Seus favoritos, sempre à mão.','organize','Organizar','sliders')}<div class="app-grid" id="home-app-grid">${paintedTiles}</div></section>`;
  const display=bool('trending')&&catalogs.movies.items.length?catalogs.movies.items.slice(0,4):curated;
  const shelf=bool('films')?`<section class="shelf" aria-label="Descobrir">${section('Para sua próxima sessão','Filmes e séries em destaque' ,'page','Ver catálogo','arrow','movies')}<div class="card-grid">${display.map(card).join('')}</div></section>`:'';
- return `${bool('hero')?`<section class="hero" aria-label="Atalhos do início"><div class="actions">${btn(bool('films')?'Explorar':'Seus apps','page',bool('films')?'film':'grid','primary',bool('films')?'movies':'apps')}${btn('Minha lista','page','bookmark','ghost glass','saved')}</div><button class="ambient-card glass" data-do="page" data-arg="ambient"><span class="picture">${ico('mountain',22)}</span><span class="words"><small>MODO AMBIENTE</small><b data-wall-title>${escape(wallNow.title)}</b></span><span class="chev">${ico('chev',18)}</span></button></section>`:'<div class="section-label" style="margin-top:36px">Tela inicial</div>'}${appsMarkup}${shelf}${extraHome()}`;
+ return `${bool('hero')?`<section class="hero" aria-label="Atalhos do início"><div class="actions">${btn(bool('films')?'Explorar':'Seus apps','page',bool('films')?'film':'grid','primary',bool('films')?'movies':'apps')}${btn('Minha lista','page','bookmark','ghost glass','saved')}</div><button class="ambient-card glass" data-do="page" data-arg="ambient"><span class="picture">${ico('mountain',22)}</span><span class="words"><small>MODO AMBIENTE</small><b data-wall-title>${escape(wallNow.title)}</b></span><span class="chev">${ico('chev',18)}</span></button></section>`:'<div class="section-label" style="margin-top:36px">Tela inicial</div>'}${appsMarkup}<div id="iptv-slot">${iptvPromo()}</div>${shelf}${extraHome()}`;
 }
 const head=(mark,title,desc,actions='')=>`<div class="page-head"><div><span class="eyebrow">${mark}</span><h1>${title}</h1><p>${desc}</p></div>${actions?`<div class="actions">${actions}</div>`:''}</div>`;
 const empty=(title,descr,actions='')=>`<div class="empty glass"><h2>${title}</h2><p>${descr}</p>${actions?`<div class="actions">${actions}</div>`:''}</div>`;
@@ -404,7 +408,7 @@ function catalog(which){
  const notice=primeOnly?'':state.state==='loading'?'<p class="status" role="status">Atualizando o catálogo…</p>':state.state==='error'?`<p class="status offline" role="status">${isMovie?'Não foi possível atualizar a iTunes Store.':'Não foi possível atualizar. Mostrando os títulos disponíveis localmente.'}</p>`:state.state==='cache'?'<p class="status" role="status">Exibindo a última seleção salva no dispositivo.</p>':'';
  return head('DESCOBRIR',isMovie?'Filmes':'Séries',isMovie?'Explore títulos da iTunes Store e uma seleção para assistir no Prime Video.':'Explore as séries do TVmaze. Alguns dados estão em inglês.',primeOnly?'':btn('Atualizar','refresh','reload','ghost glass',which))+filters+notice+(data.length?`<div class="card-grid poster-grid" ${isMovie?'id="movie-posters"':''}>${(isMovie?data.slice(0,movieLimit):data).map(t=>card(t,true)).join('')}</div>${isMovie&&movieLimit<data.length?`<div class="movie-more-row" id="movie-more-row">${btn('Mostrar mais filmes','moreMovies','down')}</div>`:''}`:state.state==='loading'?'':empty('Catálogo indisponível',isMovie?'Você ainda pode escolher um título no filtro Prime Video.':'Tente atualizar o catálogo mais tarde.'));
 }
-function live(){const matches=apps.filter(a=>/globoplay|pluto|samsung tv|tv aberta|tv ao vivo|brasil tv|sbt|record|soul tv|zapping|tivimate|distro|sling|youtube/i.test(a.label));return head('CANAIS E TRANSMISSÕES','Ao vivo','Abra apps que oferecem canais ou transmissões. O Nova OS não fornece canais próprios.')+(matches.length?`<div class="app-grid">${matches.map(appTile).join('')}</div>`:empty('Nenhum app compatível encontrado','Os atalhos aparecerão aqui quando você instalar um app de TV ao vivo.',btn('Ver todos os apps','page','grid','primary','apps')));}
+function live(){const matches=apps.filter(a=>a.pkg!=='br.com.novaos.iptv'&&/globoplay|pluto|samsung tv|tv aberta|tv ao vivo|brasil tv|sbt|record|soul tv|zapping|tivimate|distro|sling|youtube/i.test(a.label));return head('CANAIS E TRANSMISSÕES','Ao vivo','Abra apps que oferecem canais ou transmissões. O Nova OS não fornece canais próprios.')+`<div id="iptv-slot">${iptvPromo()}</div>`+(matches.length?`<div class="app-grid">${matches.map(appTile).join('')}</div>`:empty('Nenhum app compatível encontrado','Os atalhos aparecerão aqui quando você instalar um app de TV ao vivo.',btn('Ver todos os apps','page','grid','primary','apps')));}
 function allApps(){return head('BIBLIOTECA','Todos os apps',native?'Aplicativos instalados no seu aparelho.':'Nesta prévia, os atalhos abrem os sites dos serviços.',btn('Organizar','organize','sliders'))+(apps.length?`<div class="app-grid">${apps.map(appTile).join('')}</div>`:empty('Sem apps disponíveis','Aplicativos compatíveis aparecerão aqui depois da instalação.'));}
 function saved(){return head('SUA BIBLIOTECA','Minha lista','Os títulos que você salvar ficam neste dispositivo.')+(pref.saved.length?`<div class="card-grid">${pref.saved.map(card).join('')}</div>`:empty('Sua lista está vazia','Abra os detalhes de um título para adicioná-lo à sua lista.',btn('Explorar catálogo','page','film','primary','movies')));}
 function organizer(){return head('TELA INICIAL','Organizar apps','Escolha até sete favoritos. Selecione um app para fixar, remover ou mover.',btn('Concluir','page','check','primary',organizeFrom))+(apps.length?`<h2 class="section-label">Fixados · ${tiles().length}/7</h2><div class="mini-list">${tiles().map((a,i)=>setting(a.label,`${i+1}ª posição`,'star','manage',a.id)).join('')||'<p class="status">Nenhum favorito fixado.</p>'}</div><h2 class="section-label">Outros aplicativos</h2><div class="mini-list">${apps.filter(a=>!pins().includes(a.id)).map(a=>setting(a.label,'Não fixado','grid','manage',a.id)).join('')||'<p class="status">Nenhum outro aplicativo.</p>'}</div>`:empty('Sem apps para organizar','Quando você instalar um aplicativo, ele aparecerá aqui.'));}
@@ -602,6 +606,14 @@ function doAction(action,arg){switch(action){
   if(page!=='movies'||arg===movieFilter||!['all','prime','itunes'].includes(arg))break;
   movieFilter=arg;movieLimit=MOVIE_BATCH;const request=arg==='prime'?null:prepareCatalog('movies',false);render(true,false);focusMatching($('main'),'movieFilter\n'+arg);if(request)request();break;
  }
+ case 'novaIptv':{
+  if(iptvInstalled()){native.iptvAction('open');break;}
+  const inStore=!!(native&&native.iptvStoreAvailable&&native.iptvStoreAvailable());
+  const controls=native&&native.iptvAction?btn('Instalar no Android','iptvInstall','down','primary')+(inStore?btn('Ver na Nova Store','iptvStore','store','ghost glass'):''):btn('Fechar','close','x','primary');
+  openDialog('Nova IPTV',`<p>Canais de TV ao vivo, filmes e séries para assistir com o controle remoto.</p><p>${native&&native.iptvAction?'O APK já vem nesta versão do Nova OS. Confirme a instalação no Android; para assistir, conecte sua TV à internet.':'No Nova OS para Android TV, este atalho permite instalar a Nova IPTV ou abrir a ficha na Nova Store.'}</p><div class="actions">${controls}</div>`,'novaIptv');break;
+ }
+ case 'iptvStore':if(native&&native.iptvAction){closeDialog();native.iptvAction('store');}break;
+ case 'iptvInstall':if(native&&native.iptvAction)native.iptvAction('install');break;
  case 'storeShortcut':if(native&&native.openStoreIfInstalled&&native.openStoreIfInstalled())break;
   // Otherwise show the same install controls available in System settings.
  case 'novaStore':renderStore();if(native&&native.storeStatus)native.storeStatus();break;
@@ -779,7 +791,7 @@ window.NovaUi={
  updateApps(raw){try{if(raw===lastAppPayload)return;const rows=JSON.parse(raw);if(!Array.isArray(rows))return;lastAppPayload=raw;apps=rows.filter(a=>a&&a.id&&a.label).map(a=>({...a,brand:brandByPackage[a.pkg]}));const rank=x=>x.brand?brandOrder[x.brand]:999;apps.sort((a,b)=>rank(a)-rank(b)||a.label.localeCompare(b.label,'pt-BR'));if(['home','apps','organize','live'].includes(page)){if(page==='home')refreshHomeApps();else render(false,!dialog);if(document.activeElement===document.body&&useDpad&&!dialog)focusPage();}if(page==='search')searchResults();}catch(_){}},
  catalogReply, artReady, updateState, storeState, storeInvite, toast, back, key, remoteArrow, net,
  suspend(){nativePaused=true;clearTimeout(wallTimer);clearTimeout(idleTimer);idleTimer=0;},
- reopen(){nativePaused=false;clock();net();queueIdle();if((bool('rotate')||!wallActive)&&Date.now()-lastWallChange>1000)rotateWallpaper(bool('rotate'));else scheduleWallpaper();},
+ reopen(){nativePaused=false;refreshIptv();if(dialog==='novaIptv'&&iptvInstalled())closeDialog();clock();net();queueIdle();if((bool('rotate')||!wallActive)&&Date.now()-lastWallChange>1000)rotateWallpaper(bool('rotate'));else scheduleWallpaper();},
  home(){if(idleMode){wakeIdle();return;}go('home');}
 };
 window.addEventListener('resize',resize);window.addEventListener('online',net);window.addEventListener('offline',net);window.addEventListener('blur',()=>{if(held){clearTimeout(held.timer);held=null;}});

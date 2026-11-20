@@ -11,18 +11,21 @@ import android.provider.OpenableColumns;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-/** A read-only, permission-granted URI for the two APK paths staged by Nova OS. */
+/** A read-only, permission-granted URI for the APK paths staged by Nova OS. */
 public final class UpdateFileProvider extends ContentProvider {
     static final String MIME = "application/vnd.android.package-archive";
     static File staged(Context c) { return new File(c.getCacheDir(), "nova-update.apk"); }
     static Uri uri(Context c) { return Uri.parse("content://" + c.getPackageName() + ".update/nova-update.apk"); }
     static File storeStaged(Context c) { return new File(c.getCacheDir(), "nova-store.apk"); }
     static Uri storeUri(Context c) { return Uri.parse("content://" + c.getPackageName() + ".update/nova-store.apk"); }
+    static File iptvStaged(Context c) { return new File(c.getCacheDir(), "nova-iptv.apk"); }
+    static Uri iptvUri(Context c) { return Uri.parse("content://" + c.getPackageName() + ".update/nova-iptv.apk"); }
     private File file(Uri u) {
         Context c=getContext();
         if(c==null)return null;
         if(uri(c).equals(u))return staged(c);
         if(storeUri(c).equals(u))return storeStaged(c);
+        if(iptvUri(c).equals(u))return iptvStaged(c);
         return null;
     }
     @Override public boolean onCreate() { return true; }
@@ -39,7 +42,7 @@ public final class UpdateFileProvider extends ContentProvider {
         MatrixCursor cursor = new MatrixCursor(columns, 1);
         Object[] values = new Object[columns.length];
         for (int i=0;i<columns.length;i++) {
-            if (OpenableColumns.DISPLAY_NAME.equals(columns[i])) values[i]=storeUri(getContext()).equals(u)?"Nova-Store.apk":"Nova-OS.apk";
+            if (OpenableColumns.DISPLAY_NAME.equals(columns[i])) values[i]=storeUri(getContext()).equals(u)?"Nova-Store.apk":iptvUri(getContext()).equals(u)?"Nova-IPTV.apk":"Nova-OS.apk";
             if (OpenableColumns.SIZE.equals(columns[i])) values[i]=apk.length();
         }
         cursor.addRow(values);
