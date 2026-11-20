@@ -74,7 +74,6 @@ VOD={
  'coffee-run':('Comédia','Uma corrida por café atravessa cenários que refletem as fases de um relacionamento.'),
  'hero':('Fantasia','Um aventureiro enfrenta o perigo em um curta animado em 2D.'),
  'glass-half':('Comédia','Dois críticos de arte confrontam suas opiniões em uma galeria.'),
- 'daily-dweebs':('Comédia','Um cachorro, um gato e um pequeno mal-entendido desencadeiam uma confusão doméstica.')
 }
 LIVE={
  'TVBrasil.br@SD':('tv-brasil','TV Brasil','TV pública','https://tvbrasil.ebc.com.br/webtv','tvbrasil-stream.ebc.com.br','BR','#214c46'),

@@ -195,23 +195,6 @@
       "artSource": "https://studio.blender.org/files/public/thumbnail/ca/e4/cae4b30a27c3a0fe21d494d20b4fce83_m.webp"
     },
     {
-      "name": "The Daily Dweebs",
-      "year": "2017",
-      "credit": "Blender Foundation / Blender Studio · direção: Pablo Vazquez",
-      "license": "CC BY 4.0",
-      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
-      "source": "https://studio.blender.org/projects/dailydweebs/",
-      "stream": "https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/daily-dweebs.mp4",
-      "id": "daily-dweebs",
-      "type": "movies",
-      "genre": "Comédia",
-      "description": "Um cachorro, um gato e um pequeno mal-entendido desencadeiam uma confusão doméstica.",
-      "kind": "video",
-      "discovery": "https://api.github.com/repos/lakson-llc/kyte-demo-media/releases/tags/v1",
-      "art": "daily-dweebs",
-      "artSource": "https://studio.blender.org/files/public/thumbnail/61/64/6164ee908b8421a93f2914e04d9705ff_m.webp"
-    },
-    {
       "id": "cosmos-laundromat",
       "name": "Cosmos Laundromat: First Cycle",
       "year": "2015",
