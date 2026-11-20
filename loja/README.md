@@ -1,19 +1,25 @@
 # Nova Store · catálogo Android TV
 
-Projeto web independente na branch `nova-store`. Todos os apps listados oferecem download direto de seus APKs oficiais. A Nova Store não reempacota, hospeda nem instala os arquivos. Nenhum código do launcher é alterado.
+O visual publicado foi mantido. Desde a Nova Store 1.0.1, a loja consulta um arquivo JSON público do GitHub ao abrir e ao voltar ao app (com intervalo mínimo de cinco minutos):
 
-## Testar a loja
+- [Editar o catálogo na branch nova-store-app](https://github.com/Pedro21062014/nova-os/blob/nova-store-app/catalogo.json)
+- [Ler o arquivo Raw](https://raw.githubusercontent.com/Pedro21062014/nova-os/refs/heads/nova-store-app/catalogo.json)
+
+## Atualizar sem compilar o APK
+
+1. Edite **somente `catalogo.json`** na raiz da branch `nova-store-app`. Use um objeto existente de `apps` como exemplo. O campo `id` precisa ser único. Mantenha `schema: 1`; não há número de revisão para atualizar manualmente.
+2. Cada app guarda nome, descrição, categoria, preço, logo, pelo menos duas capturas, suas fontes em `mediaSources` e uma lista `apks` com versões, URLs HTTPS, pacotes, tamanhos, Android mínimo e arquiteturas. Os registros iniciais também guardam hash e certificado, além da indicação de suporte a Android TV. Guarde URLs de download direto do desenvolvedor; a loja não hospeda os APKs de terceiros. A presença no JSON não substitui conferir a origem, a assinatura e a compatibilidade do binário.
+3. Para trocar um logo ou captura, exporte em WebP e rode `python3 loja/empacotar-imagem.py sua-imagem.webp`. Cole o valor gerado, com aspas, em `logo` ou em `shots`. Assim as imagens **estão dentro do JSON**, não só referenciadas por links. `mediaSources` conserva a procedência. Mantenha o arquivo inteiro abaixo de 12 MiB e cada imagem em até 350.000 caracteres codificados. Prefira compactar capturas com até ~840 px de largura e ícones com até ~150 px.
+4. Para destacar um app, use seu ID em `featured`, `wellKnown` ou `essentials`. Se remover um app, remova também as referências nessas listas. As categorias aceitas são `video`, `live`, `music`, `files`, `photo`, `net`, `game`, `personal` e `tool`.
+5. Faça commit do JSON. A Nova Store instalada sincroniza na próxima abertura ou retomada elegível, sujeito ao cache do GitHub. Não publique APK novo para mudar o catálogo.
+
+A edição Android conserva o último arquivo válido no aparelho, mesmo após reiniciar. Em caso de erro, falta de internet ou JSON inválido, mantém o cache; se nunca sincronizou, mostra a cópia que acompanha o APK. O HTML também traz a cópia inicial e tenta carregar o RAW quando o navegador permite conexão.
+
+## Prévia independente
 
 ```bash
 python3 loja/build-preview.py
 python3 -m http.server 8080 --bind 0.0.0.0 --directory loja
 ```
 
-O HTML gerado abre offline; baixar exige internet e um navegador que permita downloads. Use as setas para navegar, Enter (OK) para selecionar, Esc para voltar e `/` para buscar. **Minha lista** fica no navegador quando há armazenamento local. Cada app tem página própria acessível por `#app/{id}`, como `#app/jellyfin`. Cada app tem um carrossel com duas ou mais capturas. Use os botões anterior/próxima ou as setas esquerda/direita do controle quando o foco estiver na galeria. Clique na imagem para ampliar; as setas funcionam também na tela ampliada. A seção **APKs oficiais** oferece nove categorias, busca por nome ou função, ordem por nome/adições e filtro pela arquitetura do sistema. A lista abre em lotes de 15. Apps em desenvolvimento têm selo **Prévia**.
-
-## Conteúdo e verificações
-
-- `apk-catalog.json`: 68 apps e 87 arquivos APK. Registra a fonte oficial, o arquivo específico, versão, bytes, Android mínimo, arquiteturas observadas, pacote, SHA-256 e certificado. Os 87 arquivos foram baixados e conferidos com `aapt` e `apksigner`; o hash publicado foi comparado quando disponível. Os links de Steam Link, FCast, NordVPN, Surfshark, TiviMate e HDHomeRun são canais oficiais mantidos pelos desenvolvedores: os metadados correspondem ao arquivo observado e podem mudar se o fornecedor atualizar o link. Nenhuma instalação foi testada em TV física.
-- `apps-expansion.json`: nomes, categorias, descrições e selo de prévia dos apps incluídos na expansão.
-- `media-sources.json`: procedência de cada logo e captura publicada pelo respectivo projeto. As imagens são incorporadas localmente em WebP e podem vir de versões ou plataformas diferentes da que está disponível para download; as páginas com material promocional ou capturas de outros dispositivos da nova seleção trazem uma indicação. A arte do destaque de VLC é ilustrativa; o ícone e as capturas da página do app são oficiais. Os logotipos são marcas dos respectivos proprietários. A fonte Manrope mantém a licença já incluída no repositório.
-- O instalador Android exige confirmação. Uma edição previamente instalada com outra assinatura pode não aceitar a atualização por cima. Uma assinatura válida não é uma garantia sobre o comportamento do aplicativo.
+Use as setas, Enter (OK), Esc e `/` para buscar. Cada app tem página própria (ex.: `#app/jellyfin`) e galeria com setas. Os APKs são baixados dos endereços oficiais; o Android decide a instalação e pede confirmação.

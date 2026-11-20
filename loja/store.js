@@ -2,31 +2,74 @@
 'use strict';
 var drawing={download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/>',shield:'<path d="M12 2 3 6v6c0 5 4 8 9 10 5-2 9-5 9-10V6Z"/><path d="m8 12 3 3 5-6"/>',bag:'<path d="M5 8h14l1 12H4L5 8Z"/><path d="M8.5 9V7a3.5 3.5 0 0 1 7 0v2"/><path d="m11 11 4 2.5-4 2.5V11Z" fill="currentColor" stroke="none"/>',home:'<path d="m3 10 9-7 9 7v10h-6v-6H9v6H3Z"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/>',library:'<path d="M6 3h12v18l-6-4-6 4Z"/>',tv:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/>',search:'<circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 5 5"/>',arrow:'<path d="M4 12h15m-6-6 6 6-6 6"/>',chev:'<path d="m9 6 6 6-6 6"/>',video:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m10 8 6 4-6 4V8Z"/>',music:'<path d="M8 17V6l12-2v11M8 10l12-2"/><ellipse cx="5" cy="17" rx="3" ry="2"/><ellipse cx="17" cy="15" rx="3" ry="2"/>',tool:'<path d="M4 7h10m4 0h2M4 17h4m4 0h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>',game:'<path d="M7 6h10c2 0 3 2 4 5l1 4c.6 3-2 5-4 3l-3-3H9l-3 3c-2 2-4.6 0-4-3l1-4c1-3 2-5 4-5Z"/><path d="M6 10h5m-2.5-2v5m7.5-3h.01m3 2h.01"/>',x:'<path d="m6 6 12 12M18 6 6 18"/>',check:'<path d="m5 12 4 4L19 6"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/>',external:'<path d="M13 4h7v7m0-7-9 9m8 0v6H5V5h6"/>',folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>',image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="m4 18 5-5 3 3 3-3 5 5"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/>',palette:'<path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 1-3.7 2 2 0 0 1 1-3.8h2A4 4 0 0 0 21 10c0-4-4-7-9-7Z"/><circle cx="7.5" cy="10" r=".9" fill="currentColor" stroke="none"/><circle cx="10" cy="6.8" r=".9" fill="currentColor" stroke="none"/><circle cx="14" cy="6.8" r=".9" fill="currentColor" stroke="none"/>',spark:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9Z"/>'};
 function icon(id,size){size=size||20;return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+drawing[id]+'</svg>';}
-var artwork=/*MEDIA*/{};
-var categories=[['video','Vídeo e mídia','video'],['live','TV e listas','tv'],['music','Música','music'],['files','Arquivos','folder'],['photo','Fotos e ambiente','image'],['net','Navegadores','globe'],['game','Jogos','game'],['personal','Personalização','palette'],['tool','Utilitários','tool']];
-var packages=/*CATALOG*/[];
-var byApp=Object.create(null);packages.forEach(function(p){(byApp[p.app]||(byApp[p.app]=[])).push(p);});
-var apps=[
- {id:'vlc',name:'VLC for Android',cat:'video',price:'Grátis',tone:'#694536',desc:'Reproduza arquivos de vídeo e áudio e acesse mídias da sua rede em um único player.',url:'https://www.videolan.org/vlc/download-android.html'},
- {id:'aerial',name:'Aerial Views',cat:'photo',price:'Grátis',tone:'#3d416b',desc:'Protetor de tela para Android TV com vídeos de paisagens. Configure nas opções de proteção de tela do aparelho.',url:'https://github.com/theothernt/AerialViews'},
- {id:'tvbro',name:'TV Bro',cat:'net',price:'Grátis',tone:'#263d62',desc:'Navegador para usar com o controle remoto. A edição leve usa o WebView do aparelho.',url:'https://github.com/truefedex/tv-bro'},
- {id:'just',name:'Just (Video) Player',cat:'video',price:'Grátis',tone:'#244a4b',desc:'Player de vídeo leve, com seleção de legendas e trilhas e ajuste de taxa de quadros em aparelhos compatíveis.',url:'https://github.com/moneytoo/Player'},
- {id:'nova',name:'Nova Video Player',cat:'video',price:'Grátis',tone:'#4c316d',desc:'Reproduza vídeos de armazenamento externo, servidor ou rede local em uma interface para TV. Projeto independente do Nova OS.',url:'https://github.com/nova-video-player/aos-AVP'},
- {id:'kodi',name:'Kodi',cat:'video',price:'Grátis',tone:'#204b63',desc:'Central de mídia de código aberto para organizar e reproduzir seus vídeos, fotos e músicas.',url:'https://kodi.tv/'},
- {id:'jellyfin',name:'Jellyfin',cat:'video',price:'Grátis',tone:'#392b62',desc:'Conecte a TV ao seu servidor Jellyfin para assistir à sua biblioteca pessoal.',url:'https://jellyfin.org/'},
- {id:'retro',name:'RetroArch',cat:'game',price:'Grátis',tone:'#432c67',desc:'Interface de emulação para jogar títulos compatíveis da sua própria coleção. Não inclui jogos.',url:'https://www.retroarch.com/'},
- {id:'moonlight',name:'Moonlight',cat:'game',price:'Grátis',tone:'#3c4c74',desc:'Transmita os jogos do seu computador para a TV. Requer um servidor de streaming compatível, como Sunshine. Esta é a edição sem root.',url:'https://moonlight-stream.org/'},
- {id:'wholphin',name:'Wholphin',cat:'video',price:'Grátis',tone:'#294762',desc:'Cliente alternativo para navegar pelo seu servidor Jellyfin na TV.',url:'https://github.com/damontecres/Wholphin'},
- {id:'arc',name:'Arc Launcher',cat:'personal',price:'Grátis',tone:'#534382',desc:'Tela inicial alternativa para Android TV com categorias, grade de apps e papéis de parede personalizáveis.',url:'https://github.com/meddouribadis/arclauncher'},
- {id:'lounge',name:'Lounge',cat:'personal',price:'Grátis',tone:'#604154',desc:'Launcher alternativo com temas, fileiras de apps e uma tela inicial voltada ao que você assiste.',url:'https://github.com/Gingerbreadfork/lounge'}
-];
-var additions=/*EXPANSION*/[];apps=apps.concat(additions);
-var latestWave=additions.reduce(function(w,a){return Math.max(w,a.wave||0);},0);
-categories=categories.filter(function(c){return apps.some(function(a){return a.cat===c[0];});});
+var fallbackCatalog=/*FALLBACK_CATALOG*/null;
+var catalogUrl=/*CATALOG_URL*/null;
+var catalogDigest=/*CATALOG_DIGEST*/null;
+var MAX_CATALOG=12*1024*1024;
+var allCategories=[['video','Vídeo e mídia','video'],['live','TV e listas','tv'],['music','Música','music'],['files','Arquivos','folder'],['photo','Fotos e ambiente','image'],['net','Navegadores','globe'],['game','Jogos','game'],['personal','Personalização','palette'],['tool','Utilitários','tool']];
+var categories=[],apps=[],additions=[],artwork=Object.create(null),packages=[],byApp=Object.create(null),latestWave=0;
+var featured=[],wellKnownIds=[],essentials=[],pendingCatalog=null,lastCatalogDigest=catalogDigest,catalogRequest=null,lastCatalogCheck=0;
+function text(v,max,empty){return typeof v==='string'&&(empty||v.length>0)&&v.length<=max;}
+function integer(v,min,max){return typeof v==='number'&&v>=min&&v<=max&&Math.floor(v)===v;}
+function list(v,min,max){return Array.isArray(v)&&v.length>=min&&v.length<=max;}
+function image(v){return text(v,350000)&&/^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(v);}
+function secureUrl(v){return text(v,1000)&&/^https:\/\/(?:[a-z0-9-]+\.)+[a-z]{2,63}(?:[/?#][^\s<>"'\\]*)?$/i.test(v)&&!/[\u0000-\u0020\u007f]/.test(v);}
+function apkUrl(v){return secureUrl(v)&&v.indexOf('#')<0&&(/^https:\/\/[^/]+\/[^?#]+\.apk$/i.test(v.split('?')[0])||v==='https://www.lonelycatgames.com/download/4-53-08?wpdmdl=3649');}
+function validCatalog(d){
+ var catIds=allCategories.map(function(c){return c[0];}),ids=Object.create(null),variants=['universal','arm64-v8a','armeabi-v7a','x86','x86_64'],urls=Object.create(null);
+ if(!d||d.schema!==1||!list(d.apps,1,400)||!list(d.featured,0,12)||!list(d.wellKnown,0,100)||!list(d.essentials,0,24))return false;
+ if(!d.apps.every(function(a){
+  if(!a||!text(a.id,50)||!/^[a-z0-9][a-z0-9-]*$/.test(a.id)||ids[a.id]||!text(a.name,100)||catIds.indexOf(a.cat)<0||!text(a.desc,1800)||!text(a.price,120)||!/^#[a-f0-9]{6}$/i.test(a.tone)||typeof a.tone!=='string'||!text(a.stage,60,true)||!text(a.galleryNote,300,true)||typeof a.added!=='boolean'||typeof a.rolling!=='boolean'||!integer(a.wave,0,999999)||!image(a.logo)||!list(a.shots,2,12)||!a.shots.every(image)||!list(a.apks,1,12))return false;
+  ids[a.id]=true;
+  return a.apks.every(function(p){
+   if(!p||variants.indexOf(p.abi)<0||!apkUrl(p.url)||urls[p.url]||!secureUrl(p.source)||!text(p.version,100)||!text(p.package,180)||!/^[a-z0-9_]+(?:\.[a-z0-9_]+)+$/i.test(p.package)||!integer(p.minSdk,1,100)||!integer(p.bytes,1024,3000000000)||!list(p.abis,0,12)||!p.abis.every(function(x){return text(x,25)&&/^[a-z0-9_-]+$/i.test(x);}))return false;
+   urls[p.url]=true;return true;
+  });
+ }))return false;
+ return [d.wellKnown,d.essentials].every(function(rows){return rows.every(function(i){return typeof i==='string'&&ids[i];});})&&d.featured.every(function(f){return f&&typeof f.id==='string'&&ids[f.id]&&text(f.label,80)&&text(f.line,300)&&integer(f.shot,0,11)&&list(f.meta,0,6)&&f.meta.every(function(x){return text(x,100);});});
+}
+function indexCatalog(d){
+ var activeFeature=featured[heroIndex], oldSelection=activeFeature&&activeFeature.id;
+ apps=d.apps;additions=apps.filter(function(a){return a.added;});
+ latestWave=additions.reduce(function(w,a){return Math.max(w,a.wave);},0);
+ categories=allCategories.filter(function(c){return apps.some(function(a){return a.cat===c[0];});});
+ packages=[];byApp=Object.create(null);artwork=Object.create(null);
+ apps.forEach(function(a){byApp[a.id]=a.apks;artwork[a.id]={logo:a.logo,shots:a.shots};a.apks.forEach(function(p){packages.push(p);});});
+ featured=d.featured.length?d.featured:[{id:apps[0].id,label:'EM DESTAQUE',line:apps[0].desc,meta:[apps[0].price,'APK oficial'],shot:0}];
+ wellKnownIds=d.wellKnown;essentials=d.essentials;
+ heroIndex=Math.max(0,featured.map(function(f){return f.id;}).indexOf(oldSelection));
+ if(selected&&!catRow(selected))selected='';
+}
+function applyCatalog(d){
+ if(detailId||!modal.hidden){pendingCatalog=d;return;}
+ var el=document.activeElement, id=el&&el.id, app=el&&el.getAttribute('data-app'), isContent=el&&content.contains(el), cursor=isContent&&el.tagName==='INPUT'?el.value:null;
+ indexCatalog(d); render(true);
+ if(isContent){var next=(id&&document.getElementById(id))||(app&&content.querySelector('[data-app="'+app+'"]'));if(next){next.focus();if(cursor!==null&&next.value===cursor)try{next.setSelectionRange(cursor.length,cursor.length);}catch(ignore){}}}
+}
+function refreshCatalog(){
+ if(!catalogUrl||catalogRequest)return;
+ var now=Date.now();if(lastCatalogCheck&&now-lastCatalogCheck<5*60*1000)return;
+ lastCatalogCheck=now;
+ var req=new XMLHttpRequest();catalogRequest=req;
+ var native=location.hostname==='store.nova.invalid';
+ req.open('GET',native?'/catalogo.json':catalogUrl,true);
+ req.timeout=native?23500:17000;
+ req.onprogress=function(e){if(e.loaded>MAX_CATALOG)req.abort();};
+ req.onload=function(){
+  if(req.status!==200||req.responseText.length>MAX_CATALOG)return;
+  var digest=native?req.getResponseHeader('X-Nova-Catalog-Digest'):null;
+  if(digest&&digest===lastCatalogDigest)return;
+  try{var next=JSON.parse(req.responseText);if(validCatalog(next)){lastCatalogDigest=digest;applyCatalog(next);}}catch(e){}
+ };
+ req.onloadend=function(){catalogRequest=null;};
+ try{req.send();}catch(e){catalogRequest=null;}
+}
 var content=document.getElementById('content'),main=document.getElementById('main'),menu=document.getElementById('menu'),modal=document.getElementById('modal'),dialog=document.getElementById('dialog');
 var page='home',selected='',query='',detailId='',catalogPlace=null,saved=[],shotIndex=0,heroIndex=0,guideOpen=false,returnFocus=null;
 var PAGE_SIZE=15,catalogLimit=PAGE_SIZE,catalogQuery='',catalogSort='featured',catalogAbi='';
 var railCount=0;
+if(!validCatalog(fallbackCatalog))throw new Error("Catálogo local inválido");
+indexCatalog(fallbackCatalog);fallbackCatalog=null;
 try{var initial=JSON.parse(localStorage.getItem('nova.store.wishlist')||'[]');if(Array.isArray(initial))saved=initial.filter(function(id){return appById(id);});}catch(e){}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function normalize(s){s=String(s).toLowerCase();return (s.normalize?s.normalize('NFD'):s).replace(/[\u0300-\u036f]/g,'');}
@@ -109,15 +152,10 @@ function empty(title,sub,extra){
 var showAll='<button type="button" class="text-button" data-page="downloads">Ver catálogo completo '+icon('arrow',15)+'</button>';
 
 /* ---------- destaques ---------- */
-var featured=[
- {id:'stremio',label:'EM DESTAQUE',line:'Sua central de mídia: escolha o que assistir e abra na TV em um só lugar.',meta:['Grátis','Vídeo e mídia','APK oficial'],shot:1},
- {id:'tivimate',label:'TV NA TELA GRANDE',line:'Sua lista de TV organizada em uma grade prática de navegar com o controle.',meta:['Grátis · Premium opcional','TV e listas','Requer lista própria'],shot:0},
- {id:'synphotos',label:'PARA SUAS FOTOS',line:'Seus álbuns do NAS na tela grande, com apresentação e favoritos.',meta:['Grátis','Fotos e ambiente','Requer um NAS Synology'],shot:0}
-];
 function heroSlide(item,index){
  var a=appById(item.id);if(!a)return '';
  var media=artwork[a.id]||{shots:[]},shot=Math.min(item.shot||0,Math.max(media.shots.length-1,0));
- return '<article class="hero-slide"'+(index?' hidden':'')+'><div class="hero-copy"><span class="hero-label"><i></i>'+item.label+'</span><h2>'+esc(a.name)+'</h2><p>'+item.line+'</p>'
+ return '<article class="hero-slide"'+(index?' hidden':'')+'><div class="hero-copy"><span class="hero-label"><i></i>'+esc(item.label)+'</span><h2>'+esc(a.name)+'</h2><p>'+esc(item.line)+'</p>'
  +'<div class="hero-meta">'+item.meta.map(function(t){return esc(t);}).join('<span class="dot">·</span>')+'</div>'
  +'<div class="hero-actions"><button type="button" class="primary hero-cta" data-app="'+a.id+'">'+icon('download',16)+' Baixar APK</button><button type="button" class="secondary" data-cat="'+a.cat+'">Ver em '+esc(category(a.cat))+'</button></div></div>'
  +'<div class="hero-visual"><div class="hero-frame">'+imgShot(a.id,shot)+'</div><span class="hero-chip"><span class="chip-logo">'+imgLogo(a.id)+'</span><span><strong>'+esc(a.name)+'</strong><small>'+esc(category(a.cat))+' · APK oficial</small></span></span></div></article>';
@@ -146,8 +184,6 @@ function chip(c,filter){
 function categoryGrid(filter){return '<div class="category-grid'+(filter?' filters':'')+'">'+categories.map(function(c){return chip(c,filter);}).join('')+'</div>';}
 
 /* ---------- home ---------- */
-var wellKnownIds=['stremio','steamlink','ppsspp','emby','protonvpn','smarttube','tivimate','localsend','synphotos','hdhomerun','pxplay','stk','xbxplay','dolphin','xplore','nordvpn','lemuroid','surfshark','mullvad','kodi','vlc','jellyfin','retro','moonlight'];
-var essentials=['vlc','kodi','jellyfin','smarttube','tvbro','aerial'];
 function viewHome(){
  var known=wellKnownIds.map(appById).filter(Boolean).slice(0,6);
  var recents=additions.filter(function(a){return a.wave===latestWave;});
@@ -334,6 +370,7 @@ function closeModal(){
  document.querySelector('.store').removeAttribute('aria-hidden');
  if(returnFocus&&returnFocus.focus)returnFocus.focus();
  returnFocus=null;
+ if(pendingCatalog&&!detailId){var next=pendingCatalog;pendingCatalog=null;applyCatalog(next);}
 }
 
 /* ---------- diálogo de ajuda ---------- */
@@ -383,6 +420,7 @@ function updateMenu(){
  for(var i=0;i<buttons.length;i++){if(buttons[i].getAttribute('data-page')===page)buttons[i].setAttribute('aria-current','page');else buttons[i].removeAttribute('aria-current');}
 }
 function render(keepScroll){
+ if(pendingCatalog&&!detailId&&modal.hidden){var nextCatalog=pendingCatalog;pendingCatalog=null;indexCatalog(nextCatalog);}
  var scroll=main.scrollTop;
  updateMenu();updateSaved();updateFoot();
  if(detailId){renderDetail();return;}
@@ -475,4 +513,8 @@ window.novaStoreBack=function(){if(modal.hidden&&!detailId&&page==='home')return
 if(!(window.CSS&&CSS.supports&&CSS.supports('display','grid')&&CSS.supports('width','clamp(1px,2px,3px)')))document.body.classList.add('store-legacy');
 if(currentHash())syncDetail();else render(false);
 if(location.hostname==='store.nova.invalid'){document.body.classList.add('android-store');if(!detailId){var primary=document.querySelector('.hero-cta');if(primary)primary.focus();}}
+setTimeout(refreshCatalog,50);
+window.addEventListener('online',function(){lastCatalogCheck=0;refreshCatalog();});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshCatalog();});
+window.novaStoreRefresh=refreshCatalog;
 }());

@@ -25,10 +25,12 @@ public final class StoreActivity extends Activity {
     private static final String APK = "application/vnd.android.package-archive";
     private final Map<String, String> downloads = new LinkedHashMap<>();
     private WebView web;
+    private CatalogFeed feed;
     private long lastRequest;
     private String lastUrl = "";
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
+        feed=new CatalogFeed(this);
         try (java.io.InputStream stream = getAssets().open("links.json")) {
             java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
             byte[] buffer = new byte[4096]; int n;
@@ -57,13 +59,22 @@ public final class StoreActivity extends Activity {
             @Override public WebResourceResponse shouldInterceptRequest(WebView v,WebResourceRequest r){return local(r.getUrl());}
             @Override public WebResourceResponse shouldInterceptRequest(WebView v,String u){return local(Uri.parse(u));}
         });
-        web.setDownloadListener((url,ua,disposition,mime,length)->{if(downloads.containsKey(url))navigate(Uri.parse(url));});
+        web.setDownloadListener((url,ua,disposition,mime,length)->{if(downloadName(url)!=null)navigate(Uri.parse(url));});
         setContentView(web);web.setFocusableInTouchMode(true);web.requestFocus();web.loadUrl(HOME);
     }
+    private String downloadName(String url){String fromFeed=feed.downloadName(url);return fromFeed==null?downloads.get(url):fromFeed;}
     private WebResourceResponse local(Uri uri){
+        if(("https://store.nova.invalid"+CatalogFeed.PATH).equals(uri.toString())){
+            CatalogFeed.Snapshot snapshot=feed.get();
+            if(snapshot!=null){
+                Map<String,String> headers=new LinkedHashMap<>();headers.put("Cache-Control","no-store");
+                headers.put("X-Nova-Catalog-Digest",snapshot.digest);headers.put("X-Content-Type-Options","nosniff");
+                return new WebResourceResponse("application/json","UTF-8",200,"OK",headers,new ByteArrayInputStream(snapshot.bytes));
+            }
+        }
         if(HOME.equals(uri.toString()))try {
             return new WebResourceResponse("text/html","UTF-8",200,"OK",Collections.singletonMap("Content-Security-Policy",
-                "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src data:; base-uri 'none'; form-action 'none'"),getAssets().open("index.html"));
+                "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src 'self'; base-uri 'none'; form-action 'none'"),getAssets().open("index.html"));
         }catch(Exception ignored){}
         return new WebResourceResponse("text/plain","UTF-8",404,"Not Found",Collections.emptyMap(),new ByteArrayInputStream(new byte[0]));
     }
@@ -71,7 +82,7 @@ public final class StoreActivity extends Activity {
         String url=uri.toString();
         if(HOME.equals(url)||url.startsWith(HOME+"#"))return false;
         if(!"https".equals(uri.getScheme())||uri.getHost()==null||uri.getUserInfo()!=null)return true;
-        String name=downloads.get(url);
+        String name=downloadName(url);
         if(name!=null){
             long now=android.os.SystemClock.elapsedRealtime();
             if(url.equals(lastUrl)&&now-lastRequest<1500)return true;
@@ -90,6 +101,7 @@ public final class StoreActivity extends Activity {
         return true;
     }
     private void notice(String message){Toast.makeText(this,message,Toast.LENGTH_LONG).show();}
+    @Override protected void onResume(){super.onResume();if(web!=null)web.evaluateJavascript("window.novaStoreRefresh && window.novaStoreRefresh()",null);}
     @Override public void onBackPressed(){
         if(web==null){super.onBackPressed();return;}
         web.evaluateJavascript("!!(window.novaStoreBack && window.novaStoreBack())",value->{if(!"true".equals(value)&&!isFinishing())finish();});
