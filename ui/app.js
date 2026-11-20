@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.2.4';
+const VERSION = '1.2.5';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -484,7 +484,7 @@ function go(to,keepNavFocus=false){
  if(request)request();
  if(to==='search'){load('movies');load('series');}
  if(to==='updates'&&native)native.updaterState();
- if(to==='home'&&bool('trending'))load('movies');
+ if(to==='home'){if(bool('trending'))load('movies');maybeStoreUpdate();}
  if(to==='ambient'&&!wallActive&&!wallLoading)rotateWallpaper(false);
  if(oldPage!==to&&to!=='ambient')animateIn($('main').querySelector('.page-surface'),oldIndex>=0&&newIndex>=0&&newIndex<oldIndex?-8:8);
 }
@@ -538,31 +538,35 @@ function openDialog(title,body,tag){
  $('overlay').hidden=false;$('viewport').setAttribute('aria-hidden','true');
  const first=$('dialog').querySelector('.actions button')||$('dialog').querySelector('button');if(first)first.focus();
 }
-function closeDialog(restore=true){if(!dialog)return;dialog=null;$('overlay').hidden=true;$('viewport').removeAttribute('aria-hidden');if(restore){if(!focusMatching($('stage'),previousFocus))focusPage();}}
+function closeDialog(restore=true){if(!dialog)return;dialog=null;$('overlay').hidden=true;$('viewport').removeAttribute('aria-hidden');if(restore){if(!focusMatching($('stage'),previousFocus))focusPage();maybeStoreUpdate();}}
 let storeInfo={status:'available',message:'Baixe a Nova Store para explorar o catálogo de apps para TV.',progress:0};
 function storeInvite(){
  if(dialog||page!=='home'||!native||!native.claimStoreInvitation||!native.claimStoreInvitation())return;
  openDialog('Quer baixar a Nova Store?',`<p>Conheça a loja de apps do Nova OS. Ela é instalada separadamente e reúne APKs para TV baixados da fonte oficial de cada desenvolvedor.</p><div class="actions">${btn('Agora não','close','x','ghost glass')}${btn('Baixar Nova Store','storeDownload','down','primary')}</div><p class="credit">Este convite aparece uma vez. Depois, a Nova Store fica disponível em Configurações → Sistema.</p>`,'novaStoreInvite');
 }
+function maybeStoreUpdate(){
+ if(dialog||page!=='home'||idleMode||suspended()||!storeInfo.updateAvailable||storeInfo.status!=='available'||!native||!native.claimStoreUpdateNotice||!native.claimStoreUpdateNotice())return;
+ openDialog('A Nova Store foi atualizada',`<p>A versão ${escape(storeInfo.targetVersion||'')} já está disponível. Baixe a atualização sem sair do Nova OS e confirme no Android quando terminar.</p><div class="actions">${btn('Agora não','close','x','ghost glass')}${btn('Baixar atualização','storeDownload','down','primary')}</div><p class="credit">Se preferir, atualize depois em Configurações → Sistema → Nova Store.</p>`,'novaStoreUpdate');
+}
 function storeControls(){
  if(!native||!native.storeAction)return btn('Fechar','close','check','ghost glass');
  if(storeInfo.status==='installed')return btn('Abrir Nova Store','storeOpen','external','primary');
- if(storeInfo.status==='ready'||storeInfo.status==='permission')return btn(storeInfo.status==='permission'?'Autorizar instalação':'Instalar Nova Store','storeInstall','check','primary');
+ if(storeInfo.status==='ready'||storeInfo.status==='permission')return btn(storeInfo.status==='permission'?'Autorizar instalação':storeInfo.updateAvailable?'Instalar atualização':'Instalar Nova Store','storeInstall','check','primary');
  if(storeInfo.status==='downloading'||storeInfo.status==='installing')return btn('Fechar','close','x','ghost glass');
- return btn('Baixar Nova Store','storeDownload','down','primary');
+ return storeInfo.updateAvailable?btn('Baixar atualização','storeDownload','down','primary')+btn('Abrir Nova Store','storeOpen','external','ghost glass'):btn('Baixar Nova Store','storeDownload','down','primary');
 }
 function renderStore(){
  openDialog('Nova Store',`<p id="nova-store-status" role="status">${escape(native&&native.storeAction?storeInfo.message:'O download integrado está disponível no aplicativo Android do Nova OS.')}</p><progress aria-label="Progresso do download" id="nova-store-progress" max="100" value="${Number(storeInfo.progress)||0}" ${storeInfo.status==='downloading'?'':'hidden'}></progress><div class="actions">${storeControls()}</div><p class="credit">A Nova Store é um aplicativo separado. O Android pede confirmação para instalar.</p>`,'novaStore');
 }
 function storeState(raw){
- try{const previous=storeInfo.status;storeInfo=JSON.parse(raw);if(dialog!=='novaStore')return;
-  if(previous!==storeInfo.status){renderStore();return;}
+ try{const previous=storeInfo.status,wasUpdate=!!storeInfo.updateAvailable;storeInfo=JSON.parse(raw);if(dialog!=='novaStore'){maybeStoreUpdate();return;}
+  if(previous!==storeInfo.status||wasUpdate!==!!storeInfo.updateAvailable){renderStore();return;}
   const msg=$('nova-store-status'), bar=$('nova-store-progress');if(msg&&msg.textContent!==storeInfo.message)msg.textContent=storeInfo.message;if(bar)bar.value=Number(storeInfo.progress)||0;
  }catch(_){}
 }
 function startStoreDownload(){
  if(!native||!native.storeAction)return;
- storeInfo={status:'downloading',message:'Baixando a Nova Store…',progress:0};renderStore();native.storeAction('download');
+ storeInfo={...storeInfo,status:'downloading',message:storeInfo.updateAvailable?'Baixando a atualização da Nova Store…':'Baixando a Nova Store…',progress:0};renderStore();native.storeAction('download');
 }
 function titleById(id){return [...curated,...primeMovies,...catalogs.movies.items,...catalogs.series.items,...pref.saved].find(x=>x.id===id);}
 function detail(id){const t=titleById(id);if(!t)return;const isSaved=pref.saved.some(x=>x.id===id);let src=t.art||t.image&&'art?url='+encodeURIComponent(t.image);

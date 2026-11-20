@@ -244,6 +244,7 @@ public final class NovaActivity extends Activity {
         Bridge(WebView owner){this.owner=owner;}
         @JavascriptInterface public void ready(){runOnUiThread(()->{if(web!=owner||ready)return;cancelBootDeadline();ready=true;lastApps="";refreshApps(true);if(updater!=null){updater.send();updater.onResume();}if(store!=null){store.send();js("storeInvite()");}});}
         @JavascriptInterface public boolean claimStoreInvitation(){return web==owner&&store!=null&&store.claimInvitation();}
+        @JavascriptInterface public boolean claimStoreUpdateNotice(){return web==owner&&store!=null&&store.claimUpdateNotice();}
         @JavascriptInterface public boolean openStoreIfInstalled(){return web==owner&&store!=null&&store.openIfInstalled();}
         @JavascriptInterface public void storeStatus(){if(web==owner&&store!=null)store.send();}
         @JavascriptInterface public void storeAction(String action){
