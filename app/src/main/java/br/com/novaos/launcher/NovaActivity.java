@@ -115,8 +115,10 @@ public final class NovaActivity extends Activity {
         catch(RuntimeException e){if(!Settings.ACTION_SETTINGS.equals(action))openRecoverySettings(Settings.ACTION_SETTINGS);else error("Os ajustes não estão disponíveis neste aparelho.");}
     }
 
+    private StoreInstaller store;
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        store=new StoreInstaller(this,stateJson->js("storeState("+JSONObject.quote(stateJson.toString())+")"));
         updater=new UpdateManager(this,stateJson->js("updateState("+JSONObject.quote(stateJson.toString())+")"));
         createWeb();
     }
@@ -161,10 +163,10 @@ public final class NovaActivity extends Activity {
     }
     @Override protected void onResume() {
         super.onResume();
-        if(web!=null){web.onResume();if(ready){refreshApps(false);js("reopen()");if(updater!=null)updater.onResume();}}
+        if(web!=null){web.onResume();if(ready){refreshApps(false);js("reopen()");if(updater!=null)updater.onResume();if(store!=null)store.send();}}
     }
     @Override protected void onPause(){super.onPause();if(web!=null){js("suspend()");web.onPause();}}
-    @Override protected void onDestroy(){if(updater!=null)updater.close();requests.shutdownNow();artwork.shutdownNow();releaseWeb();super.onDestroy();}
+    @Override protected void onDestroy(){if(store!=null)store.close();if(updater!=null)updater.close();requests.shutdownNow();artwork.shutdownNow();releaseWeb();super.onDestroy();}
     @Override protected void onNewIntent(Intent intent) {super.onNewIntent(intent);if (intent.hasCategory(Intent.CATEGORY_HOME)) js("home()");}
     @Override public void onBackPressed() {
         if (web == null || !ready) {if(!isDeviceHome())super.onBackPressed();return;}
@@ -239,7 +241,16 @@ public final class NovaActivity extends Activity {
     public final class Bridge {
         private final WebView owner;
         Bridge(WebView owner){this.owner=owner;}
-        @JavascriptInterface public void ready(){runOnUiThread(()->{if(web!=owner||ready)return;cancelBootDeadline();ready=true;lastApps="";refreshApps(true);if(updater!=null){updater.send();updater.onResume();}});}
+        @JavascriptInterface public void ready(){runOnUiThread(()->{if(web!=owner||ready)return;cancelBootDeadline();ready=true;lastApps="";refreshApps(true);if(updater!=null){updater.send();updater.onResume();}if(store!=null){store.send();js("storeInvite()");}});}
+        @JavascriptInterface public boolean claimStoreInvitation(){return web==owner&&store!=null&&store.claimInvitation();}
+        @JavascriptInterface public void storeStatus(){if(web==owner&&store!=null)store.send();}
+        @JavascriptInterface public void storeAction(String action){
+            if(web!=owner||store==null)return;
+            if("download".equals(action))store.download();
+            else if("install".equals(action))store.install();
+            else if("open".equals(action))store.open();
+            else if("dismiss".equals(action))store.skipInvitation();
+        }
         @JavascriptInterface public void updaterState(){if(updater!=null)updater.send();}
         @JavascriptInterface public void updaterConfigure(String repo,boolean automatic){if(updater!=null)updater.configure(repo,automatic);}
         @JavascriptInterface public void updaterCheck(boolean force){if(updater!=null)updater.check(force);}
@@ -404,7 +415,7 @@ public final class NovaActivity extends Activity {
                 if(!ASSET_PATH.matcher(path).matches())return notFound();
                 String mime=type(path);
                 WebResourceResponse response=new WebResourceResponse(mime,mime.startsWith("text/")||(mime.equals("application/javascript")||mime.equals("application/json"))?"UTF-8":null,getAssets().open(path.substring(1)));
-                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"121".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
+                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"122".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
                 response.setResponseHeaders(Collections.singletonMap("Cache-Control",cache));
                 return response;
             }catch(Exception ignored){return notFound();}

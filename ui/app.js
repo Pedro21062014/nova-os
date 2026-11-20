@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.2.1';
+const VERSION = '1.2.2';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -345,6 +345,7 @@ const groups={
  system:{title:'Sistema',icon:'settings',hint:'Android e informações',copy:'Gerencie a integração do Nova OS com o seu aparelho.',rows:()=>[
    setting('Launcher padrão','Abre a configuração de tela inicial do Android.','home','system','home'),
    setting('Configurações do Android','Acesse rede, tela e outros ajustes do aparelho.','settings','system','all'),
+   setting('Nova Store','Baixe, instale ou abra o catálogo de apps para TV.','down','novaStore'),
    setting('Atualizações','Consulte, baixe e instale novas versões do Nova OS.','reload','page','updates'),
    setting('Sobre o Nova OS','Versão, fontes de catálogo e informações de privacidade.','info','about')]}
 };
@@ -521,6 +522,31 @@ function openDialog(title,body,tag){
  const first=$('dialog').querySelector('.actions button')||$('dialog').querySelector('button');if(first)first.focus();
 }
 function closeDialog(restore=true){if(!dialog)return;dialog=null;$('overlay').hidden=true;$('viewport').removeAttribute('aria-hidden');if(restore){if(!focusMatching($('stage'),previousFocus))focusPage();}}
+let storeInfo={status:'available',message:'Baixe a Nova Store para explorar o catálogo de apps para TV.',progress:0};
+function storeInvite(){
+ if(dialog||page!=='home'||!native||!native.claimStoreInvitation||!native.claimStoreInvitation())return;
+ openDialog('Quer baixar a Nova Store?',`<p>Conheça a loja de apps do Nova OS. Ela é instalada separadamente e reúne APKs para TV baixados da fonte oficial de cada desenvolvedor.</p><div class="actions">${btn('Agora não','close','x','ghost glass')}${btn('Baixar Nova Store','storeDownload','down','primary')}</div><p class="credit">Este convite aparece uma vez. Depois, a Nova Store fica disponível em Configurações → Sistema.</p>`,'novaStoreInvite');
+}
+function storeControls(){
+ if(!native||!native.storeAction)return btn('Fechar','close','check','ghost glass');
+ if(storeInfo.status==='installed')return btn('Abrir Nova Store','storeOpen','external','primary');
+ if(storeInfo.status==='ready'||storeInfo.status==='permission')return btn(storeInfo.status==='permission'?'Autorizar instalação':'Instalar Nova Store','storeInstall','check','primary');
+ if(storeInfo.status==='downloading'||storeInfo.status==='installing')return btn('Fechar','close','x','ghost glass');
+ return btn('Baixar Nova Store','storeDownload','down','primary');
+}
+function renderStore(){
+ openDialog('Nova Store',`<p id="nova-store-status" role="status">${escape(native&&native.storeAction?storeInfo.message:'O download integrado está disponível no aplicativo Android do Nova OS.')}</p><progress aria-label="Progresso do download" id="nova-store-progress" max="100" value="${Number(storeInfo.progress)||0}" ${storeInfo.status==='downloading'?'':'hidden'}></progress><div class="actions">${storeControls()}</div><p class="credit">A Nova Store é um aplicativo separado. O Android pede confirmação para instalar.</p>`,'novaStore');
+}
+function storeState(raw){
+ try{const previous=storeInfo.status;storeInfo=JSON.parse(raw);if(dialog!=='novaStore')return;
+  if(previous!==storeInfo.status){renderStore();return;}
+  const msg=$('nova-store-status'), bar=$('nova-store-progress');if(msg&&msg.textContent!==storeInfo.message)msg.textContent=storeInfo.message;if(bar)bar.value=Number(storeInfo.progress)||0;
+ }catch(_){}
+}
+function startStoreDownload(){
+ if(!native||!native.storeAction)return;
+ storeInfo={status:'downloading',message:'Baixando a Nova Store…',progress:0};renderStore();native.storeAction('download');
+}
 function titleById(id){return [...curated,...primeMovies,...catalogs.movies.items,...catalogs.series.items,...pref.saved].find(x=>x.id===id);}
 function detail(id){const t=titleById(id);if(!t)return;const isSaved=pref.saved.some(x=>x.id===id);let src=t.art||t.image&&'art?url='+encodeURIComponent(t.image);
  openDialog(t.fullTitle||t.title,`${src?`<img class="detail-art${t.art?'':' poster'}" src="${attr(src)}" alt="">`:''}<div class="detail-meta">${escape([t.tag,t.meta].filter(Boolean).join(' · '))}</div><p>${escape(t.summary||'Sinopse não disponível.')}</p><div class="actions">${t.url?btn(isPrime(t)?'Assistir no Prime Video':t.source==='JustWatch'?'Onde assistir':'Abrir no '+t.source,'visit',isPrime(t)?'play':'external','primary',id):''}${btn(isSaved?'Remover da lista':'Salvar na minha lista','save',isSaved?'check':'bookmark','ghost glass',id)}</div><p class="credit">Fonte: ${escape(t.source||'Nova OS')}${t.art?' · Banner do título':''}. ${isPrime(t)?'A reprodução abre no Prime Video. A disponibilidade depende da sua região e assinatura.':'A reprodução, quando disponível, acontece fora do launcher.'}</p>`,id);}
@@ -550,6 +576,10 @@ function doAction(action,arg){switch(action){
   if(page!=='movies'||arg===movieFilter||!['all','prime','itunes'].includes(arg))break;
   movieFilter=arg;movieLimit=MOVIE_BATCH;const request=arg==='prime'?null:prepareCatalog('movies',false);render(true,false);focusMatching($('main'),'movieFilter\n'+arg);if(request)request();break;
  }
+ case 'novaStore':renderStore();if(native&&native.storeStatus)native.storeStatus();break;
+ case 'storeDownload':startStoreDownload();break;
+ case 'storeInstall':if(native&&native.storeAction)native.storeAction('install');break;
+ case 'storeOpen':if(native&&native.storeAction)native.storeAction('open');break;
  case 'settingsGroup':changeSettingsSection(arg);break;
  case 'updateSave': if(native){const v=$('release-repo');if(v)native.updaterConfigure(v.value,prefsUpdate.automatic);}break;
  case 'updateAuto': if(native)native.updaterConfigure(prefsUpdate.repo,!prefsUpdate.automatic);break;
@@ -719,7 +749,7 @@ function resize(){
 }
 window.NovaUi={
  updateApps(raw){try{const rows=JSON.parse(raw);if(!Array.isArray(rows))return;apps=rows.filter(a=>a&&a.id&&a.label).map(a=>{const entry=services.find(x=>x[3].includes(a.pkg));return {...a,brand:entry&&entry[0]};});apps.sort((a,b)=>{const rank=x=>x.brand?services.findIndex(s=>s[0]===x.brand):999;return rank(a)-rank(b)||a.label.localeCompare(b.label,'pt-BR');});if(['home','apps','organize','live'].includes(page)){if(page==='home')refreshHomeApps();else render(false,!dialog);if(document.activeElement===document.body&&useDpad&&!dialog)focusPage();}if(page==='search')searchResults();}catch(_){}},
- catalogReply, artReady, updateState, toast, back, key, remoteArrow, net,
+ catalogReply, artReady, updateState, storeState, storeInvite, toast, back, key, remoteArrow, net,
  suspend(){nativePaused=true;clearTimeout(wallTimer);clearTimeout(idleTimer);idleTimer=0;},
  reopen(){nativePaused=false;clock();net();queueIdle();if((bool('rotate')||!wallActive)&&Date.now()-lastWallChange>1000)rotateWallpaper(bool('rotate'));else scheduleWallpaper();},
  home(){if(idleMode){wakeIdle();return;}go('home');}

@@ -59,3 +59,9 @@ NODE_PATH=/tmp/nova-preview-test/node_modules node scripts/test-perf.cjs
 ```
 
 Pode-se definir `CHROMIUM_BIN` ou `NOVA_PREVIEW_URL`. O teste web simula a ponte Android e não executa o instalador. Para validar o motor legado de fato, rode `node scripts/test-chromium52.cjs` (dependência `ws`) enquanto um Chromium 52 de teste está aberto com depuração remota local na porta 9224 e a prévia está na porta 8091. O arquivo `scripts/tests/UpdateRulesTest.java` testa as regras de versão e origem do atualizador. Teste os ajustes de launcher padrão, permissões e a instalação de uma release futura na TV box física antes de distribuir.
+
+### Nova Store (Android TV)
+
+A integração do Nova OS 1.2.2 é testada na branch `nova-os-store-integration`. O convite aparece uma única vez por instalação/dados do app, somente se a loja ainda não estiver instalada. Recusar, fechar ou usar Voltar não impede abrir **Configurações → Sistema → Nova Store** a qualquer momento. O atalho baixa e verifica o APK oficial da loja (versão, pacote, tamanho e SHA-256), oferece instalação com confirmação do Android e permite abrir a loja quando ela já estiver instalada. Não há download automático.
+
+A loja é um app independente desenvolvido na branch `nova-store-app`; seu APK é distribuído na release separada `nova-store-v1.0.0` do repositório `Pedro21062014/nova-os`, que não deve ser marcada como Latest. Antes de distribuir o launcher, confirme que o link público da loja disponibiliza exatamente o binário com o hash fixado em `StoreInstaller.java`.
