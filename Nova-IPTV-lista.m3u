@@ -1,0 +1,96 @@
+#EXTM3U
+#PLAYLIST:Nova IPTV | Catálogo aberto
+#EXTINF:-1 tvg-id="tv-brasil" group-title="TV ao vivo",TV Brasil
+https://tvbrasil-stream.ebc.com.br/index.m3u8
+#EXTINF:-1 tvg-id="canal-gov" group-title="TV ao vivo",Canal Gov
+https://canalgov-stream.ebc.com.br/index.m3u8
+#EXTINF:-1 tvg-id="tv-camara" group-title="TV ao vivo",TV Câmara
+https://stream3.camara.gov.br/tv1/manifest.m3u8
+#EXTINF:-1 tvg-id="canal-educacao" group-title="TV ao vivo",Canal Educação
+https://canaleducacao-stream.ebc.com.br/index.m3u8
+#EXTINF:-1 tvg-id="tv-cultura" group-title="TV ao vivo",TV Cultura
+https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8
+#EXTINF:-1 tvg-id="tv-ufop" group-title="TV ao vivo",TV UFOP
+https://app.tvufop.com.br/hls/tvufop.m3u8
+#EXTINF:-1 tvg-id="cultura-fast" group-title="TV ao vivo",Cultura Fast
+https://fpa-gateway.tvcultura.com.br:8181/memfs/606caef0-a290-413d-9f1f-8fcdb3a73831.m3u8
+#EXTINF:-1 tvg-id="record-news" group-title="TV ao vivo",Record News
+https://rnw-rn.otteravision.com/rnw/rn/rnw_rn.m3u8
+#EXTINF:-1 tvg-id="tv-aparecida" group-title="TV ao vivo",TV Aparecida
+https://cdn.live.br1.jmvstream.com/w/LVW-9716/LVW9716_HbtQtezcaw/playlist.m3u8
+#EXTINF:-1 tvg-id="record-mt" group-title="TV ao vivo",Record MT · TV Vila Real
+https://cdn.live.br1.jmvstream.com/w/LVW-10841/LVW10841_mT77z9o2cP/playlist.m3u8
+#EXTINF:-1 tvg-id="tve-rs" group-title="TV ao vivo",TVE RS
+https://streaming.procergs.com.br:8443/tve/stve/playlist.m3u8
+#EXTINF:-1 tvg-id="sbt-interior" group-title="TV ao vivo",SBT Interior (SP)
+https://cdn.live.br1.jmvstream.com/w/LVW-10801/LVW10801_Xvg4R0u57n/playlist.m3u8
+#EXTINF:-1 tvg-id="tv-aratu" group-title="TV ao vivo",TV Aratu · SBT Bahia
+https://cdn.live.br1.jmvstream.com/w/LVW-9359/LVW9359_XSyReL0QVf/playlist.m3u8
+#EXTINF:-1 tvg-id="catve" group-title="TV ao vivo",Catve
+https://5b33b873179a2.streamlock.net:1443/live/livestream/playlist.m3u8
+# Blender Foundation / Blender Studio · direção: Colin Levy | CC BY 3.0 https://creativecommons.org/licenses/by/3.0/ | https://studio.blender.org/projects/sintel/
+#EXTINF:-1 tvg-id="sintel" group-title="Filmes abertos",Sintel
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/sintel.mp4
+# Blender Foundation / Blender Studio · direção: Andy Goralczyk | CC BY 4.0 https://creativecommons.org/licenses/by/4.0 | https://studio.blender.org/projects/spring/
+#EXTINF:-1 tvg-id="spring" group-title="Filmes abertos",Spring
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/spring.mp4
+# Blender Foundation / Blender Studio · direção: Hjalti Hjálmarsson | CC BY 4.0 https://creativecommons.org/licenses/by/4.0 | https://studio.blender.org/projects/charge/
+#EXTINF:-1 tvg-id="charge" group-title="Filmes abertos",Charge
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/charge.mp4
+# Blender Foundation / Blender Studio · direção: Ian Hubert | CC BY 3.0 https://creativecommons.org/licenses/by/3.0/ | https://studio.blender.org/projects/tears-of-steel/
+#EXTINF:-1 tvg-id="tears-of-steel" group-title="Filmes abertos",Tears of Steel
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/tears-of-steel.mp4
+# Blender Foundation / Blender Studio · direção: Matthew Luhn and Hjalti Hjálmarsson | CC BY 4.0 https://creativecommons.org/licenses/by/4.0 | https://studio.blender.org/projects/sprite-fright/
+#EXTINF:-1 tvg-id="sprite-fright" group-title="Filmes abertos",Sprite Fright
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/sprite-fright.mp4
+# Blender Foundation / Blender Studio · direção: Rik Schutte | CC BY 4.0 https://creativecommons.org/licenses/by/4.0 | https://studio.blender.org/projects/wing-it/
+#EXTINF:-1 tvg-id="wing-it" group-title="Filmes abertos",Wing It!
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/wing-it.mp4
+# Blender Foundation / Blender Studio · direção: Sacha Goedegebure | CC BY 3.0 https://creativecommons.org/licenses/by/3.0/ | https://studio.blender.org/projects/big-buck-bunny/
+#EXTINF:-1 tvg-id="big-buck-bunny" group-title="Filmes abertos",Big Buck Bunny
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/big-buck-bunny.mp4
+# Blender Foundation / Blender Studio · direção: Bassam Kurdali | CC BY 2.5 https://creativecommons.org/licenses/by/2.5 | https://studio.blender.org/projects/elephants-dream/
+#EXTINF:-1 tvg-id="elephants-dream" group-title="Filmes abertos",Elephants Dream
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/elephants-dream.mp4
+# Blender Foundation / Blender Studio · direção: Hjalti Hjálmarsson | CC BY 4.0 https://creativecommons.org/licenses/by/4.0 | https://studio.blender.org/projects/coffee-run/
+#EXTINF:-1 tvg-id="coffee-run" group-title="Filmes abertos",Coffee Run
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/coffee-run.mp4
+# Blender Foundation / Blender Studio · direção: Daniel Martínez Lara | CC BY 4.0 https://creativecommons.org/licenses/by/4.0 | https://studio.blender.org/projects/hero/
+#EXTINF:-1 tvg-id="hero" group-title="Filmes abertos",Hero
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/hero.mp4
+# Blender Foundation / Blender Studio · direção: Beorn Leonard | CC BY 4.0 https://creativecommons.org/licenses/by/4.0 | https://studio.blender.org/projects/glass-half/
+#EXTINF:-1 tvg-id="glass-half" group-title="Filmes abertos",Glass Half
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/glass-half.mp4
+# Blender Foundation / Blender Studio · direção: Pablo Vazquez | CC BY 4.0 https://creativecommons.org/licenses/by/4.0 | https://studio.blender.org/projects/dailydweebs/
+#EXTINF:-1 tvg-id="daily-dweebs" group-title="Filmes abertos",The Daily Dweebs
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/daily-dweebs.mp4
+# Blender Foundation | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0/ | https://studio.blender.org/films/cosmos-laundromat/
+#EXTINF:-1 tvg-id="cosmos-laundromat" group-title="Filmes abertos",Cosmos Laundromat: First Cycle
+https://media.xiph.org/cosmoslaundromat/Cosmos_Laundromat_First_Cycle_2k.mp4
+# Brian Knappenberger · uso não comercial | CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/ | https://archive.org/details/TheInternetsOwnBoyTheStoryOfAaronSwartz
+#EXTINF:-1 tvg-id="internets-own-boy" group-title="Filmes abertos",The Internet’s Own Boy
+https://archive.org/download/TheInternetsOwnBoyTheStoryOfAaronSwartz/TheInternetsOwnBoy_TheStoryofAaronSwartz-HD.mp4
+# Blender Foundation / Blender Studio · direção: Pablo Vazquez | CC BY 3.0 https://creativecommons.org/licenses/by/3.0 | https://studio.blender.org/projects/caminandes-1/
+#EXTINF:-1 tvg-id="caminandes-1" group-title="Séries · Caminandes",Caminandes — E01 · Llama Drama
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/caminandes-1.mp4
+# Blender Foundation · Caminandes | CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/ | https://commons.wikimedia.org/wiki/File:Caminandes,_Gran_Dillama_-_Blender_Foundation.webm
+#EXTINF:-1 tvg-id="caminandes-2" group-title="Séries · Caminandes",Caminandes — E02 · Gran Dillama
+https://video.blender.org/object-storage/web_videos/fb70d459-48d2-4db5-adba-813c84f9200a-720.mp4
+# Blender Foundation / Blender Studio · direção: Pablo Vazquez | CC BY 3.0 https://creativecommons.org/licenses/by/3.0 | https://studio.blender.org/projects/caminandes-3/
+#EXTINF:-1 tvg-id="caminandes-3" group-title="Séries · Caminandes",Caminandes — E03 · Llamigos
+https://github.com/lakson-llc/kyte-demo-media/releases/download/v1/caminandes-3.mp4
+# Morevna Project · baseado em David Revoy | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0/ | https://archive.org/details/pepper-carrot-episode-3-the-secret-ingredients-english
+#EXTINF:-1 tvg-id="pepper-3" group-title="Séries · Pepper & Carrot",Pepper & Carrot — E03 · The Secret Ingredients
+https://archive.org/download/pepper-carrot-episode-3-the-secret-ingredients-english/79780d2c-419b-42a3-adb5-85ae2aea4d1e-1080.mp4
+# Morevna Project · baseado em David Revoy | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0/ | https://archive.org/details/pepper-carrot-episode-4-stroke-of-genius-1080p
+#EXTINF:-1 tvg-id="pepper-4" group-title="Séries · Pepper & Carrot",Pepper & Carrot — E04 · Stroke of Genius
+https://archive.org/download/pepper-carrot-episode-4-stroke-of-genius-1080p/Pepper%20%26%20Carrot%20Episode%204%3A%20Stroke%20of%20Genius%201080p.mp4
+# Morevna Project · baseado em David Revoy | CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/ | https://archive.org/details/peppercarrot-ep6
+#EXTINF:-1 tvg-id="pepper-6" group-title="Séries · Pepper & Carrot",Pepper & Carrot — E06 · The Potion Contest
+https://archive.org/download/peppercarrot-ep6/pepper-en-basic.mp4
+# Morevna Project · Konstantin Dmitriev | CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/ | https://archive.org/details/morevna-ep3
+#EXTINF:-1 tvg-id="morevna-ep3" group-title="Séries · Morevna",Morevna — E03 · Morevna — Episódio 3
+https://archive.org/download/morevna-ep3/morevna-3.0.2-en.mp4
+# Morevna Project · Konstantin Dmitriev | CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0/ | https://archive.org/details/morevna-ep4
+#EXTINF:-1 tvg-id="morevna-ep4" group-title="Séries · Morevna",Morevna — E04 · Death(Less)
+https://archive.org/download/morevna-ep4/morevna-4.0.1-ru-hq.mp4
