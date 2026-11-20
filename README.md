@@ -1,4 +1,4 @@
-# Nova OS 1.2.8
+# Nova OS 1.2.9
 
 Launcher em português para Android TV e TV boxes. É um aplicativo de tela inicial, não uma ROM. O pacote Android gerencia aplicativos instalados, controle remoto, rede e o atualizador; a interface é local, renderizada pelo Android System WebView.
 
@@ -33,7 +33,7 @@ Com JDK 11+ (o CI usa 17), Android SDK Platform 35, Build Tools 35.0.1 e `zip` d
 sdkmanager 'platforms;android-35' 'build-tools;35.0.1'
 export ANDROID_SDK_ROOT=/caminho/do/android-sdk
 ./scripts/build-apk.sh
-adb install -r artifacts/Nova-OS-1.2.8-debug.apk
+adb install -r artifacts/Nova-OS-1.2.9-debug.apk
 ```
 
 O build baixa e verifica o SHA-256 do APK público da Nova IPTV quando não há cópia local. Para compilar offline, use `NOVA_IPTV_APK` com o caminho absoluto de um APK da IPTV. A instalação pelo launcher exige que a Nova IPTV e o launcher tenham o mesmo certificado.

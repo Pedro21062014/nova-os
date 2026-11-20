@@ -73,7 +73,7 @@ public final class NovaActivity extends Activity {
     private static final String SERIES = "https://api.tvmaze.com/shows?page=0";
     private static final long ART_TTL = 7L * 24 * 60 * 60 * 1000;
     private static final long ART_LIMIT = 6L * 1024 * 1024;
-    private static final Pattern ASSET_PATH = Pattern.compile("/(index\\.html|app\\.js|style\\.css|manrope\\.woff2|fonts/manrope-(400|600|650|700|750|800)\\.woff2|wallpapers/(list\\.json|glass-(dolomitas|braies|moraine|reine|aoraki)\\.webp|(braies|moraine|reine|aoraki)\\.webp)|img/(dolomitas|discover/(cinema|series|live)|prime/(air|contador|guerra|ideia|mapa|matador|minha-culpa|musica|natal|nossa-culpa|operacao-natal|pisque|ricky|som|sua-culpa|vermelho)(-poster)?|brand/(apple|hbo|netflix|nova-os-header|plex|prime|spotify|youtube)|media/(dune|hunger|interstellar|severance)(-poster)?)\\.webp)");
+    private static final Pattern ASSET_PATH = Pattern.compile("/(index\\.html|app\\.js|style\\.css|manrope\\.woff2|fonts/manrope-(400|600|650|700|750|800)\\.woff2|wallpapers/(list\\.json|glass-(dolomitas|braies|moraine|reine|aoraki)\\.webp|(braies|moraine|reine|aoraki)\\.webp)|img/(dolomitas|discover/(cinema|series|live)|prime/(air|contador|guerra|ideia|mapa|matador|minha-culpa|musica|natal|nossa-culpa|operacao-natal|pisque|ricky|som|sua-culpa|vermelho)(-poster)?|brand/(apple|hbo|netflix|nova-iptv|nova-os-header|plex|prime|spotify|youtube)|media/(dune|hunger|interstellar|severance)(-poster)?)\\.webp)");
     private final ExecutorService requests = Executors.newFixedThreadPool(3);
     private final LruCache<String, byte[]> icons = new LruCache<String, byte[]>(1024 * 1024) {
         @Override protected int sizeOf(String key, byte[] data) {return data.length;}
