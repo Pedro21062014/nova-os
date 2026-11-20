@@ -23,8 +23,7 @@ if [[ ! -x "$BT/aapt2" || ! -r "$PLATFORM" ]];then
 fi
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 mkdir -p "$TMP/assets"
-python3 ../loja/build-preview.py "$TMP/assets/index.html"
-python3 ../loja/build-preview.py --links > "$TMP/assets/links.json"
+python3 ../loja/build-preview.py --android "$TMP/assets"
 mkdir -p "$TMP/classes" "$TMP/dex" "$(dirname "$OUT")" "$(dirname "$KEY")"
 if [[ ! -f "$KEY" ]];then
   (umask 077; keytool -genkeypair -noprompt -storetype JKS -keystore "$KEY" -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname 'CN=Android Debug,O=Android,C=US' >/dev/null 2>&1)

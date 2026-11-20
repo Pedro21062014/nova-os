@@ -1,12 +1,12 @@
 package br.com.novaos.store;
 
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Build;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -22,15 +22,19 @@ import org.json.JSONObject;
 
 public final class StoreActivity extends Activity {
     private static final String HOME = "https://store.nova.invalid/index.html";
-    private static final String APK = "application/vnd.android.package-archive";
-    private final Map<String, String> downloads = new LinkedHashMap<>();
+    private static final String ORIGIN="https://store.nova.invalid";
+    private static final String YOUTUBE="com.google.android.youtube.tv";
+    private final Map<String, CatalogFeed.Apk> downloads = new LinkedHashMap<>();
     private WebView web;
     private CatalogFeed feed;
-    private long lastRequest;
-    private String lastUrl = "";
+    private StoreTransfers transfers;
+    private StoreUpdates updates;
+    private volatile boolean youtubeInstalled;
+    private final JSONArray deviceAbis=new JSONArray(java.util.Arrays.asList(Build.SUPPORTED_ABIS));
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
         feed=new CatalogFeed(this);
+        transfers=new StoreTransfers(this);updates=new StoreUpdates(this);
         try (java.io.InputStream stream = getAssets().open("links.json")) {
             java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
             byte[] buffer = new byte[4096]; int n;
@@ -38,11 +42,11 @@ public final class StoreActivity extends Activity {
             JSONArray rows=new JSONArray(out.toString("UTF-8"));
             for(int i=0;i<rows.length();i++){
                 JSONObject row=rows.getJSONObject(i);
-                downloads.put(row.getString("url"),row.getString("app")+"-"+row.getString("abi"));
+                downloads.put(row.getString("url"),CatalogFeed.Apk.row(row,row.getString("app"),row.optBoolean("rolling")));
             }
         } catch(Exception invalid){notice("Não foi possível carregar os links do catálogo.");}
         try {web=new WebView(this);} catch(RuntimeException error){notice("O Android System WebView não está disponível.");finish();return;}
-        web.setBackgroundColor(0xff0b0812);
+        web.setBackgroundColor(0xff101412);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
         WebSettings settings=web.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -59,10 +63,11 @@ public final class StoreActivity extends Activity {
             @Override public WebResourceResponse shouldInterceptRequest(WebView v,WebResourceRequest r){return local(r.getUrl());}
             @Override public WebResourceResponse shouldInterceptRequest(WebView v,String u){return local(Uri.parse(u));}
         });
-        web.setDownloadListener((url,ua,disposition,mime,length)->{if(downloadName(url)!=null)navigate(Uri.parse(url));});
+        web.addJavascriptInterface(new Bridge(),"NovaStore");
+        web.setDownloadListener((url,ua,disposition,mime,length)->{if(downloadFile(url)!=null)navigate(Uri.parse(url));});
         setContentView(web);web.setFocusableInTouchMode(true);web.requestFocus();web.loadUrl(HOME);
     }
-    private String downloadName(String url){String fromFeed=feed.downloadName(url);return fromFeed==null?downloads.get(url):fromFeed;}
+    private CatalogFeed.Apk downloadFile(String url){CatalogFeed.Apk fromFeed=feed.download(url);return fromFeed==null?downloads.get(url):fromFeed;}
     private WebResourceResponse local(Uri uri){
         if(("https://store.nova.invalid"+CatalogFeed.PATH).equals(uri.toString())){
             CatalogFeed.Snapshot snapshot=feed.get();
@@ -72,9 +77,20 @@ public final class StoreActivity extends Activity {
                 return new WebResourceResponse("application/json","UTF-8",200,"OK",headers,new ByteArrayInputStream(snapshot.bytes));
             }
         }
+        if(ORIGIN.equals(uri.getScheme()+"://"+uri.getAuthority())&&uri.getQuery()==null){
+            String path=uri.getPath();
+            try{
+                if(path!=null&&path.matches("/local-media/[a-z0-9-]{1,50}/(logo|[0-9]{1,2})\\.webp"))
+                    return new WebResourceResponse("image/webp",null,200,"OK",Collections.singletonMap("Cache-Control","public, max-age=86400"),getAssets().open(path.substring(1)));
+                if(path!=null&&path.matches("/remote-media/[a-f0-9]{16}/[a-z0-9-]{1,50}/(logo|[0-9]{1,2})\\.webp")){
+                    byte[] data=feed.media(path);
+                    if(data!=null)return new WebResourceResponse("image/webp",null,200,"OK",Collections.singletonMap("Cache-Control","public, max-age=86400"),new ByteArrayInputStream(data));
+                }
+            }catch(Exception ignored){}
+        }
         if(HOME.equals(uri.toString()))try {
             return new WebResourceResponse("text/html","UTF-8",200,"OK",Collections.singletonMap("Content-Security-Policy",
-                "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src 'self'; base-uri 'none'; form-action 'none'"),getAssets().open("index.html"));
+                "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: 'self'; font-src data:; connect-src 'self'; base-uri 'none'; form-action 'none'"),getAssets().open("index.html"));
         }catch(Exception ignored){}
         return new WebResourceResponse("text/plain","UTF-8",404,"Not Found",Collections.emptyMap(),new ByteArrayInputStream(new byte[0]));
     }
@@ -82,29 +98,42 @@ public final class StoreActivity extends Activity {
         String url=uri.toString();
         if(HOME.equals(url)||url.startsWith(HOME+"#"))return false;
         if(!"https".equals(uri.getScheme())||uri.getHost()==null||uri.getUserInfo()!=null)return true;
-        String name=downloadName(url);
-        if(name!=null){
-            long now=android.os.SystemClock.elapsedRealtime();
-            if(url.equals(lastUrl)&&now-lastRequest<1500)return true;
-            try {
-                DownloadManager manager=(DownloadManager)getSystemService(DOWNLOAD_SERVICE);
-                DownloadManager.Request request=new DownloadManager.Request(uri).setTitle("Nova Store · "+name)
-                    .setMimeType(APK).setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                String file=name+"-"+System.currentTimeMillis()+".apk";
-                if(android.os.Build.VERSION.SDK_INT>=29)request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,file);
-                else request.setDestinationInExternalFilesDir(this,Environment.DIRECTORY_DOWNLOADS,file);
-                if(manager==null)throw new IllegalStateException("Downloads");
-                manager.enqueue(request);lastUrl=url;lastRequest=now;notice("Download iniciado. Abra o APK em Downloads quando terminar.");
-            }catch(RuntimeException error){notice("O gerenciador de downloads não pôde baixar este APK.");}
-        }else try{startActivity(new Intent(Intent.ACTION_VIEW,uri).addCategory(Intent.CATEGORY_BROWSABLE));}
-        catch(RuntimeException error){notice("Nenhum navegador disponível para abrir a fonte.");}
+        CatalogFeed.Apk apk=downloadFile(url);
+        if(apk!=null)transfers.start(url,apk);
+        else openExternal(uri,"Nenhum navegador disponível para abrir a fonte.");
         return true;
     }
-    private void notice(String message){Toast.makeText(this,message,Toast.LENGTH_LONG).show();}
-    @Override protected void onResume(){super.onResume();if(web!=null)web.evaluateJavascript("window.novaStoreRefresh && window.novaStoreRefresh()",null);}
+    private boolean openExternal(Uri uri,String fallback){
+        try{startActivity(new Intent(Intent.ACTION_VIEW,uri).addCategory(Intent.CATEGORY_BROWSABLE));return true;}
+        catch(RuntimeException error){if(fallback!=null)notice(fallback);return false;}
+    }
+    private Intent youtube(){
+        Intent launch=getPackageManager().getLeanbackLaunchIntentForPackage(YOUTUBE);
+        return launch==null?getPackageManager().getLaunchIntentForPackage(YOUTUBE):launch;
+    }
+    private void openYoutube(){
+        try{Intent launch=youtube();if(launch!=null){startActivity(launch);return;}}catch(RuntimeException ignored){}
+        try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id="+YOUTUBE)).setPackage("com.android.vending"));return;}
+        catch(RuntimeException ignored){}
+        openExternal(Uri.parse("https://play.google.com/store/apps/details?id="+YOUTUBE),"Google Play indisponível nesta TV. Consulte youtube.com/tv em outro dispositivo.");
+    }
+    public final class Bridge {
+        @JavascriptInterface public String state(){
+            try{JSONObject s=new JSONObject().put("jobs",transfers.states()).put("youtube",youtubeInstalled).put("abis",deviceAbis).put("sdk",Build.VERSION.SDK_INT);
+                StoreUpdates.Offer next=updates.offer();if(next!=null)s.put("update",next.info());return s.toString();}
+            catch(Exception bad){return "{}";}
+        }
+        @JavascriptInterface public void download(String url){CatalogFeed.Apk apk=downloadFile(url);if(apk!=null)transfers.start(url,apk);}
+        @JavascriptInterface public void install(String key){if(key!=null)transfers.install(key);}
+        @JavascriptInterface public void cancel(String key){if(key!=null)transfers.cancel(key);}
+        @JavascriptInterface public void update(){StoreUpdates.Offer next=updates.offer();if(next!=null)transfers.start(next.url,next.file);}
+        @JavascriptInterface public void openOfficial(){runOnUiThread(()->openYoutube());}
+    }
+    void notice(String message){runOnUiThread(()->Toast.makeText(this,message,Toast.LENGTH_LONG).show());}
+    @Override protected void onResume(){super.onResume();youtubeInstalled=youtube()!=null;updates.check();if(web!=null)web.evaluateJavascript("window.novaStoreRefresh && window.novaStoreRefresh()",null);}
     @Override public void onBackPressed(){
         if(web==null){super.onBackPressed();return;}
         web.evaluateJavascript("!!(window.novaStoreBack && window.novaStoreBack())",value->{if(!"true".equals(value)&&!isFinishing())finish();});
     }
-    @Override protected void onDestroy(){if(web!=null){web.stopLoading();web.destroy();web=null;}super.onDestroy();}
+    @Override protected void onDestroy(){if(web!=null){web.stopLoading();web.destroy();web=null;}transfers.close();updates.close();super.onDestroy();}
 }
