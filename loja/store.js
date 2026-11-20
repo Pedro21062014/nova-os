@@ -56,7 +56,16 @@ function indexCatalog(d){
  if(selected&&!catRow(selected))selected='';
 }
 function applyCatalog(d){
- if(detailId||!modal.hidden){pendingCatalog=d;return;}
+ if(!modal.hidden){pendingCatalog=d;return;}
+ if(detailId){
+  var old=appById(detailId), replacement=d.apps.filter(function(a){return a.id===detailId;})[0];
+  if(!replacement||!old||JSON.stringify(old.apks)===JSON.stringify(replacement.apks)){pendingCatalog=d;return;}
+  var focused=document.activeElement,primary=focused&&focused.hasAttribute('data-primary-apk'), y=main.scrollTop, shot=shotIndex;
+  pendingCatalog=null;indexCatalog(d);renderDetail();if(shot)setShot(shot);main.scrollTop=y;
+  if(primary){var action=content.querySelector('[data-primary-apk]');if(action&&action.tabIndex>=0)action.focus();}
+  else if(focused&&!document.contains(focused))document.getElementById('detail-back').focus({preventScroll:true});
+  return;
+ }
  var el=document.activeElement, id=el&&el.id, app=el&&el.getAttribute('data-app'), isContent=el&&content.contains(el), cursor=isContent&&el.tagName==='INPUT'?el.value:null;
  indexCatalog(d); render(true);
  if(isContent){var next=(id&&document.getElementById(id))||(app&&content.querySelector('[data-app="'+app+'"]'));if(next){next.focus();if(cursor!==null&&next.value===cursor)try{next.setSelectionRange(cursor.length,cursor.length);}catch(ignore){}}}
@@ -310,9 +319,6 @@ function searchResults(){
 }
 
 /* ---------- detalhe ---------- */
-function variant(p,bundled){
- return '<a class="variant" href="'+esc(p.url)+'" aria-label="'+(bundled?'Preparar ':'Baixar ')+esc(platform(p))+'"><span class="variant-ico">'+icon('download',17)+'</span><span class="variant-copy"><strong>'+esc(platform(p))+'</strong><small>Android '+(androidName[p.minSdk]||('API '+p.minSdk))+'+ · '+size(p.bytes)+'</small></span><span class="variant-arrow">'+icon('chev',18)+'</span></a>';
-}
 function specs(a,files){
  var abis=[];files.forEach(function(f){if(f.abi==='universal'&&!f.abis.length){abis.push('Universal');}else{f.abis.forEach(function(x){if(abis.indexOf(abiLabel[x]||x)<0)abis.push(abiLabel[x]||x);});}});
  var biggest=files.reduce(function(m,f){return Math.max(m,f.bytes);},0);
@@ -353,13 +359,13 @@ function renderDetail(){
  +'<article class="product" style="--tone:'+a.tone+'">'
  +'<header class="detail-hero"><span class="detail-art" aria-hidden="true"><img class="detail-bg" data-art="'+a.id+':0" alt=""></span><div class="product-head"><div class="app-real-logo">'+imgLogo(a.id)+'</div>'
  +'<div class="product-title"><span class="kicker">'+esc(category(a.cat))+' · ANDROID TV</span><h1>'+esc(a.name)+'</h1><div class="detail-tags"><span class="tag verified">'+icon('shield',12)+(official?' App oficial</span>':' APK da fonte oficial</span><span class="tag">'+(a.rolling?'Versão verificada: ':'v')+esc(files[0].version.replace(/^v(?=\d)/i,''))+'</span>')+'<span class="tag">'+esc(a.price||'Grátis')+'</span>'+(a.stage?'<span class="tag stage-tag">'+esc(a.stage)+'</span>':'')+'</div></div>'
- +'<div class="product-actions">'+(official?(nativeApi?'<button class="primary" data-official id="official-action">'+officialText()+'</button>':'<a class="primary" href="https://play.google.com/store/apps/details?id=com.google.android.youtube.tv" target="_blank" rel="noopener noreferrer">Ver no Google Play</a>'):'<a class="primary" data-primary-apk href="'+esc(files[0].url)+'">'+icon('download',16)+(bundled?' Preparar instalação':' Baixar APK')+'</a>')+'<button type="button" class="secondary" data-save>'+saveButton(a)+'</button></div></div></header>'
+ +'<div class="product-actions">'+(official?(nativeApi?'<button class="primary" data-official id="official-action">'+officialText()+'</button>':'<a class="primary" href="https://play.google.com/store/apps/details?id=com.google.android.youtube.tv" target="_blank" rel="noopener noreferrer">Ver no Google Play</a>'):'<a class="primary" data-primary-apk href="'+esc(webApk(files).url)+'">'+icon('download',16)+(bundled?' Preparar instalação':' Baixar APK')+'</a>')+'<button type="button" class="secondary" data-save>'+saveButton(a)+'</button></div></div></header>'
  +'<div class="product-columns"><div class="overview">'+gallery(a,media)
  +'<section class="about-section"><h2>Sobre o app</h2><p>'+esc(a.desc)+'</p>'+(official?'':specs(a,files))+'</section>'
  +related(a)+'</div>'
  +(official?'<aside class="download-panel"><div class="download-head"><div><span class="eyebrow">GOOGLE LLC</span><h2>Instalação oficial</h2></div></div><p class="note">Se o YouTube já estiver instalado, você pode abri-lo daqui. Senão, instale pelo Google Play. A Nova Store não oferece APK avulso do YouTube.</p><a class="text-button source-link" href="'+esc(a.source)+'" target="_blank" rel="noopener noreferrer">Ajuda oficial '+icon('external',14)+'</a>'+officialAlternative()+'</aside>':'<aside class="download-panel" aria-label="Download direto"><div class="download-head"><div><span class="eyebrow">'+(bundled?'INCLUÍDO NA LOJA':'DOWNLOAD DIRETO')+'</span><h2>'+(bundled?'Instalação do app':'Baixar APK')+'</h2></div><span class="panel-icon">'+icon('download',21)+'</span></div>'
- +'<div id="transfer-slot"></div><div class="variants">'+files.map(function(p){return variant(p,bundled);}).join('')+'</div>'
- +'<p class="note">'+(a.rolling?'O link é mantido pelo desenvolvedor e pode oferecer uma versão mais recente. ':'')+(files.length>1?'Escolha a arquitetura do Android da sua TV box. ':'')+(bundled?'A loja inclui o APK. Prepare a instalação e confirme no Android. É preciso internet para assistir.':nativeApi?'Acompanhe o progresso aqui e toque em Instalar quando terminar.':'Abra o APK baixado para confirmar a instalação.')+'</p>'
+ +'<div id="transfer-slot"></div>'+(nativeApi?'<p class="note" data-apk-status aria-live="polite"></p>':files.length>1?'<label class="variant-copy">Variante do APK <select data-web-variant>'+files.map(function(p){return '<option value="'+esc(p.url)+'"'+(p===webApk(files)?' selected':'')+'>'+esc(platform(p))+'</option>';}).join('')+'</select></label>':'')
+ +'<p class="note">'+(a.rolling?'O link é mantido pelo desenvolvedor e pode oferecer uma versão mais recente. ':'')+(nativeApi?'A compatibilidade é selecionada automaticamente. ':files.length>1?'No navegador, confira a variante antes de baixar. ':'')+(bundled?'A loja inclui o APK. Prepare a instalação e confirme no Android. É preciso internet para assistir.':nativeApi?'Acompanhe o progresso aqui. Depois, use o mesmo botão para confirmar no Android.':'Abra o APK baixado para confirmar a instalação.')+'</p>'
  +(bundled?'':'<a class="text-button source-link" href="'+esc(files[0].source)+'" target="_blank" rel="noopener noreferrer">Fonte da versão '+icon('external',14)+'</a>')
  +'</aside>')+'</div></article>';
  paintTransfers();
@@ -437,18 +443,36 @@ function paintTransfer(slot,key){
  bar.hidden=!active&&!checking;
  if(active&&job.progress>=0)bar.value=job.progress;else if(bar.hasAttribute('value'))bar.removeAttribute('value');
  var install=slot.querySelector('[data-install]'),cancel=slot.querySelector('[data-cancel]');
- install.hidden=!ready;
+ install.hidden=!ready||key!=='store-update';
  cancel.hidden=checking;
  writeText(cancel,ready?'Remover arquivo':job.status==='failed'?'Limpar':'Cancelar');
 }
+function webApk(files){return files.filter(function(p){return p.abi==='universal';})[0]||files[0];}
 function compatibleApk(files){
  var supported=nativeState.abis,sdk=nativeState.sdk;
- if(Array.isArray(supported)&&supported.length){
-  for(var i=0;i<supported.length;i++)for(var j=0;j<files.length;j++){
-   var file=files[j];if(file.minSdk<=sdk&&(file.abi===supported[i]||file.abis.indexOf(supported[i])>=0||file.abi==='universal'&&!file.abis.length))return file;
-  }
+ if(!Array.isArray(supported)||!supported.length||!sdk)return null;
+ for(var i=0;i<supported.length;i++)for(var j=0;j<files.length;j++){
+  var p=files[j];if(p.minSdk<=sdk&&(p.abi===supported[i]||p.abis.indexOf(supported[i])>=0))return p;
  }
- return files[0];
+ return files.filter(function(p){return p.minSdk<=sdk&&p.abi==='universal'&&!p.abis.length;})[0]||null;
+}
+function installedFor(file){
+ if(!file||!nativeApi||typeof nativeApi.appState!=='function')return null;
+ try{return JSON.parse(nativeApi.appState(file.url));}catch(e){return null;}
+}
+function newer(file,local){
+ if(file.versionCode>0&&local.code>0)return file.versionCode>local.code;
+ var version=/^v?(\d+(?:\.\d+){0,7})(?:-([0-9a-z.-]+))?(?:\+[0-9a-z.-]+)?$/i, a=version.exec(file.version),b=version.exec(local.version||'');
+ if(!a||!b)return false;var ax=a[1].split('.'),bx=b[1].split('.');
+ for(var i=0;i<Math.max(ax.length,bx.length);i++){var x=Number(ax[i]||0),y=Number(bx[i]||0);if(x!==y)return x>y;}
+ if(!a[2]||!b[2])return !a[2]&&!!b[2];
+ ax=a[2].toLowerCase().split('.');bx=b[2].toLowerCase().split('.');
+ for(var j=0;j<Math.min(ax.length,bx.length);j++){
+  if(ax[j]===bx[j])continue;var an=/^\d+$/.test(ax[j]),bn=/^\d+$/.test(bx[j]);
+  if(an&&bn){if(Number(ax[j])===Number(bx[j]))continue;return Number(ax[j])>Number(bx[j]);}
+  return an!==bn?bn:ax[j]>bx[j];
+ }
+ return ax.length>bx.length;
 }
 function paintTransfers(){
  var jobs=nativeState.jobs||{},offer=document.getElementById('update-offer'),official=document.getElementById('official-action');
@@ -456,13 +480,17 @@ function paintTransfers(){
   paintTransfer(document.getElementById('transfer-slot'),detailId);
   var mainAction=content.querySelector('[data-primary-apk]');
   if(nativeApi&&mainAction){
-   var job=jobs[detailId],status=job&&job.status||'',primary=compatibleApk(byApp[detailId]);
-   mainAction.setAttribute('href',primary.url);
-   var mode=status==='ready'?'install':status==='waiting'||status==='downloading'||status==='verifying'?'progress':status==='failed'?'retry':'download';
-   if(mainAction.getAttribute('data-mode')!==mode){
-    mainAction.setAttribute('data-mode',mode);
-    mainAction.innerHTML=icon(mode==='install'?'check':'download',16)+(mode==='install'?' Instalar':mode==='progress'?' Ver progresso':builtInIptv&&primary.url===builtInIptv.apks[0].url?' Preparar instalação':mode==='retry'?' Baixar novamente':' Baixar APK');
-   }
+   var job=jobs[detailId],status=job&&job.status||'',primary=compatibleApk(byApp[detailId]),local=installedFor(primary),update=!!(local&&local.installed&&newer(primary,local));
+   var same=!!(job&&primary&&(job.url===primary.url||!job.url&&!update)),running=status==='waiting'||status==='downloading'||status==='verifying';
+   var pending=!nativeState.sdk, blocked=local&&local.installed&&local.signer===false;
+   var mode=!primary?'unavailable':blocked?'signer':local&&local.installed&&!update?(local.open?'open':'current'):running?'progress':same&&status==='ready'?'install':'download';
+   var label=mode==='unavailable'?(pending?'Verificando compatibilidade…':'Incompatível com este aparelho'):mode==='signer'?'Assinatura diferente':mode==='open'?'Abrir':mode==='current'?'Já instalado':mode==='progress'?'Ver progresso':update?'Atualizar':mode==='install'?'Instalar':builtInIptv&&primary.url===builtInIptv.apks[0].url?'Preparar instalação':same&&status==='failed'?'Baixar novamente':'Baixar APK';
+   var disabled=mode==='unavailable'||mode==='signer'||mode==='current';
+   if(primary)mainAction.setAttribute('href',primary.url);else mainAction.removeAttribute('href');
+   mainAction.setAttribute('aria-disabled',String(disabled));mainAction.tabIndex=disabled?-1:0;
+   mainAction.setAttribute('data-mode',mode);
+   if(mainAction.getAttribute('data-label')!==label){mainAction.setAttribute('data-label',label);mainAction.innerHTML=icon(mode==='open'?'arrow':mode==='install'?'check':'download',16)+' '+label;}
+   var note=content.querySelector('[data-apk-status]');if(note)writeText(note,primary?platform(primary)+' · Android '+(androidName[primary.minSdk]||('API '+primary.minSdk))+'+ · '+size(primary.bytes)+(local&&local.installed?' · Instalada: '+(local.version||'—'):'')+(update?' · Disponível: '+primary.version:''):'');
   }
  }
  if(official)writeText(official,officialText());
@@ -562,6 +590,7 @@ document.addEventListener('focusin',function(e){
  if(t&&t.closest){var track=t.closest('.rail-track');if(track){var r=t.getBoundingClientRect(),box=track.getBoundingClientRect();if(r.left<box.left+5)track.scrollLeft+=r.left-box.left-7;else if(r.right>box.right-5)track.scrollLeft+=r.right-box.right+7;}}
 });
 window.addEventListener('resize',function(){updateRails();});
+content.addEventListener('change',function(e){if(e.target.hasAttribute('data-web-variant')){var button=content.querySelector('[data-primary-apk]');if(button)button.setAttribute('href',e.target.value);}});
 document.addEventListener('click',function(e){
  var b=e.target.closest('button,a');
  if(!modal.hidden){
@@ -579,6 +608,8 @@ document.addEventListener('click',function(e){
  if(b.hasAttribute('data-update-offer')){updateDialog();return;}
  if(nativeApi&&detailId&&b.hasAttribute('data-primary-apk')){
   var mode=b.getAttribute('data-mode');
+  if(b.getAttribute('aria-disabled')==='true'){e.preventDefault();return;}
+  if(mode==='open'){e.preventDefault();callNative('openApp',b.getAttribute('href'));return;}
   if(mode==='install'){e.preventDefault();callNative('install',detailId);return;}
   if(mode==='progress'){
    e.preventDefault();var slot=document.getElementById('transfer-slot'),control=slot&&slot.querySelector('[data-cancel]:not([hidden])');
@@ -627,16 +658,21 @@ document.addEventListener('click',function(e){
  if(b.hasAttribute('data-more')){var start=catalogLimit;catalogLimit+=PAGE_SIZE;renderCatalogResults();var cards=document.querySelectorAll('#catalog-results .app-card');var target=cards[start];if(target)target.focus();return;}
  if(b.hasAttribute('data-app')){var app=appById(b.getAttribute('data-app'));if(app)openDetails(app);return;}
 });
-function controls(){var scope=modal.hidden?document.querySelector('.store'):dialog;return [].slice.call(scope.querySelectorAll('button, a[href], input')).filter(function(el){return el.getClientRects().length;});}
+function controls(){var scope=modal.hidden?document.querySelector('.store'):dialog;return [].slice.call(scope.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled])')).filter(function(el){return el.getClientRects().length&&el.getAttribute('aria-disabled')!=='true';});}
 function spatial(key){
  var a=document.activeElement,options=controls();
  if(options.indexOf(a)<0){var fallback=document.getElementById('hero-action')||options[0];if(fallback)fallback.focus();return;}
- var r=a.getBoundingClientRect(),x=(r.left+r.right)/2,y=(r.top+r.bottom)/2,h=key==='ArrowRight'||key==='ArrowLeft',sign=key==='ArrowRight'||key==='ArrowDown'?1:-1,best=null,min=Infinity;
- options.forEach(function(b){if(b===a)return;var t=b.getBoundingClientRect(),tx=(t.left+t.right)/2,ty=(t.top+t.bottom)/2,major=sign*(h?tx-x:ty-y),cross=Math.abs(h?ty-y:tx-x),overlap=h?Math.min(r.bottom,t.bottom)-Math.max(r.top,t.top):Math.min(r.right,t.right)-Math.max(r.left,t.left);if(major<4)return;var score=major+cross*(overlap>0?.24:3)+(overlap>0?0:30);if(score<min){min=score;best=b;}});
+ var r=a.getBoundingClientRect(),x=(r.left+r.right)/2,y=(r.top+r.bottom)/2,h=key==='ArrowRight'||key==='ArrowLeft',sign=key==='ArrowRight'||key==='ArrowDown'?1:-1,best=null,min=Infinity,tier=Infinity;
+ var inMain=main.contains(a),inTop=inMain&&!!a.closest('.top');
+ options.forEach(function(b){if(b===a)return;var t=b.getBoundingClientRect(),dx=(t.left+t.right)/2-x,dy=(t.top+t.bottom)/2-y,major=sign*(h?dx:dy),cross=Math.abs(h?dy:dx),overlap=h?Math.min(r.bottom,t.bottom)-Math.max(r.top,t.top):Math.min(r.right,t.right)-Math.max(r.left,t.left);if(major<4)return;
+  var part=0;if(!h&&modal.hidden){var there=main.contains(b);if(there!==inMain)return;if(there&&b.closest('.top'))part=1;if(inTop&&sign<0&&!part)return;}
+  var score=h?major+cross*(overlap>0?.24:3)+(overlap>0?0:30):major+Math.min(48,cross*.12)+(overlap>0?0:8);if(part<tier||part===tier&&score<min){min=score;tier=part;best=b;}
+ });
  if(best)best.focus();
 }
 document.addEventListener('keydown',function(e){
  var input=e.target.tagName==='INPUT';
+ if(e.key&&e.target.tagName==='SELECT'&&e.key.indexOf('Arrow')===0)return;
  if(!e.key)return;
  if(e.key==='Escape'||e.key==='BrowserBack'||e.key==='GoBack'){e.preventDefault();back();return;}
  if(e.key==='/'&&!input&&modal.hidden&&!detailId){e.preventDefault();go('search');return;}

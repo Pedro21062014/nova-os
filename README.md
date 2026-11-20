@@ -28,3 +28,7 @@ A **Nova IPTV** tem seu próprio APK. A Store 1.0.5 continua funcionando e apres
 3. A Store 1.0.2 em diante consulta esse descritor quando abre ou volta ao primeiro plano. A partir da 1.0.4, **Verificar atualizações** no menu lateral consulta o canal imediatamente e informa o resultado. A loja oferece a atualização, mas não baixa sem confirmação. Antes da instalação, verifica o APK contra o hash, o pacote `br.com.novaos.store`, a versão anunciada e a assinatura da cópia instalada.
 
 Se você estiver na Store 1.0.0 ou 1.0.1, instale a 1.0.2 por cima para receber os próximos avisos. Para alterações de apps e capturas, basta editar o [catálogo](loja/README.md).
+
+## Nova Store 1.0.6
+
+Na TV, a ficha tem uma ação principal. A loja escolhe um APK compatível com a versão do Android e a arquitetura informada pelo aparelho. Para apps instalados, compara a versão local com a oferta: usa **Atualizar** se houver uma mais nova, ou **Abrir** quando não houver. O Android confirma a instalação ou atualização. A prévia web não tem acesso aos apps instalados no dispositivo.

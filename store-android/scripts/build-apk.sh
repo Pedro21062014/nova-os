@@ -42,7 +42,15 @@ if [[ ! -f "$KEY" ]];then
   (umask 077; keytool -genkeypair -noprompt -storetype JKS -keystore "$KEY" -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname 'CN=Android Debug,O=Android,C=US' >/dev/null 2>&1)
 fi
 "$BT/aapt2" compile --dir "$APP/res" -o "$TMP/res.zip"
-"$BT/aapt2" link -I "$PLATFORM" --manifest "$APP/AndroidManifest.xml" -A "$TMP/assets" -o "$TMP/unsigned.apk" "$TMP/res.zip"
+python3 - "$APP/AndroidManifest.xml" "$TMP/assets/links.json" "$TMP/manifest.xml" <<'PY_PACKAGES'
+import sys, json, re
+from pathlib import Path
+src,links,out=map(Path,sys.argv[1:]);pkgs=sorted({x['package'] for x in json.loads(links.read_text())})
+assert all(re.fullmatch(r'[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)+',p) for p in pkgs)
+queries=''.join(f'<package android:name="{p}"/>\n' for p in pkgs if p!='com.google.android.youtube.tv')
+out.write_text(src.read_text().replace('</queries>',queries+'</queries>'))
+PY_PACKAGES
+"$BT/aapt2" link -I "$PLATFORM" --manifest "$TMP/manifest.xml" -A "$TMP/assets" -o "$TMP/unsigned.apk" "$TMP/res.zip"
 mapfile -t JAVA < <(find "$APP/java" -name '*.java' -print | LC_ALL=C sort)
 javac -encoding UTF-8 -source 8 -target 8 -bootclasspath "$PLATFORM:$BT/core-lambda-stubs.jar" -d "$TMP/classes" "${JAVA[@]}"
 jar cf "$TMP/classes.jar" -C "$TMP/classes" .

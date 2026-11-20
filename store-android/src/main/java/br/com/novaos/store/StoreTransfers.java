@@ -36,9 +36,9 @@ final class StoreTransfers {
     private final Map<String,Job> jobs=new LinkedHashMap<>();
     private boolean closed;
     static final class Job {
-        long id;String key,token,pkg,hash,cert,abi,error="";long size;int code;boolean checking;
+        long id;String url="",key,token,pkg,hash,cert,abi,error="";long size;int code;boolean checking;
         Job(String key,String token,String pkg,String hash,long size,int code,long id,String cert,String abi){this.abi=abi;this.cert=cert;this.key=key;this.token=token;this.pkg=pkg;this.hash=hash;this.size=size;this.code=code;this.id=id;}
-        JSONObject json() throws Exception {return new JSONObject().put("key",key).put("token",token).put("pkg",pkg).put("sha",hash).put("size",size).put("code",code).put("id",id).put("cert",cert).put("abi",abi);}
+        JSONObject json() throws Exception {return new JSONObject().put("key",key).put("token",token).put("pkg",pkg).put("sha",hash).put("size",size).put("code",code).put("id",id).put("cert",cert).put("abi",abi).put("url",url);}
     }
     StoreTransfers(StoreActivity host){
         this.host=host;manager=(DownloadManager)host.getSystemService(StoreActivity.DOWNLOAD_SERVICE);prefs=host.getSharedPreferences("downloads-v1",0);
@@ -46,7 +46,7 @@ final class StoreTransfers {
             JSONObject j=a.getJSONObject(i);String key=j.getString("key"),token=j.getString("token");
             if(key.matches("[a-z0-9][a-z0-9-]{0,49}")&&token.matches("[a-f0-9]{32}")){
                 Job job=new Job(key,token,j.getString("pkg"),j.getString("sha"),j.getLong("size"),j.getInt("code"),j.getLong("id"),j.optString("cert"),j.optString("abi"));
-                if(job.id>0)jobs.put(key,job);
+                job.url=j.optString("url");if(job.id>0)jobs.put(key,job);
             }
         }}catch(Exception ignored){}
         Job update=jobs.get(UPDATE);
@@ -60,7 +60,7 @@ final class StoreTransfers {
         Job old=jobs.get(file.app);
         if(old!=null){String s=state(old).optString("status");if("waiting".equals(s)||"downloading".equals(s)||"verifying".equals(s))return;remove(old);}
         if(jobs.size()>=12){host.notice("Finalize ou cancele outro download primeiro.");return;}
-        String token=UUID.randomUUID().toString().replace("-","");Job j=new Job(file.app,token,file.pkg,file.hash,file.size,file.code,-1,file.cert,file.abi);jobs.put(file.app,j);
+        String token=UUID.randomUUID().toString().replace("-","");Job j=new Job(file.app,token,file.pkg,file.hash,file.size,file.code,-1,file.cert,file.abi);j.url=url;jobs.put(file.app,j);
         if(StoreActivity.IPTV_URL.equals(url)&&"nova-iptv".equals(file.app)&&"br.com.novaos.iptv".equals(file.pkg)&&file.size>0&&!file.hash.isEmpty()&&!file.cert.isEmpty()){j.id=INCLUDED;save();return;}
         try{
             DownloadManager.Request req=new DownloadManager.Request(Uri.parse(url)).setTitle("Nova Store · "+file.app)
@@ -91,7 +91,7 @@ final class StoreTransfers {
         }catch(RuntimeException ignored){}
         if(msg.isEmpty())msg="Download indisponível. Tente novamente.";
         int percent="ready".equals(s)?100:total>0?(int)Math.max(0,Math.min(99,done*100.0/total)):-1;
-        try{return new JSONObject().put("status",s).put("abi",j.abi).put("message",msg).put("progress",percent).put("bytes",Math.max(0,done)).put("total",Math.max(0,total));}catch(Exception ignored){return new JSONObject();}
+        try{return new JSONObject().put("status",s).put("abi",j.abi).put("url",j.url).put("message",msg).put("progress",percent).put("bytes",Math.max(0,done)).put("total",Math.max(0,total));}catch(Exception ignored){return new JSONObject();}
     }
     synchronized JSONObject states(){JSONObject out=new JSONObject();for(Job job:jobs.values())try{out.put(job.key,state(job));}catch(Exception ignored){}return out;}
     synchronized void install(String key){
@@ -122,7 +122,13 @@ final class StoreTransfers {
             if(apk==null||!j.pkg.equals(apk.packageName)||apk.signatures==null||apk.signatures.length==0)throw new SecurityException("APK");
             if(!j.cert.isEmpty()&&(apk.signatures.length!=1||!j.cert.equals(hex(sha.digest(apk.signatures[0].toByteArray())))))throw new SecurityException("Signer");
             if(j.id==INCLUDED&&apk.versionCode!=1)throw new SecurityException("Version");
-            if(j.code>0){PackageInfo installed=pm.getPackageInfo(host.getPackageName(),PackageManager.GET_SIGNATURES);
+            if(!UPDATE.equals(j.key))try{
+                PackageInfo local=pm.getPackageInfo(j.pkg,0);
+                long current=Build.VERSION.SDK_INT>=28?local.getLongVersionCode():local.versionCode;
+                long incoming=Build.VERSION.SDK_INT>=28?apk.getLongVersionCode():apk.versionCode;
+                if(incoming<current)throw new SecurityException("Downgrade");
+            }catch(PackageManager.NameNotFoundException ignored){}
+            if(UPDATE.equals(j.key)&&j.code>0){PackageInfo installed=pm.getPackageInfo(host.getPackageName(),PackageManager.GET_SIGNATURES);
                 if(apk.versionCode!=j.code||apk.versionCode<=installed.versionCode||!Arrays.equals(apk.signatures,installed.signatures))throw new SecurityException("Update");}
             host.runOnUiThread(()->{
                 if(host.isFinishing()||host.isDestroyed())return;
@@ -133,6 +139,6 @@ final class StoreTransfers {
         }catch(Exception err){output.delete();synchronized(this){j.error="O arquivo não pôde ser verificado. Tente baixar novamente.";}}
         finally{synchronized(this){j.checking=false;}}
     }
-    private static String hex(byte[] bytes){StringBuilder hex=new StringBuilder();for(byte b:bytes){hex.append(Character.forDigit(b>>4&15,16));hex.append(Character.forDigit(b&15,16));}return hex.toString();}
+    static String hex(byte[] bytes){StringBuilder hex=new StringBuilder();for(byte b:bytes){hex.append(Character.forDigit(b>>4&15,16));hex.append(Character.forDigit(b&15,16));}return hex.toString();}
     synchronized void close(){closed=true;verifyJobs.shutdownNow();}
 }

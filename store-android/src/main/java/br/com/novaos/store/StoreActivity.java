@@ -115,10 +115,11 @@ public final class StoreActivity extends Activity {
         try{startActivity(new Intent(Intent.ACTION_VIEW,uri).addCategory(Intent.CATEGORY_BROWSABLE));return true;}
         catch(RuntimeException error){if(fallback!=null)notice(fallback);return false;}
     }
-    private Intent youtube(){
-        Intent launch=getPackageManager().getLeanbackLaunchIntentForPackage(YOUTUBE);
-        return launch==null?getPackageManager().getLaunchIntentForPackage(YOUTUBE):launch;
+    private Intent launchFor(String pkg){
+        Intent launch=getPackageManager().getLeanbackLaunchIntentForPackage(pkg);
+        return launch==null?getPackageManager().getLaunchIntentForPackage(pkg):launch;
     }
+    private Intent youtube(){return launchFor(YOUTUBE);}
     private void openYoutube(){
         try{Intent launch=youtube();if(launch!=null){startActivity(launch);return;}}catch(RuntimeException ignored){}
         try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id="+YOUTUBE)).setPackage("com.android.vending"));return;}
@@ -130,6 +131,20 @@ public final class StoreActivity extends Activity {
             try{JSONObject s=new JSONObject().put("jobs",transfers.states()).put("youtube",youtubeInstalled).put("abis",deviceAbis).put("sdk",Build.VERSION.SDK_INT);
                 StoreUpdates.Check check=updates.result();s.put("updateCheck",check.status);if(check.offer!=null)s.put("update",check.offer.info());return s.toString();}
             catch(Exception bad){return "{}";}
+        }
+        @JavascriptInterface public String appState(String url){
+            CatalogFeed.Apk apk=url==null?null:downloadFile(url);if(apk==null)return "{}";
+            try{
+                android.content.pm.PackageInfo p=getPackageManager().getPackageInfo(apk.pkg,android.content.pm.PackageManager.GET_SIGNATURES);
+                JSONObject j=new JSONObject().put("installed",true).put("version",p.versionName==null?"":p.versionName)
+                    .put("code",Build.VERSION.SDK_INT>=28?p.getLongVersionCode():p.versionCode).put("open",launchFor(apk.pkg)!=null);
+                if(!apk.cert.isEmpty())j.put("signer",p.signatures!=null&&p.signatures.length==1&&apk.cert.equals(StoreTransfers.hex(java.security.MessageDigest.getInstance("SHA-256").digest(p.signatures[0].toByteArray()))));
+                return j.toString();
+            }catch(Exception ignored){return "{}";}
+        }
+        @JavascriptInterface public void openApp(String url){
+            CatalogFeed.Apk apk=url==null?null:downloadFile(url);if(apk==null)return;
+            runOnUiThread(()->{try{Intent launch=launchFor(apk.pkg);if(launch!=null){startActivity(launch);return;}}catch(RuntimeException ignored){}notice("Não foi possível abrir este app.");});
         }
         @JavascriptInterface public void download(String url){CatalogFeed.Apk apk=downloadFile(url);if(apk!=null)transfers.start(url,apk);}
         @JavascriptInterface public void install(String key){if(key!=null)transfers.install(key);}
