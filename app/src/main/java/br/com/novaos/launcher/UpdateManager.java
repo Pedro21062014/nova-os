@@ -59,7 +59,7 @@ final class UpdateManager {
             }
             edit.apply();
         }
-        String v="1.2.9";
+        String v="1.2.10";
         try {v=installed(0).versionName;} catch(Exception ignored){}
         runningVersion=v;
     }

@@ -37,6 +37,12 @@ const pixel=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR
   await p.getByRole('button',{name:'App 139 renomeado',exact:true}).focus();
   await p.waitForFunction(()=>document.querySelector('button[data-arg="139"] img[src]'));
   assert.equal(await p.evaluate(()=>document.activeElement.dataset.arg),'139');
+  const starting=await p.evaluate(()=>({y:document.activeElement.getBoundingClientRect().top,scroll:document.querySelector('#main').scrollTop}));
+  await p.keyboard.press('ArrowUp');
+  const step=await p.evaluate(()=>({id:document.activeElement.dataset.arg,inside:document.activeElement.matches('#main .tile'),scroll:document.querySelector('#main').scrollTop}));
+  assert(step.inside&&Number(step.id)<139&&Number(step.id)>125, JSON.stringify(step));
+  assert(step.scroll<=starting.scroll);
+  for(let i=0;i<5;i++){await p.keyboard.press('ArrowUp');assert(await p.evaluate(()=>document.activeElement.matches('#main .tile')));}
   assert.deepEqual(errors,[]);
   console.log(`140 apps: ${initial} ícones solicitados até o primeiro lote observado; último ícone carregado ao receber foco; Início manteve DOM e foco.`);
  }finally{await browser.close();}

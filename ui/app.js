@@ -25,7 +25,7 @@ function softwareMode(){try{return !!(native&&native.softwareRendering&&native.s
 const softwareRendering=softwareMode();
 const legacyGlass=!!(window.CSS&&CSS.supports&&CSS.supports('--x','0')&&(softwareRendering||(!CSS.supports('backdrop-filter','blur(11px)')&&!CSS.supports('-webkit-backdrop-filter','blur(11px)'))));
 const $ = id => document.getElementById(id);
-const VERSION = '1.2.9';
+const VERSION = '1.2.10';
 let glassFrame=0;
 function sampleGlass(){
  if(!legacyGlass||glassFrame)return;
@@ -451,7 +451,7 @@ const pages={home,movies:()=>catalog('movies'),series:()=>catalog('series'),live
 const describe=el=>el&&el.dataset&&el.dataset.do?`${el.dataset.do}\n${el.dataset.arg||''}`:'';
 function focusMatching(scope,signature){if(!signature)return false;const at=signature.indexOf('\n'),action=signature.slice(0,at),arg=signature.slice(at+1),nodes=scope.querySelectorAll('button[data-do]');for(let i=0;i<nodes.length;i++){const hit=nodes[i];if(hit.dataset.do===action&&(hit.dataset.arg||'')===arg){hit.focus();return true;}}return false;}
 function applyAppearance(){
- document.body.className=`${page} ${legacyLayout?'legacy-layout':''} ${legacyGlass?'legacy-glass':''} ${softwareRendering?'software-rendering':''} ${prefsUpdate.status==='available'||prefsUpdate.status==='ready'?'has-update':''} ${pref.glass?'':'solid'} ${pref.wall?'':'no-wall'} ${useDpad?'dpad':''} ${pref.motion?'':'motion-off'} ${idleMode?'idle-ambient':''}`;sampleGlass();
+ const classes=`${page} ${legacyLayout?'legacy-layout':''} ${legacyGlass?'legacy-glass':''} ${softwareRendering?'software-rendering':''} ${prefsUpdate.status==='available'||prefsUpdate.status==='ready'?'has-update':''} ${pref.glass?'':'solid'} ${pref.wall?'':'no-wall'} ${useDpad?'dpad':''} ${pref.motion?'':'motion-off'} ${idleMode?'idle-ambient':''}`;if(document.body.className!==classes)document.body.className=classes;sampleGlass();
 }
 function animateIn(el,distance=8){
  if(!el||!pref.motion||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))return;
@@ -646,8 +646,19 @@ function spatial(k){
  const isOverlay=!!dialog;
  const root=isOverlay?$('dialog'):page==='ambient'?$('main'):$('stage');const active=document.activeElement;const elements=Array.from(root.querySelectorAll('button:not([disabled]):not([hidden]),input:not([disabled]):not([hidden])'));
  if(!elements.includes(active)){const first=page==='home'&&!isOverlay?elements.find(e=>e.classList.contains('tile')):null;const target=first||elements[0];if(target)target.focus();return;}
- const r=active.getBoundingClientRect(), x=(r.left+r.right)/2,y=(r.top+r.bottom)/2;let best=null, score=Infinity;
- for(const el of elements){if(el===active)continue;const t=el.getBoundingClientRect();if(!t.width&&!t.height)continue;const tx=(t.left+t.right)/2,ty=(t.top+t.bottom)/2, h=k==='ArrowLeft'||k==='ArrowRight';const major=h?(k==='ArrowLeft'?x-tx:tx-x):(k==='ArrowUp'?y-ty:ty-y);if(major<3)continue;const overlap=h?Math.min(t.bottom,r.bottom)-Math.max(t.top,r.top):Math.min(t.right,r.right)-Math.max(t.left,r.left);const off=h?Math.abs(ty-y):Math.abs(tx-x);const point=major+off*(overlap>1?.26:3)+(overlap>1?0:34);if(point<score){score=point;best=el;}}
+ const r=active.getBoundingClientRect(), x=(r.left+r.right)/2,y=(r.top+r.bottom)/2;
+ const h=k==='ArrowLeft'||k==='ArrowRight', sign=k==='ArrowUp'||k==='ArrowLeft'?-1:1;
+ const main=$('main'), inMain=main.contains(active);let best=null, score=Infinity, tier=Infinity;
+ for(const el of elements){
+  if(el===active)continue;
+  const part=!h&&!isOverlay&&!main.contains(el)?1:0;
+  if(part>tier||!h&&!isOverlay&&!inMain&&sign<0&&!part)continue;
+  const t=el.getBoundingClientRect();if(!t.width||!t.height)continue;
+  const dx=(t.left+t.right)/2-x,dy=(t.top+t.bottom)/2-y,major=sign*(h?dx:dy);if(major<4)continue;
+  const overlap=h?Math.min(t.bottom,r.bottom)-Math.max(t.top,r.top):Math.min(t.right,r.right)-Math.max(t.left,r.left);
+  const cross=Math.abs(h?dy:dx),point=h?major+cross*(overlap>1?.26:3)+(overlap>1?0:34):major+Math.min(48,cross*.12)+(overlap>1?0:8);
+  if(part<tier||point<score){tier=part;score=point;best=el;}
+ }
  if(best)best.focus();
 }
 function key(k,down,repeat=false,fromRemote=false){

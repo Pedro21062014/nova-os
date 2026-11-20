@@ -1,4 +1,4 @@
-# Nova OS 1.2.9
+# Nova OS 1.2.10
 
 Launcher em português para Android TV e TV boxes. É um aplicativo de tela inicial, não uma ROM. O pacote Android gerencia aplicativos instalados, controle remoto, rede e o atualizador; a interface é local, renderizada pelo Android System WebView.
 
@@ -33,7 +33,7 @@ Com JDK 11+ (o CI usa 17), Android SDK Platform 35, Build Tools 35.0.1 e `zip` d
 sdkmanager 'platforms;android-35' 'build-tools;35.0.1'
 export ANDROID_SDK_ROOT=/caminho/do/android-sdk
 ./scripts/build-apk.sh
-adb install -r artifacts/Nova-OS-1.2.9-debug.apk
+adb install -r artifacts/Nova-OS-1.2.10-debug.apk
 ```
 
 O build baixa e verifica o SHA-256 do APK público da Nova IPTV quando não há cópia local. Para compilar offline, use `NOVA_IPTV_APK` com o caminho absoluto de um APK da IPTV. A instalação pelo launcher exige que a Nova IPTV e o launcher tenham o mesmo certificado.
@@ -67,3 +67,5 @@ Pode-se definir `CHROMIUM_BIN` ou `NOVA_PREVIEW_URL`. O teste web simula a ponte
 A partir do Nova OS 1.2.2, o convite aparece uma única vez por instalação/dados do app, somente se a loja ainda não estiver instalada. Recusar, fechar ou usar Voltar não impede abrir **Configurações → Sistema → Nova Store** a qualquer momento. O atalho baixa e verifica o APK oficial da loja (versão, pacote, tamanho e SHA-256), oferece instalação com confirmação do Android e permite abrir a loja quando ela já estiver instalada. Não há download automático. Na versão 1.2.3, o botão de sacola imediatamente à esquerda da busca abre a loja se ela estiver instalada; caso contrário, mostra as opções de download e instalação.
 
 A loja é um app independente desenvolvido na branch independente `nova-store-app`, que não contém o código nem o histórico do launcher; seu APK é distribuído na release separada `nova-store-v1.0.0` do repositório `Pedro21062014/nova-os`, que não deve ser marcada como Latest. Antes de distribuir o launcher, confirme que o link público da loja disponibiliza exatamente o binário com o hash fixado em `StoreInstaller.java`.
+
+A versão 1.2.10 percorre os controles do conteúdo antes de voltar à barra superior. A lista de apps começa a carregar em paralelo ao WebView e é mantida em memória entre retornos; mudanças de pacotes disparam uma nova leitura.

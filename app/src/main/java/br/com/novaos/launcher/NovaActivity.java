@@ -3,6 +3,8 @@ package br.com.novaos.launcher;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -85,7 +87,15 @@ public final class NovaActivity extends Activity {
     private final ThreadPoolExecutor artwork = new ThreadPoolExecutor(2,2,30,TimeUnit.SECONDS,new ArrayBlockingQueue<>(32));
     private volatile Map<String, ComponentName> installed = new HashMap<>();
     private String lastApps = "";
-    private long lastAppQuery = 0;
+    private boolean appQueryActive, appQueryAgain, packagesWatching;
+    private long lastAppQuery;
+    private final Runnable packagesChanged=()->refreshApps(true);
+    private final BroadcastReceiver packageChanges=new BroadcastReceiver(){
+        @Override public void onReceive(Context context,Intent intent){
+            if(Intent.ACTION_PACKAGE_REMOVED.equals(intent.getAction())&&intent.getBooleanExtra(Intent.EXTRA_REPLACING,false))return;
+            startup.removeCallbacks(packagesChanged);startup.postDelayed(packagesChanged,160);
+        }
+    };
     private WebView web;
     private UpdateManager updater;
     private boolean ready;
@@ -120,6 +130,10 @@ public final class NovaActivity extends Activity {
         super.onCreate(state);
         store=new StoreInstaller(this,stateJson->js("storeState("+JSONObject.quote(stateJson.toString())+")"));
         updater=new UpdateManager(this,stateJson->js("updateState("+JSONObject.quote(stateJson.toString())+")"));
+        IntentFilter filter=new IntentFilter();filter.addAction(Intent.ACTION_PACKAGE_ADDED);filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        filter.addAction(Intent.ACTION_PACKAGE_CHANGED);filter.addAction(Intent.ACTION_PACKAGE_REPLACED);filter.addDataScheme("package");
+        try{if(android.os.Build.VERSION.SDK_INT>=33)registerReceiver(packageChanges,filter,Context.RECEIVER_EXPORTED);else registerReceiver(packageChanges,filter);packagesWatching=true;}catch(RuntimeException ignored){}
+        refreshApps(true);
         createWeb();
     }
     private void createWeb(){
@@ -166,7 +180,7 @@ public final class NovaActivity extends Activity {
         if(web!=null){web.onResume();if(ready){refreshApps(false);js("reopen()");if(updater!=null)updater.onResume();if(store!=null)store.send();}}
     }
     @Override protected void onPause(){super.onPause();if(web!=null){js("suspend()");web.onPause();}}
-    @Override protected void onDestroy(){if(store!=null)store.close();if(updater!=null)updater.close();requests.shutdownNow();artwork.shutdownNow();releaseWeb();super.onDestroy();}
+    @Override protected void onDestroy(){startup.removeCallbacks(packagesChanged);if(packagesWatching)unregisterReceiver(packageChanges);if(store!=null)store.close();if(updater!=null)updater.close();requests.shutdownNow();artwork.shutdownNow();releaseWeb();super.onDestroy();}
     @Override protected void onNewIntent(Intent intent) {super.onNewIntent(intent);if (intent.hasCategory(Intent.CATEGORY_HOME)) js("home()");}
     @Override public void onBackPressed() {
         if (web == null || !ready) {if(!isDeviceHome())super.onBackPressed();return;}
@@ -215,8 +229,13 @@ public final class NovaActivity extends Activity {
     void showStoreOpenError(){error("Não foi possível abrir a Nova Store neste aparelho.");}
     private void error(String text){if(ready)js("toast("+JSONObject.quote(text)+")");else Toast.makeText(this,text,Toast.LENGTH_SHORT).show();}
     private void refreshApps(boolean force) {
-        final long now=android.os.SystemClock.elapsedRealtime();if(!force&&now-lastAppQuery<600)return;lastAppQuery=now;
+        final long now=android.os.SystemClock.elapsedRealtime();
+        if(!force&&lastAppQuery!=0&&now-lastAppQuery<(packagesWatching?120_000:1_500))return;
+        if(appQueryActive){appQueryAgain|=force;return;}
+        if(isDestroyed()||requests.isShutdown())return;
+        appQueryActive=true;lastAppQuery=now;
         requests.execute(()->{
+          try{
             PackageManager pm=getPackageManager();Map<String,ComponentName> ids=new LinkedHashMap<>();JSONArray data=new JSONArray();
             Map<String,ResolveInfo> visible=new LinkedHashMap<>();
             for(String category:new String[]{Intent.CATEGORY_LEANBACK_LAUNCHER,Intent.CATEGORY_LAUNCHER}){
@@ -231,18 +250,21 @@ public final class NovaActivity extends Activity {
                 ResolveInfo r=visible.get(name);ComponentName c=new ComponentName(r.activityInfo.packageName,r.activityInfo.name);String id=c.flattenToShortString();ids.put(id,c);
                 try{
                     CharSequence label=r.loadLabel(pm);JSONObject a=new JSONObject();
-                    a.put("id",id);a.put("pkg",c.getPackageName());a.put("label",label==null?c.getPackageName():label.toString());a.put("icon","/icon?id="+Uri.encode(id));data.put(a);
+                    String stamp=r.activityInfo.applicationInfo.sourceDir;
+                    a.put("id",id);a.put("pkg",c.getPackageName());a.put("label",label==null?c.getPackageName():label.toString());a.put("icon","/icon?id="+Uri.encode(id)+"&v="+(stamp==null?0:stamp.hashCode()));data.put(a);
                 }catch(Exception ignored){}
             }
             installed=ids;
             String result=data.toString();
-            runOnUiThread(()->{if(!lastApps.equals(result)){lastApps=result;js("updateApps("+JSONObject.quote(result)+")");}});
+            runOnUiThread(()->{if(!lastApps.equals(result)){lastApps=result;sendApps();}});
+          }catch(RuntimeException ignored){}finally{runOnUiThread(()->{appQueryActive=false;if(appQueryAgain){appQueryAgain=false;refreshApps(true);}});}
         });
     }
+    private void sendApps(){if(!lastApps.isEmpty())js("updateApps("+JSONObject.quote(lastApps)+")");}
     public final class Bridge {
         private final WebView owner;
         Bridge(WebView owner){this.owner=owner;}
-        @JavascriptInterface public void ready(){runOnUiThread(()->{if(web!=owner||ready)return;cancelBootDeadline();ready=true;lastApps="";refreshApps(true);if(updater!=null){updater.send();updater.onResume();}if(store!=null){store.send();js("storeInvite()");}});}
+        @JavascriptInterface public void ready(){runOnUiThread(()->{if(web!=owner||ready)return;cancelBootDeadline();ready=true;sendApps();if(lastApps.isEmpty())refreshApps(false);if(updater!=null){updater.send();updater.onResume();}if(store!=null){store.send();js("storeInvite()");}});}
         @JavascriptInterface public boolean claimStoreInvitation(){return web==owner&&store!=null&&store.claimInvitation();}
         @JavascriptInterface public boolean claimStoreUpdateNotice(){return web==owner&&store!=null&&store.claimUpdateNotice();}
         @JavascriptInterface public boolean iptvInstalled(){return web==owner&&IptvOffer.available(NovaActivity.this,IptvOffer.PACKAGE);}
@@ -333,14 +355,15 @@ public final class NovaActivity extends Activity {
             return read(c.getInputStream(),limit);
         }finally{c.disconnect();}
     }
-    private byte[] icon(String id) throws IOException{
+    private byte[] icon(String id,String revision) throws IOException{
         ComponentName c=installed.get(id);if(c==null)throw new IOException("Missing icon");
-        byte[] existing=icons.get(id);if(existing!=null)return existing;
+        String key=revision!=null&&revision.matches("-?[0-9]{1,10}")?id+":"+revision:id;
+        byte[] existing=icons.get(key);if(existing!=null)return existing;
         try{
             Drawable d=getPackageManager().getActivityIcon(c);
             Bitmap b=Bitmap.createBitmap(96,96,Bitmap.Config.ARGB_8888);Canvas canvas=new Canvas(b);
             d.setBounds(2,2,94,94);d.draw(canvas);ByteArrayOutputStream out=new ByteArrayOutputStream();b.compress(Bitmap.CompressFormat.PNG,100,out);b.recycle();
-            byte[] data=out.toByteArray();icons.put(id,data);return data;
+            byte[] data=out.toByteArray();icons.put(key,data);return data;
         }catch(PackageManager.NameNotFoundException e){throw new IOException(e);}
     }
     private static String hash(String s) throws Exception{
@@ -416,13 +439,13 @@ public final class NovaActivity extends Activity {
             if(!"https".equals(u.getScheme())||!HOST.equals(u.getHost())||u.getPort()!=-1)return notFound();
             String path=u.getPath();if(path==null)return notFound();
             try{
-                if(path.equals("/icon"))return bytes("image/png",icon(u.getQueryParameter("id")));
+                if(path.equals("/icon"))return bytes("image/png",icon(u.getQueryParameter("id"),u.getQueryParameter("v")));
                 if(path.equals("/art")){String url=u.getQueryParameter("url");if(!allowedArt(url))return notFound();return art(url);}
                 if(path.equals("/"))path="/index.html";
                 if(!ASSET_PATH.matcher(path).matches())return notFound();
                 String mime=type(path);
                 WebResourceResponse response=new WebResourceResponse(mime,mime.startsWith("text/")||(mime.equals("application/javascript")||mime.equals("application/json"))?"UTF-8":null,getAssets().open(path.substring(1)));
-                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"123".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
+                String cache=(path.equals("/app.js")||path.equals("/style.css"))&&"1210".equals(u.getQueryParameter("v"))?"private, max-age=86400":"no-cache";
                 response.setResponseHeaders(Collections.singletonMap("Cache-Control",cache));
                 return response;
             }catch(Exception ignored){return notFound();}
